@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Unicleya — Second Hand Mobiles & Computers</title>
+  <link rel="stylesheet" href="stylesheet.css" />
+</head>
+<body>
+  <div class="page-wrapper">
+    <header>
+      <div class="header-content">
+        <div class="header-left">
+          <button class="hamburger-btn" id="hamburgerBtn" aria-label="Open menu" aria-expanded="false">
+            <span></span><span></span><span></span>
+          </button>
+          <div class="logo" role="banner">
+            <h1>Unicleya</h1>
+            <span class="tagline">Buy & Sell Second Hand</span>
+          </div>
+        </div>
+
+        <div class="search-container" role="search" aria-label="Search devices">
+          <div class="search-wrapper">
+            <div class="search-bar">
+              <div class="search-icon" aria-hidden>🔍</div>
+              <input id="searchInput" type="text" placeholder="Search devices (e.g. iPhone 12)" autocomplete="off" />
+              <button id="clearBtn" class="clear-btn" aria-label="Clear search" hidden>×</button>
+            </div>
+            <div class="search-dropdown" id="searchDropdown" hidden>
+              <div class="search-results" id="searchResults" role="listbox"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="header-right">
+          <button class="login-btn" id="loginBtn" aria-haspopup="dialog">👤 Login</button>
+        </div>
+      </div>
+    </header>
+
+    <nav class="side-nav" id="sideNav" aria-hidden="true">
+      <div class="side-nav-header">
+        <div class="nav-logo">
+          <h2>Unicleya</h2>
+          <span>Second Hand Marketplace</span>
+        </div>
+        <button class="nav-close-btn" id="navCloseBtn" aria-label="Close menu">
+          <span></span><span></span>
+        </button>
+      </div>
+
+      <div class="side-nav-content" id="navContent">
+        <!-- links use data-route for SPA routing -->
+        <a href="#" class="nav-item active" data-route="home" data-tooltip="Go to homepage">🏠 Home</a>
+        <a href="#" class="nav-item" data-route="buy-mobile" data-tooltip="Browse mobile phones">📱 Buy Mobile</a>
+        <a href="#" class="nav-item" data-route="sell-mobile" data-tooltip="Sell your mobile">💰 Sell Mobile</a>
+        <a href="#" class="nav-item" data-route="buy-computer" data-tooltip="Browse computers">💻 Buy Computer</a>
+        <a href="#" class="nav-item" data-route="sell-computer" data-tooltip="Sell computer">🖥️ Sell Computer</a>
+        <a href="#" class="nav-item" data-route="how" data-tooltip="Learn our process">📋 How It Works</a>
+        <a href="#" class="nav-item" data-route="contact" data-tooltip="Get in touch">📞 Contact</a>
+        <a href="#" class="nav-item" data-route="account" data-tooltip="My account">👤 My Account</a>
+      </div>
+
+      <div class="side-nav-footer">
+        <div class="nav-divider"></div>
+        <div style="padding:16px 24px;color:#bcd;">Call/WhatsApp: <strong>7057257971</strong></div>
+      </div>
+    </nav>
+
+    <div class="overlay" id="overlay" hidden></div>
+
+    <!-- Login Modal -->
+    <div class="login-modal" id="loginModal" role="dialog" aria-modal="true" aria-hidden="true">
+      <div class="login-modal-content">
+        <button class="login-modal-close-btn" id="closeLogin" aria-label="Close login">×</button>
+        <h3>Login to Unicleya</h3>
+        <form id="loginForm" novalidate>
+          <label for="emailInput">Email</label>
+          <input id="emailInput" type="email" placeholder="you@domain.com" required />
+          <label for="passwordInput">Password</label>
+          <input id="passwordInput" type="password" placeholder="min 6 characters" minlength="6" required />
+          <button type="submit">Sign In</button>
+        </form>
+        <p style="text-align:center;color:#666;margin-top:6px">Don't have an account? <a href="#" id="openSellFromLogin">Create one (Sell)</a></p>
+      </div>
+    </div>
+
+    <main class="main-content" id="appMain" tabindex="-1">
+      <div class="container" id="appContainer">
+        <!-- SPA sections: content will be swapped by JS -->
+        <section id="page-home" class="page active">
+          <h2>Welcome to Unicleya</h2>
+          <p class="lead">Buy & sell refurbished or second-hand mobiles, laptops and computers — quality checked, fair pricing, free pickup.</p>
+
+          <section class="action-card-section">
+            <h3 class="section-title">Choose Your Action</h3>
+            <p class="section-subtitle">Select what you'd like to do today</p>
+
+            <div class="action-cards-container" id="actionCards">
+              <!-- action cards (same structure you provided, JS wires them) -->
+              <article class="action-card enhanced" data-action="buy-mobile" tabindex="0">
+                <div class="card-icon"><div class="icon-wrapper"><span class="icon">📱</span><div class="icon-glow"></div></div></div>
+                <div class="card-content"><h4>Buy Mobile</h4><p>Find the perfect second-hand mobile at great prices.</p>
+                  <div class="features-list"><span class="feature">Verified devices</span><span class="feature">Best prices</span><span class="feature">Quality checked</span></div>
+                </div>
+                <div class="card-selection"><input type="radio" name="action" id="r-buy-mobile" value="buy-mobile"><label for="r-buy-mobile" class="selection-indicator"><span class="checkmark"></span></label></div>
+              </article>
+
+              <article class="action-card enhanced" data-action="sell-mobile" tabindex="0">
+                <div class="card-icon"><div class="icon-wrapper"><span class="icon">💰</span><div class="icon-glow"></div></div></div>
+                <div class="card-content"><h4>Sell Mobile</h4><p>Sell your old mobile quickly and get instant quotes.</p>
+                  <div class="features-list"><span class="feature">Instant quotes</span><span class="feature">Free pickup</span><span class="feature">Best value</span></div>
+                </div>
+                <div class="card-selection"><input type="radio" name="action" id="r-sell-mobile" value="sell-mobile"><label for="r-sell-mobile" class="selection-indicator"><span class="checkmark"></span></label></div>
+              </article>
+
+              <article class="action-card enhanced" data-action="buy-computer" tabindex="0">
+                <div class="card-icon"><div class="icon-wrapper"><span class="icon">💻</span><div class="icon-glow"></div></div></div>
+                <div class="card-content"><h4>Buy Computer</h4><p>Reliable second-hand computers and laptops.</p>
+                  <div class="features-list"><span class="feature">Tested hardware</span><span class="feature">Performance verified</span><span class="feature">Warranty included</span></div>
+                </div>
+                <div class="card-selection"><input type="radio" name="action" id="r-buy-computer" value="buy-computer"><label for="r-buy-computer" class="selection-indicator"><span class="checkmark"></span></label></div>
+              </article>
+
+              <article class="action-card enhanced" data-action="sell-computer" tabindex="0">
+                <div class="card-icon"><div class="icon-wrapper"><span class="icon">🖥️</span><div class="icon-glow"></div></div></div>
+                <div class="card-content"><h4>Sell Computer</h4><p>Turn your old computer into cash with easy selling.</p>
+                  <div class="features-list"><span class="feature">Quick evaluation</span><span class="feature">Free pickup</span><span class="feature">Fair pricing</span></div>
+                </div>
+                <div class="card-selection"><input type="radio" name="action" id="r-sell-computer" value="sell-computer"><label for="r-sell-computer" class="selection-indicator"><span class="checkmark"></span></label></div>
+              </article>
+            </div>
+
+            <div class="action-summary">
+              <div class="selected-action">
+                <span class="action-text">No action selected</span>
+                <button class="proceed-btn" id="proceedBtn" disabled>Proceed</button>
+              </div>
+            </div>
+          </section>
+        </section>
+
+        <!-- Buy Mobile Page -->
+        <section id="page-buy-mobile" class="page" hidden>
+          <div class="page-header">
+            <h2>Buy Mobile</h2>
+            <p>Browse verified phones — click Add to Cart to reserve.</p>
+          </div>
+          <div id="listingsMobile" class="listings-grid"></div>
+        </section>
+
+        <!-- Sell Mobile Page -->
+        <section id="page-sell-mobile" class="page" hidden>
+          <h2>Sell Mobile</h2>
+          <p>Fill the form below and we'll contact you with a quote.</p>
+          <form id="sellMobileForm" class="form-grid">
+            <label>Model<input name="model" required></label>
+            <label>Condition
+              <select name="condition">
+                <option>Excellent</option><option>Good</option><option>Fair</option><option>Poor</option>
+              </select>
+            </label>
+            <label>Price expectation<input name="price" type="number" required></label>
+            <label>Upload photos<input name="photos" type="file" accept="image/*" multiple></label>
+            <div><button type="submit">Submit for Quote</button></div>
+          </form>
+          <div id="sellPreview" style="margin-top:16px"></div>
+        </section>
+
+        <!-- Buy Computer Page -->
+        <section id="page-buy-computer" class="page" hidden>
+          <h2>Buy Computer</h2>
+          <div id="listingsComputer" class="listings-grid"></div>
+        </section>
+
+        <!-- Sell Computer Page -->
+        <section id="page-sell-computer" class="page" hidden>
+          <h2>Sell Computer</h2>
+          <form id="sellComputerForm" class="form-grid">
+            <label>Model<input name="model" required></label>
+            <label>Condition
+              <select name="condition"><option>Excellent</option><option>Good</option><option>Fair</option><option>Poor</option></select>
+            </label>
+            <label>Price expectation<input name="price" type="number" required></label>
+            <div><button type="submit">Submit for Quote</button></div>
+          </form>
+        </section>
+
+        <!-- How It Works -->
+        <section id="page-how" class="page" hidden>
+          <h2>How Unicleya Works</h2>
+          <ol>
+            <li>Choose Buy or Sell</li>
+            <li>We verify & test devices</li>
+            <li>Free pickup for sellers in your city</li>
+            <li>Secure payments on delivery</li>
+          </ol>
+        </section>
+
+        <!-- Contact -->
+        <section id="page-contact" class="page" hidden>
+          <h2>Contact Us</h2>
+          <form id="contactForm" class="form-grid">
+            <label>Name<input name="name" required></label>
+            <label>Email<input name="email" type="email" required></label>
+            <label>Message<textarea name="message" rows="4" required></textarea></label>
+            <div><button type="submit">Send Message</button></div>
+          </form>
+        </section>
+
+        <!-- Account -->
+        <section id="page-account" class="page" hidden>
+          <h2>My Account</h2>
+          <div id="accountArea"></div>
+        </section>
+      </div>
+    </main>
+
+    <footer>
+      <div class="footer-content">
+        <p>&copy; <span id="copyYear"></span> Unicleya. All rights reserved.</p>
+      </div>
+    </footer>
+  </div>
+
+  <script src="script.js" defer></script>
+</body>
+</html>
