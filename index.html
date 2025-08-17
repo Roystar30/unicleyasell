@@ -325,14 +325,45 @@
     const $$ = s => Array.from(document.querySelectorAll(s));
 
     // Demo data (replace with real API calls later)
-    const demo = {
+   /* const demo = {
       products: [
         {id:'m1',title:'iPhone 12 - 64GB',desc:'Good condition, battery 86%',price:14500,category:'mobiles'},
         {id:'m2',title:'Samsung A32 - 128GB',desc:'Excellent, box included',price:9999,category:'mobiles'},
         {id:'c1',title:'Dell Latitude E7470',desc:'i5/8GB/256SSD',price:8999,category:'computers'},
         {id:'c2',title:'Lenovo ThinkPad T480',desc:'i5/16GB/512SSD',price:14999,category:'computers'}
       ]
-    };
+    };*/
+
+
+    async function fetchProducts() {
+  try {
+    showLoader();
+    const res = await fetch(`${API_BASE}/api/products`);
+    const products = await res.json();
+    hideLoader();
+    return products;
+  } catch (err) {
+    console.error(err);
+    hideLoader();
+    return [];
+  }
+}
+
+// render listings using backend data
+async function renderListings(){
+  const items = await fetchProducts();
+  const filtered = items.filter(p => activeCategory==='all' || p.category===activeCategory);
+  listingsRoot.innerHTML = filtered.map(it => `
+    <div class="listing">
+      <h4>${it.title}</h4>
+      <p>${it.desc}</p>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-top:8px">
+        <div style="color:var(--accent);font-weight:800">₹${it.price}</div>
+        <div style="display:flex;gap:8px"><button class="btn add-btn" data-id="${it._id}">Add</button></div>
+      </div>
+    </div>
+  `).join("");
+}
 
     // UI elements
     const progress = $('#progress');
@@ -452,10 +483,24 @@
     }
 
     // login form submit
-    loginForm.addEventListener('submit', e=>{e.preventDefault(); const fd = new FormData(loginForm); const email = fd.get('email'); const pw = fd.get('password');
-      // in real app, send to API. Here we accept any credentials for demo
-      fakeNetwork(()=>{ localStorage.setItem('unicleya_user', JSON.stringify({email,name:email.split('@')[0]})); renderAccount(); closeAuth(); showToast('Signed in (demo)') }, 800);
-    });
+ loginForm.addEventListener('submit', async e => {
+  e.preventDefault();
+  const fd = new FormData(loginForm);
+  const res = await fetch(`${API_BASE}/api/login`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email: fd.get("email"), password: fd.get("password") })
+  });
+  const data = await res.json();
+  if(data.success){
+    localStorage.setItem("unicleya_user", JSON.stringify(data.user));
+    renderAccount();
+    closeAuth();
+    showToast("Signed in");
+  } else {
+    showToast("Login failed");
+  }
+});
 
     // register submit
     registerForm.addEventListener('submit', e=>{
