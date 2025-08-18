@@ -3,97 +3,51 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Unicleya second hand teck market</title>
-  <meta name="description" content="Unicleya — buy & sell refurbished mobiles & computers. Playful UI with animations." />
-
+  <title>Unicleya — Second‑hand Tech Market</title>
+  <meta name="description" content="Unicleya — buy & sell refurbished mobiles & computers." />
+  <link rel="stylesheet" href="stylesheet.css" />
   <style>
-    /* ---------- Variables & reset ---------- */
+    /* Keep the polished look from your current page while removing demo-only styles */
     :root{
       --bg-1:#0f1724; --bg-2:#071022; --card:#0f1724; --accent:#6EE7B7; --accent-2:#60A5FA; --glass: rgba(255,255,255,0.04);
       --muted: #9aa6b2; --soft:#e6eef8; --max:1200px;
     }
     *{box-sizing:border-box}
     html,body{height:100%;margin:0;font-family:Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, 'Helvetica Neue', Arial;color:var(--soft);background:linear-gradient(180deg,var(--bg-1),var(--bg-2));}
+    a{color:inherit;text-decoration:none}
     img{max-width:100%;display:block}
-    a{color:inherit}
 
-    /* ---------- Animated tech background ---------- */
-    .bg-anim{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
-    /* subtle animated gradient */
-    .bg-anim .grad{position:absolute;inset:-20%;background:radial-gradient( circle at 20% 10%, rgba(96,165,250,0.12), transparent 6% ), radial-gradient(circle at 80% 90%, rgba(110,231,183,0.08), transparent 8% );filter:blur(60px);animation:gradShift 12s linear infinite;mix-blend-mode:screen}
-    @keyframes gradShift{0%{transform:translateY(-3%) rotate(0deg)}50%{transform:translateY(3%) rotate(180deg)}100%{transform:translateY(-3%) rotate(360deg)}}
-    /* moving circuit lines (SVG mask) */
-    .bg-anim svg{position:absolute;inset:0;width:120%;height:120%;opacity:0.12;transform:translateY(-5%)}
-    .bg-anim .dots{position:absolute;inset:0;opacity:0.06;background-image:radial-gradient( rgba(255,255,255,0.02) 1px, transparent 1px);background-size:14px 14px;transform:translateY(0);animation:dotsUp 18s linear infinite}
-    @keyframes dotsUp{0%{transform:translateY(0)}50%{transform:translateY(6%)}100%{transform:translateY(0)}}
-
-    /* ---------- Layout ---------- */
-    .app{position:relative;min-height:100vh;display:flex;flex-direction:column;z-index:1}
+    .app{position:relative;min-height:100vh;display:flex;flex-direction:column}
     header{position:sticky;top:0;backdrop-filter:blur(6px);background:linear-gradient(90deg, rgba(12,18,30,0.4), rgba(6,10,18,0.35));border-bottom:1px solid rgba(255,255,255,0.03);z-index:40}
     .header-inner{max-width:var(--max);margin:0 auto;display:flex;align-items:center;gap:16px;padding:12px 20px}
-    .logo{display:flex;align-items:center;gap:12px}
+    .logo{display:flex;align-items:center;gap:12px;cursor:pointer}
+    .logo:focus{outline:2px solid var(--accent-2);outline-offset:4px;border-radius:10px}
     .logo .brand{font-weight:800;font-size:20px;background:linear-gradient(90deg,var(--accent-2),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
     .tag{font-size:12px;color:var(--muted)}
 
     .search{flex:1;display:flex;align-items:center;justify-content:center}
     .search input{width:100%;max-width:560px;padding:10px 14px;border-radius:999px;border:1px solid rgba(255,255,255,0.06);background:rgba(8,12,20,0.6);color:var(--soft);outline:none}
+    .search input::placeholder{color:#b6c2cf}
+    .search .clear{margin-left:-40px;cursor:pointer;border:none;background:transparent;color:#cfd8e3;font-size:18px;display:none}
+    .search.has-text .clear{display:inline}
 
     .actions{display:flex;align-items:center;gap:10px}
     .btn{padding:8px 14px;border-radius:10px;border:none;cursor:pointer;background:linear-gradient(90deg,var(--accent),var(--accent-2));color:#05243a;font-weight:700}
-    .ghost{background:transparent;border:1px solid rgba(255,255,255,0.06);padding:8px 12px;border-radius:10px}
+    .ghost{background:transparent;border:1px solid rgba(255,255,255,0.06);padding:8px 12px;border-radius:10px;color:var(--soft)}
 
-    main{max-width:var(--max);margin:28px auto;padding:12px;z-index:2}
-
-    /* ---------- Hero & cards ---------- */
-    .hero{display:grid;grid-template-columns:1fr 420px;gap:22px;align-items:start}
-    .hero-left{padding:18px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border-radius:16px;border:1px solid rgba(255,255,255,0.03)}
-    .hero h1{margin:6px 0 8px 0;font-size:28px}
-    .hero p{color:var(--muted);margin:0 0 12px 0}
-
-    .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
-    .card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border-radius:12px;padding:16px;min-height:170px;position:relative;cursor:pointer;overflow:visible;transform-style:preserve-3d;transition:transform .35s cubic-bezier(.2,.9,.3,1), box-shadow .35s}
-    .card .icon{width:56px;height:56px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:28px;margin-bottom:8px;background:linear-gradient(135deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02));box-shadow:inset 0 -6px 18px rgba(0,0,0,0.25)}
-    .card h3{margin:0 0 8px 0}
-    .card p{margin:0;color:var(--muted)}
-
-    /* fancy selection badge */
-    .card .select-badge{position:absolute;top:12px;right:12px;width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.04)}
-    .card.selected{box-shadow:0 28px 48px rgba(96,165,250,0.08);outline:3px solid rgba(96,165,250,0.08);transform:translateY(-8px) rotateX(6deg) rotateY(-4deg)}
-
-    /* tilt (3D) perspective container */
-    .tilt-wrap{perspective:1200px}
-    .card .shine{position:absolute;inset:0;background:linear-gradient(120deg, rgba(255,255,255,0.04), rgba(255,255,255,0));mix-blend-mode:overlay;opacity:0;transition:opacity .3s}
-    .card:hover .shine{opacity:1}
-
-    /* chips */
-    .chips{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
-    .chip{padding:8px 12px;border-radius:999px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.03);cursor:pointer;display:inline-flex;align-items:center;gap:8px;transition:transform .2s,box-shadow .2s}
-    .chip.selected{transform:translateY(-6px);box-shadow:0 14px 30px rgba(0,0,0,0.28);background:linear-gradient(90deg,var(--accent),var(--accent-2));color:#05243a;font-weight:700}
-
-    /* proceed */
-    .hero-right{padding:18px;border-radius:12px;background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.02));border:1px solid rgba(255,255,255,0.03)}
-    .proceed{display:flex;flex-direction:column;gap:12px;align-items:center;justify-content:center}
-
-    /* ---------- listings ---------- */
+    main{max-width:var(--max);margin:28px auto;padding:12px}
     .listings{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px;margin-top:18px}
     .listing{background:linear-gradient(180deg, rgba(0,0,0,0.25), rgba(0,0,0,0.18));padding:12px;border-radius:12px;border:1px solid rgba(255,255,255,0.03)}
     .listing h4{margin:0 0 8px 0}
     .listing p{margin:0 0 12px 0;color:var(--muted)}
 
-    /* ---------- page transitions & loading ---------- */
-    .page{opacity:0;transform:translateY(10px);transition:all .45s cubic-bezier(.2,.9,.3,1);display:none}
-    .page.show{display:block;opacity:1;transform:none}
-    .progress{position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,var(--accent),var(--accent-2));width:0;z-index:100}
-
-    /* loader overlay */
-    .loader-spot{position:fixed;right:20px;bottom:20px;background:linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02));padding:12px;border-radius:999px;display:flex;align-items:center;gap:10px;border:1px solid rgba(255,255,255,0.04)}
-    .spinner{width:34px;height:34px;border-radius:50%;border:4px solid rgba(255,255,255,0.06);border-top-color:var(--accent-2);animation:spin 1s linear infinite}
-    @keyframes spin{to{transform:rotate(360deg)}}
-
-    /* ---------- login/register modal ---------- */
+    /* Modal */
     .modal{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;z-index:60;backdrop-filter:blur(8px);}
-    .modal .sheet{width:430px;max-width:92%;background:linear-gradient(180deg, rgba(12,18,30,0.96), rgba(6,10,18,0.98));border-radius:12px;padding:18px;border:1px solid rgba(255,255,255,0.04);box-shadow:0 20px 40px rgba(2,6,23,0.7);transform:translateY(10px);opacity:0;transition:all .28s}
+    .modal .sheet{width:430px;max-width:92%;background:linear-gradient(180deg, rgba(12,18,30,0.96), rgba(6,10,18,0.98));border-radius:12px;padding:18px;border:1px solid rgba(255,255,255,0.04);box-shadow:0 20px 40px rgba(2,6,23,0.7);transform:translateY(10px);opacity:0;transition:all .28s;position:relative}
     .modal.show .sheet{transform:none;opacity:1}
+    .close-x{position:absolute;right:10px;top:10px;width:34px;height:34px;border-radius:8px;border:1px solid rgba(255,255,255,0.08);background:rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:center;font-size:20px;cursor:pointer}
+    .close-x:focus{outline:2px solid var(--accent)}
+
     .tabs{display:flex;gap:6px;margin-bottom:12px}
     .tab{flex:1;padding:10px;border-radius:8px;text-align:center;background:rgba(255,255,255,0.02);cursor:pointer}
     .tab.active{background:linear-gradient(90deg,var(--accent),var(--accent-2));color:#05243a;font-weight:800}
@@ -102,170 +56,66 @@
     .form-actions{display:flex;gap:8px;align-items:center;justify-content:space-between}
     .small{font-size:13px;color:var(--muted)}
 
-    /* ---------- footer ---------- */
-    footer{max-width:var(--max);margin:28px auto 40px;padding:12px;color:var(--muted);text-align:center}
+    .chips{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+    .chip{padding:8px 12px;border-radius:999px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.03);cursor:pointer;display:inline-flex;align-items:center;gap:8px;transition:transform .2s,box-shadow .2s}
+    .chip.selected{transform:translateY(-3px);box-shadow:0 14px 30px rgba(0,0,0,0.28);background:linear-gradient(90deg,var(--accent),var(--accent-2));color:#05243a;font-weight:700}
 
-    /* responsive tweaks */
-    @media (max-width:900px){.hero{grid-template-columns:1fr}.hero-right{order:2}.hero-left{order:1}}
-
+    .progress{position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,var(--accent),var(--accent-2));width:0;z-index:100}
+    .loader-spot{position:fixed;right:20px;bottom:20px;background:linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02));padding:12px;border-radius:999px;display:flex;align-items:center;gap:10px;border:1px solid rgba(255,255,255,0.04)}
+    .spinner{width:34px;height:34px;border-radius:50%;border:4px solid rgba(255,255,255,0.06);border-top-color:var(--accent-2);animation:spin 1s linear infinite}
+    @keyframes spin{to{transform:rotate(360deg)}}
   </style>
 </head>
 <body>
-
-  <div class="bg-anim" aria-hidden="true">
-    <div class="grad"></div>
-    <svg viewBox="0 0 1000 600" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-      <defs>
-        <linearGradient id="g1" x1="0" x2="1" y1="0" y2="1">
-          <stop offset="0%" stop-color="#60A5FA" stop-opacity="0.18"/>
-          <stop offset="100%" stop-color="#6EE7B7" stop-opacity="0.12"/>
-        </linearGradient>
-      </defs>
-      <g fill="none" stroke="url(#g1)" stroke-width="1">
-        <!-- animated lines -->
-        <path d="M0 80 C200 20, 300 140, 500 80 C700 20, 800 140, 1000 80" stroke-dasharray="8 6" style="animation:dash 20s linear infinite; stroke-opacity:0.8" />
-        <path d="M0 200 C220 140, 320 260, 500 200 C700 140, 820 260, 1000 200" stroke-dasharray="6 5" style="animation:dash2 26s linear infinite; stroke-opacity:0.6" />
-      </g>
-    </svg>
-    <div class="dots"></div>
-  </div>
-
   <div class="app">
     <div class="progress" id="progress"></div>
 
     <header>
       <div class="header-inner">
-        <div class="logo">
+        <div class="logo" id="homeLogo" tabindex="0" role="button" aria-label="Go to home">
           <div style="width:44px;height:44px;border-radius:10px;background:linear-gradient(90deg,var(--accent),var(--accent-2));display:flex;align-items:center;justify-content:center;font-weight:900;color:#05243a">U</div>
           <div>
             <div class="brand">Unicleya</div>
-            <div class="tag">Playful second-hand tech market</div>
+            <div class="tag">Second-hand tech market</div>
           </div>
         </div>
 
-        <div class="search">
-          <input id="searchInput" placeholder="Search devices, e.g. iPhone 12, Dell" />
+        <div class="search" id="searchWrap">
+          <input id="searchInput" placeholder="Search devices, e.g. iPhone 12, Dell" aria-label="Search products" />
+          <button id="clearSearch" class="clear" title="Clear search" aria-label="Clear search">×</button>
         </div>
 
         <div class="actions">
-          <button class="ghost" id="accountBtn">Account</button>
-          <button class="btn" id="loginBtn">Sign in / Register</button>
+          <button class="ghost" id="accountBtn" type="button">Account</button>
+          <button class="btn" id="loginBtn" type="button">Sign in / Register</button>
         </div>
       </div>
     </header>
 
     <main>
-      <!-- HERO -->
-      <section id="page-home" class="page show">
-        <div class="hero">
-          <div class="hero-left">
-            <h1>Buy & Sell <span style="background:linear-gradient(90deg,var(--accent-2),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent">Refurbished Tech</span> — with fun</h1>
-            <p>Quick quotes • Free pickup (city-wise) • Secure payments • Playful UX</p>
-
-            <div class="cards tilt-wrap" id="actionCards">
-              <div class="card" data-action="buy-mobile" tabindex="0">
-                <div class="icon">📱</div>
-                <h3>Buy Mobile</h3>
-                <p>Verified phones, tested by our technicians.</p>
-                <div class="chips">
-                  <div class="chip">🔋 Tested Battery</div>
-                  <div class="chip">📦 Warranty</div>
-                </div>
-                <div class="shine"></div>
-                <div class="select-badge">✔️</div>
-              </div>
-
-              <div class="card" data-action="sell-mobile" tabindex="0">
-                <div class="icon">💰</div>
-                <h3>Sell Mobile</h3>
-                <p>Instant quotes & doorstep pickup.</p>
-                <div class="chips">
-                  <div class="chip">🚚 Free pickup</div>
-                  <div class="chip">⚙️ Repairable</div>
-                </div>
-                <div class="shine"></div>
-                <div class="select-badge">↗</div>
-              </div>
-
-              <div class="card" data-action="buy-computer" tabindex="0">
-                <div class="icon">💻</div>
-                <h3>Buy Computer</h3>
-                <p>Desktops & laptops ready for work.</p>
-                <div class="chips">
-                  <div class="chip">🧪 Tested</div>
-                  <div class="chip">🔧 Refurbished</div>
-                </div>
-                <div class="shine"></div>
-                <div class="select-badge">✔️</div>
-              </div>
-
-              <div class="card" data-action="sell-computer" tabindex="0">
-                <div class="icon">🖥️</div>
-                <h3>Sell Computer</h3>
-                <p>Get the best value for your hardware.</p>
-                <div class="chips">
-                  <div class="chip">📄 Free valuation</div>
-                  <div class="chip">💵 Instant pay</div>
-                </div>
-                <div class="shine"></div>
-                <div class="select-badge">↗</div>
-              </div>
-
-            </div>
-
-          </div>
-
-          <aside class="hero-right">
-            <div style="display:flex;flex-direction:column;gap:12px;align-items:center;justify-content:center">
-              <div style="text-align:center">
-                <div style="font-size:13px;color:var(--muted)">Selected</div>
-                <div id="selectedLabel" style="font-weight:800;font-size:18px;margin-top:4px;color:var(--accent)">Nothing yet</div>
-              </div>
-
-              <div class="proceed">
-                <div style="display:flex;gap:8px">
-                  <button class="btn" id="proceedBtn" disabled>Proceed</button>
-                  <button class="ghost" id="resetSelection">Reset</button>
-                </div>
-                <div class="small" style="text-align:center">Try clicking cards — hover tilts them! You can also filter categories below.</div>
-
-                <div style="width:100%;margin-top:14px">
-                  <div class="small" style="margin-bottom:6px;color:var(--muted)">Categories</div>
-                  <div class="chips" id="categoryChips">
-                    <div class="chip" data-cat="all">🌐 All</div>
-                    <div class="chip" data-cat="mobiles">📱 Mobiles</div>
-                    <div class="chip" data-cat="computers">💻 Computers</div>
-                    <div class="chip" data-cat="accessories">🎧 Accessories</div>
-                  </div>
-                </div>
-
-              </div>
-            </div>
-          </aside>
+      <!-- HOME -->
+      <section id="page-home" class="page show" style="display:block;opacity:1;transform:none">
+        <div style="display:flex;align-items:center;justify-content:space-between">
+          <h3 style="margin:0">Listings</h3>
+          <div id="resultMeta" class="small"></div>
         </div>
 
-        <div style="margin-top:18px">
-          <div style="display:flex;align-items:center;justify-content:space-between">
-            <h3 style="margin:0">Listings</h3>
-            <div style="color:var(--muted);font-size:13px">Demo catalog (local)</div>
+        <div style="margin-top:10px">
+          <div class="chips" id="categoryChips">
+            <div class="chip selected" data-cat="all">🌐 All</div>
+            <div class="chip" data-cat="mobiles">📱 Mobiles</div>
+            <div class="chip" data-cat="computers">💻 Computers</div>
+            <div class="chip" data-cat="accessories">🎧 Accessories</div>
           </div>
-
-          <div class="listings" id="listings"></div>
         </div>
 
+        <div class="listings" id="listings" aria-live="polite"></div>
       </section>
 
-      <!-- other pages (kept simple for demo) -->
-      <section id="page-buy-mobile" class="page">
-        <h2>Buy Mobile</h2>
-        <div id="buyMobileList" class="listings"></div>
-      </section>
-
-      <section id="page-account" class="page">
+      <section id="page-account" class="page" style="display:none">
         <h2>My Account</h2>
         <div id="accountArea">Not signed in</div>
       </section>
-
     </main>
 
     <div class="loader-spot" id="loader" aria-hidden="true" style="display:none">
@@ -274,262 +124,53 @@
     </div>
 
     <!-- Login/Register Modal -->
-    <div class="modal" id="authModal" style="display:none">
+    <div class="modal" id="authModal" style="display:none" aria-modal="true" role="dialog" aria-labelledby="authTitle">
       <div class="sheet">
-        <div class="tabs">
-          <div class="tab active" data-tab="login">Sign in</div>
-          <div class="tab" data-tab="register">Create account</div>
+        <button class="close-x" id="authClose" aria-label="Close">×</button>
+        <div class="tabs" role="tablist">
+          <div class="tab active" data-tab="login" role="tab" aria-selected="true">Sign in</div>
+          <div class="tab" data-tab="register" role="tab" aria-selected="false">Create account</div>
         </div>
 
         <div id="tabBody">
           <!-- login form -->
-          <form id="loginForm">
+          <form id="loginForm" autocomplete="on">
+            <h3 id="authTitle" style="margin:6px 0 8px 0;">Welcome back</h3>
             <div class="form-row"><input name="email" type="email" placeholder="Email or mobile number" required></div>
             <div class="form-row"><input name="password" type="password" placeholder="Password" required minlength="6"></div>
             <div class="form-actions">
-              <div style="display:flex;gap:8px"><button class="btn" type="submit">Sign in</button><button type="button" class="ghost" id="toRegister">New here?</button></div>
+              <div style="display:flex;gap:8px">
+                <button class="btn" type="submit" id="loginSubmit">Sign in</button>
+                <button type="button" class="ghost" id="toRegister">New here?</button>
+              </div>
               <a href="#" class="small">Forgot password?</a>
             </div>
+            <div class="small" id="loginError" style="color:#ffb4b4;display:none"></div>
           </form>
 
-          <!-- register form (hidden by default) -->
+          <!-- register form -->
           <form id="registerForm" style="display:none">
+            <h3 style="margin:6px 0 8px 0;">Create account</h3>
             <div class="form-row"><input name="name" type="text" placeholder="Full name" required></div>
             <div class="form-row"><input name="email" type="email" placeholder="Email" required></div>
             <div class="form-row"><input name="phone" type="tel" placeholder="Mobile (optional)"></div>
             <div class="form-row"><input name="password" type="password" placeholder="Create password" required minlength="6"></div>
             <div class="form-row"><input name="confirm" type="password" placeholder="Re-enter password" required minlength="6"></div>
-            <div class="form-actions"><button class="btn" type="submit">Create account</button><button type="button" class="ghost" id="toLogin">Back to login</button></div>
-            <div class="small">By creating an account you agree to our <a href="#">Terms</a> and <a href="#">Privacy</a>.</div>
+            <div class="form-actions">
+              <button class="btn" type="submit" id="registerSubmit">Create account</button>
+              <button type="button" class="ghost" id="toLogin">Back to login</button>
+            </div>
+            <div class="small" id="registerError" style="color:#ffb4b4;display:none"></div>
           </form>
         </div>
       </div>
     </div>
 
-    <footer>
-      &copy; <span id="year"></span> Unicleya • Made playful
+    <footer style="max-width:var(--max);margin:28px auto 40px;padding:12px;color:var(--muted);text-align:center">
+      &copy; <span id="year"></span> Unicleya
     </footer>
   </div>
 
-  <script>
-    /* ---------- Quick demo front-end (single-file) ----------
-       - Playful UI with tilt, transitions, loader
-       - LocalStorage-backed demo catalog & user store
-       - Replace API_BASE with your Render URL to call real backend
-    */
-
- const API_BASE = 'https://unicleya-backend.onrender.com'; // https://unicleya-backend.onrender.com. // set to your backend e.g. 'https://unicleya-backend.onrender.com'
-
-    // small helper
-    const $ = s => document.querySelector(s);
-    const $$ = s => Array.from(document.querySelectorAll(s));
-
-    // Demo data (replace with real API calls later)
-   /* const demo = {
-      products: [
-        {id:'m1',title:'iPhone 12 - 64GB',desc:'Good condition, battery 86%',price:14500,category:'mobiles'},
-        {id:'m2',title:'Samsung A32 - 128GB',desc:'Excellent, box included',price:9999,category:'mobiles'},
-        {id:'c1',title:'Dell Latitude E7470',desc:'i5/8GB/256SSD',price:8999,category:'computers'},
-        {id:'c2',title:'Lenovo ThinkPad T480',desc:'i5/16GB/512SSD',price:14999,category:'computers'}
-      ]
-    };*/
-
-
-    async function fetchProducts() {
-  try {
-    showLoader();
-    const res = await fetch(`${API_BASE}/api/products`);
-    const products = await res.json();
-    hideLoader();
-    return products;
-  } catch (err) {
-    console.error(err);
-    hideLoader();
-    return [];
-  }
-}
-
-// render listings using backend data
-async function renderListings(){
-  const items = await fetchProducts();
-  const filtered = items.filter(p => activeCategory==='all' || p.category===activeCategory);
-  listingsRoot.innerHTML = filtered.map(it => `
-    <div class="listing">
-      <h4>${it.title}</h4>
-      <p>${it.desc}</p>
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-top:8px">
-        <div style="color:var(--accent);font-weight:800">₹${it.price}</div>
-        <div style="display:flex;gap:8px"><button class="btn add-btn" data-id="${it._id}">Add</button></div>
-      </div>
-    </div>
-  `).join("");
-}
-
-    // UI elements
-    const progress = $('#progress');
-    const loader = $('#loader');
-    const listingsRoot = $('#listings');
-    const selectedLabel = $('#selectedLabel');
-    const proceedBtn = $('#proceedBtn');
-
-    // State
-    let selectedAction = null;
-    let activeCategory = 'all';
-
-    // Utilities
-    function showProgress(){progress.style.width='6%';progress.style.transition='width .8s ease';setTimeout(()=>progress.style.width='50%',100);}
-    function setProgress(p){progress.style.width = (p*100)+'%';}
-    function hideProgress(){progress.style.width='0';progress.style.transition='width .6s ease 0.2s';}
-
-    function showLoader(){loader.style.display='flex'}
-    function hideLoader(){loader.style.display='none'}
-
-    function fakeNetwork(fn, ms=600){showProgress();showLoader();setTimeout(()=>{try{fn();}finally{hideLoader();hideProgress();}}, ms)}
-
-    // Render listings based on activeCategory
-    function renderListings(){
-      const items = demo.products.filter(p => activeCategory==='all' || p.category===activeCategory);
-      listingsRoot.innerHTML = items.map(it => `
-        <div class="listing">
-          <h4>${it.title}</h4>
-          <p>${it.desc}</p>
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-top:8px">
-            <div style="color:var(--accent);font-weight:800">₹${it.price}</div>
-            <div style="display:flex;gap:8px"><button class="btn add-btn" data-id="${it.id}">Add</button></div>
-          </div>
-        </div>
-      `).join('');
-
-      // wire add buttons
-      $$('.add-btn').forEach(b=>b.addEventListener('click',()=>{
-        const id = b.dataset.id; const itm = demo.products.find(x=>x.id===id);
-        const cart = JSON.parse(localStorage.getItem('unicleya_cart')||'[]'); cart.push(itm); localStorage.setItem('unicleya_cart', JSON.stringify(cart));
-        b.textContent='Added'; b.disabled=true; setTimeout(()=>{b.disabled=false; b.textContent='Add'},1300);
-      }));
-    }
-
-    // Action card interactions: tilt + select
-    function initCards(){
-      const cards = $$('.card');
-      cards.forEach(card=>{
-        // tilt effect
-        card.addEventListener('mousemove', (e)=>{
-          const rect = card.getBoundingClientRect(); const x = e.clientX - rect.left; const y = e.clientY - rect.top; const cx = rect.width/2; const cy = rect.height/2; const dx = (x-cx)/(rect.width/2); const dy = (y-cy)/(rect.height/2);
-          card.style.transform = `rotateX(${(-dy*6).toFixed(2)}deg) rotateY(${(dx*8).toFixed(2)}deg) translateZ(6px)`;
-        });
-        card.addEventListener('mouseleave', ()=>{card.style.transform='none'});
-
-        // click select
-        card.addEventListener('click', ()=>{
-          selectedAction = card.dataset.action; $$('.card').forEach(c=>c.classList.toggle('selected', c===card));
-          selectedLabel.textContent = card.querySelector('h3').innerText; proceedBtn.disabled=false;
-        });
-      });
-    }
-
-    // category chips
-    function initChips(){
-      $$('.chip').forEach(ch=>{
-        ch.addEventListener('click', ()=>{
-          $$('.chip').forEach(x=>x.classList.remove('selected'));
-          ch.classList.add('selected'); activeCategory = ch.dataset.cat==='all' ? 'all' : ch.dataset.cat; renderListings();
-        })
-      });
-      // select initial 'all'
-      document.querySelector('.chip[data-cat="all"]').classList.add('selected');
-    }
-
-    // Proceed button action (simple page transition)
-    proceedBtn.addEventListener('click', ()=>{
-      // simulate going to buy page
-      navigateTo('page-buy-mobile');
-    });
-    $('#resetSelection').addEventListener('click', ()=>{selectedAction=null; $$('.card').forEach(c=>c.classList.remove('selected')); selectedLabel.textContent='Nothing yet'; proceedBtn.disabled=true});
-
-    // Simple SPA navigator
-    function showPage(id){
-      $$('.page').forEach(p=>{if(p.id===id){p.classList.add('show')}else{p.classList.remove('show')}});
-      window.scrollTo({top:0,behavior:'smooth'});
-    }
-    function navigateTo(id){showProgress();setTimeout(()=>{showPage(id);hideProgress()}, 450)}
-
-    // Auth modal logic
-    const authModal = $('#authModal');
-    const loginForm = $('#loginForm');
-    const registerForm = $('#registerForm');
-    const tabs = $$('.tab');
-
-    function openAuth(){authModal.style.display='flex'; setTimeout(()=>authModal.classList.add('show'),40)}
-    function closeAuth(){authModal.classList.remove('show'); setTimeout(()=>authModal.style.display='none',240)}
-
-    $('#loginBtn').addEventListener('click', openAuth);
-    $('#accountBtn').addEventListener('click', ()=>{navigateTo('page-account')});
-
-    tabs.forEach(t=>t.addEventListener('click', ()=>{
-      tabs.forEach(x=>x.classList.remove('active'));
-      t.classList.add('active'); const tab = t.dataset.tab; if(tab==='login'){loginForm.style.display='block';registerForm.style.display='none'} else {loginForm.style.display='none';registerForm.style.display='block'}
-    }));
-
-    // small helpers for alerts
-    function showToast(msg){const el=document.createElement('div');el.textContent=msg;el.style.position='fixed';el.style.left='50%';el.style.transform='translateX(-50%)';el.style.bottom='28px';el.style.background='rgba(0,0,0,0.6)';el.style.color='var(--soft)';el.style.padding='10px 16px';el.style.borderRadius='10px';el.style.zIndex=120;document.body.appendChild(el);setTimeout(()=>el.remove(),2200)}
-
-    // fake auth: store user in localStorage
-    function renderAccount(){
-      const user = JSON.parse(localStorage.getItem('unicleya_user')||'null');
-      const area = $('#accountArea');
-      if(!area) return;
-      if(user){area.innerHTML=`<div style="display:flex;align-items:center;justify-content:space-between"><div><div style="font-weight:800">${user.name}</div><div class="small">${user.email}</div></div><div><button class="ghost" id="signout">Sign out</button></div></div>`; $('#signout')?.addEventListener('click', ()=>{localStorage.removeItem('unicleya_user');renderAccount(); showToast('Signed out')})}
-      else {area.innerHTML=`<div style="color:var(--muted)">You are not signed in.</div><div style="margin-top:8px"><button class="btn" id="openAuthFromAcc">Sign in / Register</button></div>`; $('#openAuthFromAcc')?.addEventListener('click', openAuth)}
-    }
-
-    // login form submit
- loginForm.addEventListener('submit', async e => {
-  e.preventDefault();
-  const fd = new FormData(loginForm);
-  const res = await fetch(`${API_BASE}/api/login`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ email: fd.get("email"), password: fd.get("password") })
-  });
-  const data = await res.json();
-  if(data.success){
-    localStorage.setItem("unicleya_user", JSON.stringify(data.user));
-    renderAccount();
-    closeAuth();
-    showToast("Signed in");
-  } else {
-    showToast("Login failed");
-  }
-});
-
-    // register submit
-    registerForm.addEventListener('submit', e=>{
-      e.preventDefault(); const fd = new FormData(registerForm); const name = fd.get('name'); const email = fd.get('email'); const pw = fd.get('password'); const confirm = fd.get('confirm');
-      if(pw!==confirm){showToast('Passwords do not match'); return}
-      fakeNetwork(()=>{localStorage.setItem('unicleya_user', JSON.stringify({email,name})); renderAccount(); closeAuth(); showToast('Account created (demo)')}, 1200);
-    });
-
-    $('#toRegister').addEventListener('click', ()=>{tabs[1].click()});
-    $('#toLogin').addEventListener('click', ()=>{tabs[0].click()});
-
-    // Start
-    (function init(){
-      document.getElementById('year').textContent = new Date().getFullYear();
-      initCards(); initChips(); renderListings(); renderAccount();
-
-      // quick search binding
-      $('#searchInput').addEventListener('input', e=>{
-        const q = e.target.value.trim().toLowerCase(); if(!q){renderListings(); return}
-        const filtered = demo.products.filter(p=> (p.title+p.desc).toLowerCase().includes(q)); activeCategory='all'; $$('.chip').forEach(c=>c.classList.remove('selected')); document.querySelector('.chip[data-cat="all"]').classList.add('selected');
-        listingsRoot.innerHTML = filtered.map(it=>`<div class="listing"><h4>${it.title}</h4><p>${it.desc}</p><div style="display:flex;align-items:center;justify-content:space-between;margin-top:8px"><div style="color:var(--accent);font-weight:800">₹${it.price}</div><div style="display:flex;gap:8px"><button class="btn add-btn" data-id="${it.id}">Add</button></div></div></div>`).join('');
-        $$('.add-btn').forEach(b=>b.addEventListener('click',()=>{const id=b.dataset.id; const itm = demo.products.find(x=>x.id===id); const cart = JSON.parse(localStorage.getItem('unicleya_cart')||'[]'); cart.push(itm); localStorage.setItem('unicleya_cart', JSON.stringify(cart)); showToast('Added to cart (demo)');}));
-      });
-
-      // close auth on ESC
-      document.addEventListener('keydown', e=>{if(e.key==='Escape') closeAuth()});
-    })();
-
-  </script>
-
+  <script src="script.js"></script>
 </body>
 </html>
