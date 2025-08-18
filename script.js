@@ -1,343 +1,303 @@
-// script.js — Unicleya SPA behaviour
-(() => {
-  /* Simple helper utils */
-  const qs = s => document.querySelector(s);
-  const qsa = s => Array.from(document.querySelectorAll(s));
-  const $ = qs;
+// Core config
+const API_BASE = 'https://unicleya-backend.onrender.com';
 
-  // Elements
-  const hamburgerBtn = $('#hamburgerBtn');
-  const sideNav = $('#sideNav');
-  const navClose = $('#navCloseBtn');
-  const overlay = $('#overlay');
-  const loginBtn = $('#loginBtn');
-  const loginModal = $('#loginModal');
-  const closeLogin = $('#closeLogin');
-  const loginForm = $('#loginForm');
-  const emailInput = $('#emailInput');
-  const passwordInput = $('#passwordInput');
-  const openSellFromLogin = $('#openSellFromLogin');
-  const searchInput = $('#searchInput');
-  const searchDropdown = $('#searchDropdown');
-  const searchResults = $('#searchResults');
-  const clearBtn = $('#clearBtn');
-  const actionCards = qsa('.action-card');
-  const proceedBtn = $('#proceedBtn');
-  const actionText = $('.action-text');
-  const pages = qsa('.page');
-  const copyYear = $('#copyYear');
+// Elements
+const $ = (s) => document.querySelector(s);
+const $$ = (s) => Array.from(document.querySelectorAll(s));
 
-  copyYear.textContent = new Date().getFullYear();
+const progress = $('#progress');
+const loader = $('#loader');
+const listingsRoot = $('#listings');
+const resultMeta = $('#resultMeta');
+const searchInput = $('#searchInput');
+const clearSearchBtn = $('#clearSearch');
+const categoryWrap = $('#categoryChips');
 
-  /* Mock inventory (you can replace with real API) */
-  const sampleInventory = {
-    mobiles: [
-      {id:'m1', title:'iPhone 12 - 64GB', desc:'Good condition', price:14500},
-      {id:'m2', title:'Samsung A32 - 128GB', desc:'Excellent', price:9999},
-      {id:'m3', title:'OnePlus Nord CE', desc:'Good', price:11999}
-    ],
-    computers: [
-      {id:'c1', title:'Dell Latitude E7470', desc:'i5/8GB/256SSD', price:8999},
-      {id:'c2', title:'Lenovo ThinkPad T480', desc:'i5/16GB/512SSD', price:14999}
-    ]
-  };
+// Auth elements
+const authModal = $('#authModal');
+const loginForm = $('#loginForm');
+const registerForm = $('#registerForm');
+const loginBtn = $('#loginBtn');
+const accountBtn = $('#accountBtn');
+const authClose = $('#authClose');
+const tabs = $$('.tab');
+const loginError = $('#loginError');
+const registerError = $('#registerError');
 
-  // LocalStorage helpers
-  const storage = {
-    get(k){ try{return JSON.parse(localStorage.getItem(k))}catch(e){return null} },
-    set(k,v){ localStorage.setItem(k, JSON.stringify(v)); }
-  };
+// Pages
+const pageHome = $('#page-home');
+const pageAccount = $('#page-account');
+const accountArea = $('#accountArea');
 
-  // Init stored cart & user
-  if(!storage.get('unicleya_cart')) storage.set('unicleya_cart', []);
-  if(!storage.get('unicleya_user')) storage.set('unicleya_user', null);
+// State
+let allProducts = [];
+let activeCategory = 'all';
+let searchText = '';
 
-  /* Navigation (SPA) */
-  function showRoute(route){
-    pages.forEach(p => {
-      if(p.id === `page-${route}`) {
-        p.hidden = false;
-        p.classList.add('active');
-      } else {
-        p.hidden = true;
-        p.classList.remove('active');
-      }
+// ---------- Utilities ----------
+function showProgress() {
+  progress.style.width = '6%';
+  progress.style.transition = 'width .8s ease';
+  setTimeout(() => (progress.style.width = '50%'), 100);
+}
+function hideProgress() {
+  progress.style.width = '0';
+  progress.style.transition = 'width .6s ease 0.2s';
+}
+function showLoader(){ loader.style.display = 'flex'; }
+function hideLoader(){ loader.style.display = 'none'; }
+
+function debounce(fn, wait = 250) {
+  let t; 
+  return (...args) => { clearTimeout(t); t = setTimeout(() => fn(...args), wait); };
+}
+
+// ---------- Navigation ----------
+function showPage(id){
+  $$('.page').forEach(p=>{
+    if(p.id===id){ p.style.display='block'; p.classList.add('show'); }
+    else { p.style.display='none'; p.classList.remove('show'); }
+  });
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+$('#homeLogo').addEventListener('click', ()=> showPage('page-home'));
+$('#homeLogo').addEventListener('keydown', (e)=>{ if(e.key==='Enter' || e.key===' ') { e.preventDefault(); showPage('page-home'); } });
+
+accountBtn.addEventListener('click', ()=> showPage('page-account'));
+
+// ---------- Products ----------
+async function loadProducts(){
+  try{
+    showProgress(); showLoader();
+    const res = await fetch(`${API_BASE}/api/products`, { credentials: 'include' });
+    const data = await res.json();
+    allProducts = Array.isArray(data) ? data : (data.products || []);
+  }catch(err){
+    console.error('Failed to load products', err);
+    allProducts = [];
+  }finally{
+    renderListings();
+    hideLoader(); hideProgress();
+  }
+}
+
+function getFiltered(){
+  const q = searchText.trim().toLowerCase();
+  return allProducts.filter(p => {
+    const inCat = activeCategory==='all' || (p.category||'').toLowerCase()===activeCategory;
+    const text = `${p.title||''} ${p.desc||p.description||''}`.toLowerCase();
+    const inSearch = !q || text.includes(q);
+    return inCat && inSearch;
+  });
+}
+
+function renderListings(){
+  const items = getFiltered();
+  resultMeta.textContent = items.length ? `${items.length} item(s)` : 'No results';
+  listingsRoot.innerHTML = items.map(it => {
+    const price = typeof it.price === 'number' ? `₹${it.price}` : (it.price || '—');
+    const desc = it.desc || it.description || '';
+    const title = it.title || it.name || 'Untitled';
+    const id = it._id || it.id || '';
+    return `
+      <div class="listing">
+        <h4>${escapeHtml(title)}</h4>
+        <p>${escapeHtml(desc)}</p>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-top:8px">
+          <div style="color:var(--accent);font-weight:800">${price}</div>
+          <div style="display:flex;gap:8px">
+            <button class="btn" data-id="${id}" data-action="add">Add</button>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
+  // wire buttons (no demo cart; stub only)
+  $$('#listings [data-action="add"]').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      toast('Added to cart');
+      btn.disabled = true;
+      setTimeout(()=>{ btn.disabled=false; }, 800);
     });
-    // set active nav item
-    qsa('.nav-item').forEach(a => {
-      a.classList.toggle('active', a.dataset.route === route);
+  });
+}
+
+function escapeHtml(s){
+  return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
+}
+
+// ---------- Search ----------
+const onSearch = debounce((e)=>{
+  searchText = e.target.value;
+  $('#searchWrap').classList.toggle('has-text', !!searchText);
+  renderListings();
+}, 200);
+searchInput.addEventListener('input', onSearch);
+searchInput.addEventListener('keydown', (e)=>{ if(e.key==='Enter'){ e.preventDefault(); } });
+clearSearchBtn.addEventListener('click', ()=>{ searchText=''; searchInput.value=''; $('#searchWrap').classList.remove('has-text'); renderListings(); });
+
+// ---------- Category chips ----------
+categoryWrap.addEventListener('click', (e)=>{
+  const chip = e.target.closest('.chip');
+  if(!chip) return;
+  $$('.chip').forEach(c=>c.classList.remove('selected'));
+  chip.classList.add('selected');
+  activeCategory = chip.dataset.cat || 'all';
+  renderListings();
+});
+
+// ---------- Auth Modal ----------
+function openAuth(){
+  authModal.style.display='flex';
+  setTimeout(()=> authModal.classList.add('show'), 10);
+}
+function closeAuth(){
+  authModal.classList.remove('show');
+  setTimeout(()=> authModal.style.display='none', 180);
+}
+loginBtn.addEventListener('click', openAuth);
+authClose.addEventListener('click', closeAuth);
+// close on outside click
+authModal.addEventListener('click', (e)=>{
+  if(e.target === authModal) closeAuth();
+});
+document.addEventListener('keydown', (e)=>{ if(e.key==='Escape') closeAuth(); });
+
+tabs.forEach(t => t.addEventListener('click', ()=>{
+  tabs.forEach(x=>x.classList.remove('active'));
+  t.classList.add('active');
+  const tab = t.dataset.tab;
+  const loginOn = tab==='login';
+  loginForm.style.display = loginOn ? 'block' : 'none';
+  registerForm.style.display = loginOn ? 'none' : 'block';
+  loginError.style.display = 'none';
+  registerError.style.display = 'none';
+}));
+
+$('#toRegister').addEventListener('click', ()=> tabs[1].click());
+$('#toLogin').addEventListener('click', ()=> tabs[0].click());
+
+function toast(msg){
+  const el = document.createElement('div');
+  el.textContent = msg;
+  el.style.position='fixed';
+  el.style.left='50%';
+  el.style.transform='translateX(-50%)';
+  el.style.bottom='28px';
+  el.style.background='rgba(0,0,0,0.6)';
+  el.style.color='var(--soft)';
+  el.style.padding='10px 16px';
+  el.style.borderRadius='10px';
+  el.style.zIndex=120;
+  document.body.appendChild(el);
+  setTimeout(()=> el.remove(), 2200);
+}
+
+// Render account
+function renderAccount(){
+  const user = JSON.parse(localStorage.getItem('unicleya_user')||'null');
+  if(user){
+    accountArea.innerHTML = `
+      <div style="display:flex;align-items:center;justify-content:space-between">
+        <div>
+          <div style="font-weight:800">${escapeHtml(user.name || user.email || 'User')}</div>
+          <div class="small">${escapeHtml(user.email || '')}</div>
+        </div>
+        <div><button class="ghost" id="signout">Sign out</button></div>
+      </div>`;
+    $('#signout').addEventListener('click', ()=>{
+      localStorage.removeItem('unicleya_user');
+      localStorage.removeItem('unicleya_token');
+      renderAccount();
+      toast('Signed out');
     });
-    // special-case: show home on unknown
-    if(route === 'home') {
-      window.location.hash = '';
-    } else {
-      window.location.hash = route;
+  }else{
+    accountArea.innerHTML = `<div style="color:var(--muted)">You are not signed in.</div>
+      <div style="margin-top:8px"><button class="btn" id="openAuthFromAcc">Sign in / Register</button></div>`;
+    $('#openAuthFromAcc')?.addEventListener('click', openAuth);
+  }
+}
+
+// Login submit
+loginForm.addEventListener('submit', async (e)=>{
+  e.preventDefault();
+  loginError.style.display='none';
+  const btn = $('#loginSubmit');
+  btn.disabled = true;
+  try{
+    const fd = new FormData(loginForm);
+    const payload = { email: fd.get('email'), password: fd.get('password') };
+    const res = await fetch(`${API_BASE}/api/login`, {
+      method: 'POST',
+      headers: { 'Content-Type':'application/json' },
+      body: JSON.stringify(payload)
+    });
+    const data = await res.json();
+    if(data && (data.success || data.user)){
+      if(data.token) localStorage.setItem('unicleya_token', data.token);
+      localStorage.setItem('unicleya_user', JSON.stringify(data.user || { email: payload.email }));
+      renderAccount();
+      closeAuth();
+      toast('Signed in');
+    }else{
+      loginError.textContent = data?.message || 'Login failed';
+      loginError.style.display='block';
     }
-    // focus content for accessibility
-    setTimeout(()=> $('#appMain').focus(), 200);
+  }catch(err){
+    console.error(err);
+    loginError.textContent = 'Network error. Try again.';
+    loginError.style.display='block';
+  }finally{
+    btn.disabled = false;
   }
+});
 
-  // wire nav links
-  qsa('.nav-item').forEach(a => {
-    a.addEventListener('click', e => {
-      e.preventDefault();
-      const route = a.dataset.route;
-      showRoute(route);
-      closeMenu();
-    });
-  });
-
-  // open/close menu
-  function openMenu(){
-    sideNav.classList.add('show');
-    overlay.classList.add('show');
-    document.body.classList.add('sidenav-open');
-    hamburgerBtn.classList.add('active');
-    hamburgerBtn.setAttribute('aria-expanded','true');
-    sideNav.setAttribute('aria-hidden','false');
-    overlay.hidden = false;
-  }
-  function closeMenu(){
-    sideNav.classList.remove('show');
-    overlay.classList.remove('show');
-    hamburgerBtn.classList.remove('active');
-    hamburgerBtn.setAttribute('aria-expanded','false');
-    sideNav.setAttribute('aria-hidden','true');
-    overlay.hidden = true;
-    document.body.classList.remove('sidenav-open');
-  }
-  hamburgerBtn.addEventListener('click', ()=> {
-    if(sideNav.classList.contains('show')) closeMenu(); else openMenu();
-  });
-  navClose.addEventListener('click', closeMenu);
-  overlay.addEventListener('click', ()=> {
-    closeMenu();
-    closeLoginModal();
-  });
-
-  // login modal
-  function openLoginModal(){
-    loginModal.classList.add('show');
-    loginModal.setAttribute('aria-hidden','false');
-    overlay.classList.add('show');
-    overlay.hidden = false;
-    loginBtn.setAttribute('aria-expanded','true');
-    emailInput.focus();
-  }
-  function closeLoginModal(){
-    loginModal.classList.remove('show');
-    loginModal.setAttribute('aria-hidden','true');
-    overlay.classList.remove('show');
-    overlay.hidden = true;
-    loginBtn.setAttribute('aria-expanded','false');
-  }
-  loginBtn.addEventListener('click', openLoginModal);
-  closeLogin.addEventListener('click', closeLoginModal);
-  openSellFromLogin.addEventListener('click', (e) => {
-    e.preventDefault();
-    closeLoginModal();
-    showRoute('sell-mobile');
-  });
-
-  // mock login (not secure — replace with real auth)
-  loginForm.addEventListener('submit', (e) => {
-    e.preventDefault();
-    const email = emailInput.value.trim();
-    const password = passwordInput.value.trim();
-    if(!email || password.length < 6){ alert('Please enter valid credentials (password >=6)'); return; }
-    const user = {email, name: email.split('@')[0], loggedAt: Date.now()};
-    storage.set('unicleya_user', user);
-    closeLoginModal();
-    renderAccount();
-    alert('Logged in (demo).');
-  });
-
-  // show account area
-  function renderAccount(){
-    const user = storage.get('unicleya_user');
-    const area = $('#accountArea');
-    if(!area) return;
-    if(user){
-      area.innerHTML = `<p>Signed in as <strong>${user.name}</strong> (${user.email})</p>
-        <p><button id="logoutBtn">Sign out</button></p>`;
-      $('#logoutBtn').addEventListener('click', () => { storage.set('unicleya_user', null); renderAccount(); alert('Signed out'); });
-    } else {
-      area.innerHTML = `<p>You are not signed in.</p><p><button id="showLoginFromAcc">Sign in</button></p>`;
-      $('#showLoginFromAcc').addEventListener('click', openLoginModal);
-    }
-  }
-
-  renderAccount();
-
-  // keyboard escape closes modals
-  document.addEventListener('keydown', e => {
-    if(e.key === 'Escape') { closeLoginModal(); closeMenu(); }
-  });
-
-  /* Action card selection & proceed */
-  let selectedAction = null;
-  function updateActionUI(){
-    actionCards.forEach(card => card.classList.toggle('selected', card.dataset.action === selectedAction));
-    actionText.textContent = selectedAction ? selectedAction.replace('-', ' ').replace(/\b\w/g, c=>c.toUpperCase()) : 'No action selected';
-    actionText.classList.toggle('has-selection', !!selectedAction);
-    proceedBtn.disabled = !selectedAction;
-  }
-  actionCards.forEach(card => {
-    // click and keyboard activation
-    card.addEventListener('click', () => {
-      selectedAction = card.dataset.action;
-      const radio = card.querySelector('input[type="radio"]');
-      if(radio) radio.checked = true;
-      updateActionUI();
-    });
-    card.addEventListener('keydown', e => {
-      if(e.key === 'Enter' || e.key === ' ') { e.preventDefault(); card.click(); }
-    });
-  });
-
-  proceedBtn.addEventListener('click', () => {
-    if(!selectedAction) return;
-    // map action to route
-    const map = {
-      'buy-mobile':'buy-mobile',
-      'sell-mobile':'sell-mobile',
-      'buy-computer':'buy-computer',
-      'sell-computer':'sell-computer'
-    };
-    const route = map[selectedAction] || 'home';
-    showRoute(route);
-    // reset selection optionally
-    // selectedAction = null; updateActionUI();
-  });
-
-  /* SEARCH functionality (client-side) */
-  const items = [...sampleInventory.mobiles, ...sampleInventory.computers].map(it => ({
-    id: it.id,
-    title: it.title,
-    subtitle: it.desc,
-    price: it.price
-  }));
-
-  function renderSearchResults(list){
-    searchResults.innerHTML = '';
-    if(!list.length) {
-      searchResults.innerHTML = `<div style="padding:12px;color:#666">No results</div>`;
+// Register submit (calls backend if available)
+registerForm.addEventListener('submit', async (e)=>{
+  e.preventDefault();
+  registerError.style.display='none';
+  const btn = $('#registerSubmit');
+  btn.disabled = true;
+  try{
+    const fd = new FormData(registerForm);
+    const name = fd.get('name');
+    const email = fd.get('email');
+    const phone = fd.get('phone');
+    const password = fd.get('password');
+    const confirm = fd.get('confirm');
+    if(password !== confirm){
+      registerError.textContent = 'Passwords do not match';
+      registerError.style.display='block';
       return;
     }
-    list.forEach(i => {
-      const el = document.createElement('div');
-      el.className = 'search-item';
-      el.tabIndex = 0;
-      el.innerHTML = `<div class="search-item-icon">🔎</div>
-        <div class="search-item-content"><div class="search-item-title">${i.title}</div><div class="search-item-subtitle">${i.subtitle} • ₹${i.price}</div></div>`;
-      el.addEventListener('click', () => {
-        // navigate to buy page and highlight or open detail
-        if(i.id.startsWith('m')) showRoute('buy-mobile'); else showRoute('buy-computer');
-        searchDropdown.hidden = true;
-        searchInput.value = '';
-        clearBtn.hidden = true;
-      });
-      searchResults.appendChild(el);
+    const res = await fetch(`${API_BASE}/api/register`, {
+      method: 'POST',
+      headers: { 'Content-Type':'application/json' },
+      body: JSON.stringify({ name, email, phone, password })
     });
-  }
-
-  searchInput.addEventListener('input', e => {
-    const v = e.target.value.trim().toLowerCase();
-    if(!v) { searchDropdown.hidden = true; clearBtn.hidden = true; return; }
-    clearBtn.hidden = false;
-    const filtered = items.filter(it => (it.title + ' ' + it.subtitle).toLowerCase().includes(v));
-    renderSearchResults(filtered);
-    searchDropdown.hidden = false;
-  });
-  clearBtn.addEventListener('click', () => { searchInput.value=''; clearBtn.hidden=true; searchDropdown.hidden=true; searchInput.focus(); });
-
-  // click outside to close dropdown
-  document.addEventListener('click', e => {
-    if(!e.target.closest('.search-wrapper')) { searchDropdown.hidden=true; }
-  });
-
-  /* Fill listings for buy pages */
-  function renderListings(){
-    const mobilesRoot = $('#listingsMobile');
-    const compsRoot = $('#listingsComputer');
-    mobilesRoot.innerHTML = '';
-    compsRoot.innerHTML = '';
-
-    sampleInventory.mobiles.forEach(m => {
-      const div = document.createElement('div');
-      div.className = 'card-listing';
-      div.innerHTML = `<h4>${m.title}</h4><p>${m.desc}</p><p><strong>₹${m.price}</strong></p><div style="display:flex;gap:8px"><button data-id="${m.id}" class="addCart">Add to Cart</button></div>`;
-      mobilesRoot.appendChild(div);
-    });
-
-    sampleInventory.computers.forEach(c => {
-      const div = document.createElement('div');
-      div.className = 'card-listing';
-      div.innerHTML = `<h4>${c.title}</h4><p>${c.desc}</p><p><strong>₹${c.price}</strong></p><div style="display:flex;gap:8px"><button data-id="${c.id}" class="addCart">Add to Cart</button></div>`;
-      compsRoot.appendChild(div);
-    });
-
-    qsa('.addCart').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const id = btn.dataset.id;
-        const item = [...sampleInventory.mobiles, ...sampleInventory.computers].find(x => x.id === id);
-        if(!item) return;
-        const cart = storage.get('unicleya_cart') || [];
-        cart.push(item);
-        storage.set('unicleya_cart', cart);
-        alert(`${item.title} added to cart (demo).`);
-      });
-    });
-  }
-
-  renderListings();
-
-  /* SELL forms logic (simple demo with preview) */
-  $('#sellMobileForm')?.addEventListener('submit', (e) => {
-    e.preventDefault();
-    const fd = new FormData(e.target);
-    const model = fd.get('model'), cond = fd.get('condition'), price = fd.get('price');
-    const photos = e.target.photos?.files || [];
-    // show preview
-    const out = $('#sellPreview');
-    out.innerHTML = `<div style="background:#fff;padding:12px;border-radius:8px;border:1px solid #eee">
-      <h4>Quote request submitted</h4>
-      <p>Model: ${model}<br/>Condition: ${cond}<br/>Expect: ₹${price}</p>
-    </div>`;
-    // (in a real product you would send form data to the backend)
-    e.target.reset();
-    alert('Quote request saved (demo). We will contact you.');
-  });
-
-  $('#sellComputerForm')?.addEventListener('submit', (e) => {
-    e.preventDefault();
-    alert('Quote request saved (demo). We will contact you.');
-    e.target.reset();
-  });
-
-  /* Contact form */
-  $('#contactForm')?.addEventListener('submit', (e) => {
-    e.preventDefault();
-    alert('Thanks! We received your message (demo).');
-    e.target.reset();
-  });
-
-  // routing from URL hash
-  function routeFromHash(){
-    const r = window.location.hash.replace('#','') || 'home';
-    showRoute(r);
-  }
-  window.addEventListener('hashchange', routeFromHash);
-  routeFromHash(); // initial
-
-  // render account initially
-  renderAccount();
-
-  // initial accessibility & cleanup
-  document.addEventListener('keydown', (e) => {
-    if(e.key === '/' && document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'TEXTAREA') {
-      e.preventDefault(); searchInput.focus();
+    const data = await res.json();
+    if(data && (data.success || data.user)){
+      if(data.token) localStorage.setItem('unicleya_token', data.token);
+      localStorage.setItem('unicleya_user', JSON.stringify(data.user || { name, email }));
+      renderAccount();
+      closeAuth();
+      toast('Account created');
+    }else{
+      registerError.textContent = data?.message || 'Registration failed';
+      registerError.style.display='block';
     }
-  });
+  }catch(err){
+    console.error(err);
+    registerError.textContent = 'Network error. Try again.';
+    registerError.style.display='block';
+  }finally{
+    btn.disabled = false;
+  }
+});
 
+// ---------- Init ----------
+(function init(){
+  document.getElementById('year').textContent = new Date().getFullYear();
+  renderAccount();
+  loadProducts();
 })();
