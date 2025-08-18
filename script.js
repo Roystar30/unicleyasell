@@ -262,7 +262,7 @@ registerForm.addEventListener('submit', async (e)=>{
     const fd = new FormData(registerForm);
     const name = fd.get('name');
     const email = fd.get('email');
-    const phone = fd.get('phone');
+    const mobile = fd.get('phone');
     const password = fd.get('password');
     const confirm = fd.get('confirm');
     if(password !== confirm){
@@ -273,7 +273,7 @@ registerForm.addEventListener('submit', async (e)=>{
     const res = await fetch(`${API_BASE}/api/register`, {
       method: 'POST',
       headers: { 'Content-Type':'application/json' },
-      body: JSON.stringify({ name, email, phone, password })
+      body: JSON.stringify({ name, email, mobile, password })
     });
     const data = await res.json();
     if(data && (data.success || data.user)){
