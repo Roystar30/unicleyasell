@@ -66,18 +66,23 @@ $('#homeLogo').addEventListener('keydown', (e)=>{ if(e.key==='Enter' || e.key===
 accountBtn.addEventListener('click', ()=> showPage('page-account'));
 
 // ---------- Products ----------
-async function loadProducts(){
-  try{
-    showProgress(); showLoader();
-    const res = await fetch(`${API_BASE}/api/products`, { credentials: 'include' });
+async function loadProducts() {
+  try {
+    showProgress(); 
+    showLoader();
+
+    const res = await fetch(`${API_BASE}/api/products`);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
     const data = await res.json();
     allProducts = Array.isArray(data) ? data : (data.products || []);
-  }catch(err){
-    console.error('Failed to load products', err);
+  } catch (err) {
+    console.error('❌ Failed to load products:', err);
     allProducts = [];
-  }finally{
+  } finally {
     renderListings();
-    hideLoader(); hideProgress();
+    hideLoader(); 
+    hideProgress();
   }
 }
 
