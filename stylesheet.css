@@ -1,5 +1,4 @@
-<style>
-    :root{
+ :root{
       /* Palette */
       --accent:#69cec4;
       --accent-2:#57b8a9;
@@ -150,4 +149,3 @@
       .product-card{flex-direction:column;align-items:flex-start}
       .product-actions{width:100%;align-items:stretch}
     }
-  </style>
