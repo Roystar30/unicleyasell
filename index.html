@@ -18,14 +18,9 @@
             <span></span><span></span><span></span>
           </button>
           <div class="logo" id="homeLogo" tabindex="0" role="button" aria-label="Go to home">
-
-           <!--  <a href="/" class="inline-flex items-center leading-none" aria-label="Unicleya home">
-    <img src="logo.png" alt="Unicleya"
-         class="h-8 sm:h-10 md:h-12 w-auto object-contain"
-         width="512" height="160" decoding="async" fetchpriority="high" loading="eager" />
-  </a> -->
-            
-            <div class="mark">logo.png</div>
+            <a href="/" class="brand" aria-label="Unicleya home">
+              <img src="assets/logo.svg" alt="Unicleya logo" class="brand-logo" width="512" height="160" decoding="async" fetchpriority="high" loading="eager" />
+            </a>
             <div>
               <h1>Unicleya</h1>
               <div class="tagline">Second‑hand tech market</div>
@@ -34,15 +29,17 @@
         </div>
 
         <div class="search-container">
-          <div class="search-bar">
-            <input id="searchInput" placeholder="Search devices, e.g. iPhone 12, Dell" aria-label="Search products" />
-            <button id="clearSearch" class="clear-btn" title="Clear search" aria-label="Clear search">×</button>
-          </div>
+          <form id="searchForm" class="search-bar" role="search">
+            <input id="searchInput" placeholder="Search devices, e.g. iPhone 12, Dell" aria-label="Search products" autocomplete="off" />
+            <button id="clearSearch" class="clear-btn" type="button" title="Clear search" aria-label="Clear search">×</button>
+            <button id="doSearch" class="search-btn" type="submit" aria-label="Search">Search</button>
+          </form>
+          <div id="searchSuggestions" class="search-suggestions" role="listbox" aria-label="Recent & popular searches"></div>
         </div>
 
         <div class="header-right">
           <button class="pill" id="accountBtn">Account</button>
-          <button class="pill primary" id="cartBtn">Cart <span id="cartCount" style="margin-left:6px;background:#083f3c;color:#bff5ec;border-radius:999px;padding:2px 8px;display:inline-block;min-width:24px;text-align:center">0</span></button>
+          <button class="pill primary" id="cartBtn">Cart <span id="cartCount" class="cart-badge">0</span></button>
           <button class="pill" id="loginBtn">Sign in</button>
         </div>
       </div>
@@ -51,19 +48,20 @@
     <!-- Side Nav -->
     <aside class="side-nav" id="sideNav" aria-hidden="true">
       <div class="side-nav-header">
-        <div style="display:flex;align-items:center;gap:10px">
-          <div class="mark" style="width:34px;height:34px;border-radius:8px"></div>
-          <strong>Menu</strong>
+        <div class="side-brand">
+          <img src="assets/logo.svg" alt="Unicleya" />
+          <strong>Unicleya</strong>
         </div>
         <button class="pill" id="closeNav">Close</button>
       </div>
-      <div class="side-nav-content">
+      <nav class="side-nav-content">
         <a class="nav-item active" data-route="home">🏠 Home</a>
         <a class="nav-item" data-route="cart">🛒 Cart</a>
         <a class="nav-item" data-route="checkout">💳 Checkout</a>
         <a class="nav-item" data-route="account">👤 Account</a>
-      </div>
+      </nav>
       <div class="side-nav-footer">
+        <a class="nav-item contact" href="mailto:support@unicleya.com">✉️ Contact us</a>
         <small>© <span id="year"></span> Unicleya</small>
       </div>
     </aside>
@@ -71,28 +69,10 @@
 
     <div class="loader-spot" id="loader" aria-hidden="true">
       <div class="spinner"></div>
-      <div style="font-size:13px">Working...</div>
+      <div class="loader-text">Working...</div>
     </div>
 
-    <main class="main-content">
-      <div class="container">
-        <!-- HOME -->
-        <section id="page-home" class="page show">
-          <h2 class="section-title">Shop Refurbished Tech</h2>
-          <div class="section-subtitle">Quality checked mobiles, computers, and accessories — priced right.</div>
-
-          <div class="chips" id="categoryChips">
-            <div class="chip selected" data-cat="all">🌐 All</div>
-            <div class="chip" data-cat="mobiles">📱 Mobiles</div>
-            <div class="chip" data-cat="computers">💻 Computers</div>
-            <div class="chip" data-cat="accessories">🎧 Accessories</div>
-          </div>
-
-          <div id="resultMeta" style="margin:6px 0 12px;color:var(--muted)"></div>
-          <div class="grid" id="listings" aria-live="polite"></div>
-        </section>
-
-         <!-- Login/Register Modal -->
+    <!-- Auth Modal (2-step) -->
     <div class="modal" id="authModal" style="display:none" aria-modal="true" role="dialog" aria-labelledby="authTitle">
       <div class="sheet">
         <button class="close-x" id="authClose" aria-label="Close">×</button>
@@ -102,24 +82,33 @@
         </div>
 
         <div id="tabBody">
-          <!-- login form -->
-          <form id="loginForm" autocomplete="on">
-            <h3 id="authTitle" style="margin:6px 0 8px 0;">Welcome back</h3>
-            <div class="form-row"><input name="email" type="email" placeholder="Email or mobile number" required></div>
-            <div class="form-row"><input name="password" type="password" placeholder="Password" required minlength="6"></div>
-            <div class="form-actions">
-              <div style="display:flex;gap:8px">
-                <button class="btn" type="submit" id="loginSubmit">Sign in</button>
-                <button type="button" class="ghost" id="toRegister">New here?</button>
-              </div>
-              <a href="#" class="small">Forgot password?</a>
+          <!-- Step 1: Identifier -->
+          <form id="loginFormStep1" autocomplete="on">
+            <h3 id="authTitle" class="modal-title">Welcome back</h3>
+            <p class="modal-sub">Enter email or mobile</p>
+            <div class="form-row"><input name="identifier" type="text" placeholder="Email or mobile number" required></div>
+            <div class="form-actions between">
+              <button class="btn" type="submit" id="loginNext">Continue</button>
+              <a href="#" id="switchToRegister" class="small">New here? Create account</a>
             </div>
-            <div class="small" id="loginError" style="color:#ffb4b4;display:none"></div>
+            <div class="small err" id="loginError" style="display:none"></div>
+          </form>
+
+          <!-- Step 2: Password -->
+          <form id="loginFormStep2" style="display:none">
+            <h3 class="modal-title">Enter password</h3>
+            <p class="modal-sub" id="whoLabel"></p>
+            <div class="form-row"><input name="password" type="password" placeholder="Password" required minlength="6"></div>
+            <div class="form-actions between">
+              <button class="btn" type="submit" id="loginSubmit">Sign in</button>
+              <a href="#" class="small" id="forgotPass">Forgot password?</a>
+            </div>
+            <div class="small err" id="loginError2" style="display:none"></div>
           </form>
 
           <!-- register form -->
           <form id="registerForm" style="display:none">
-            <h3 style="margin:6px 0 8px 0;">Create account</h3>
+            <h3 class="modal-title">Create account</h3>
             <div class="form-row"><input name="name" type="text" placeholder="Full name" required></div>
             <div class="form-row"><input name="email" type="email" placeholder="Email" required></div>
             <div class="form-row"><input name="phone" type="tel" placeholder="Mobile (optional)"></div>
@@ -129,22 +118,41 @@
               <button class="btn" type="submit" id="registerSubmit">Create account</button>
               <button type="button" class="ghost" id="toLogin">Back to login</button>
             </div>
-            <div class="small" id="registerError" style="color:#ffb4b4;display:none"></div>
+            <div class="small err" id="registerError" style="display:none"></div>
           </form>
         </div>
       </div>
     </div>
 
+    <main class="main-content">
+      <div class="container">
+        <!-- HOME -->
+        <section id="page-home" class="page show">
+          <h2 class="section-title">Shop Refurbished Tech</h2>
+          <div class="section-subtitle">Quality checked mobiles, computers, and accessories — priced right.</div>
+
+          <div class="filters">
+            <div class="chips" id="categoryChips">
+              <div class="chip selected" data-cat="all">🌐 All</div>
+              <div class="chip" data-cat="mobiles">📱 Mobiles</div>
+              <div class="chip" data-cat="computers">💻 Computers</div>
+              <div class="chip" data-cat="accessories">🎧 Accessories</div>
+            </div>
+          </div>
+
+          <div id="resultMeta" class="result-meta"></div>
+          <div class="grid" id="listings" aria-live="polite"></div>
+        </section>
 
         <!-- CART -->
         <section id="page-cart" class="page">
           <h2 class="section-title">Your Cart</h2>
           <div class="section-subtitle">Review items and adjust quantities.</div>
-          <div id="cartEmpty" style="display:none;color:var(--muted);text-align:center;margin:10px 0">Your cart is empty.</div>
+          <div id="cartEmpty" class="empty">Your cart is empty.</div>
           <div class="cart-list" id="cartList"></div>
-          <div class="cart-footer" id="cartFooter" style="display:none">
+          <div class="cart-footer" id="cartFooter">
             <div><strong>Total:</strong> <span id="cartTotal">₹0</span></div>
-            <div style="display:flex;gap:8px">
+            <div class="row-actions">
               <button class="btn ghost" id="clearCartBtn">Clear</button>
               <button class="btn primary" id="toCheckoutBtn">Proceed to Checkout</button>
             </div>
@@ -155,7 +163,7 @@
         <section id="page-checkout" class="page">
           <h2 class="section-title">Checkout</h2>
           <div class="section-subtitle">Enter your details and confirm your order.</div>
-          <div class="form-grid" style="margin-bottom:12px">
+          <div class="form-grid">
             <div>
               <label>Full Name</label>
               <input id="coName" placeholder="Your name" required>
@@ -168,7 +176,7 @@
               <label>Email</label>
               <input id="coEmail" type="email" placeholder="you@example.com" required>
             </div>
-            <div style="grid-column:1/-1">
+            <div class="full">
               <label>Address</label>
               <textarea id="coAddress" rows="3" placeholder="Flat, Street, City, PIN" required></textarea>
             </div>
@@ -182,29 +190,44 @@
             </div>
           </div>
           <div class="summary-card">
-            <div style="display:flex;align-items:center;justify-content:space-between">
+            <div class="summary-head">
               <strong>Order Summary</strong>
               <strong id="coTotal">₹0</strong>
             </div>
-            <div id="coItems" style="margin-top:8px;color:var(--muted)"></div>
-            <div style="margin-top:12px;display:flex;gap:8px">
+            <div id="coItems" class="summary-items"></div>
+            <div class="summary-actions">
               <button class="btn ghost" id="backToCart">Back to Cart</button>
               <button class="btn primary" id="placeOrderBtn">Place Order</button>
             </div>
-            <div id="checkoutMsg" style="margin-top:8px;color:#0b6b46;display:none"></div>
+            <div id="checkoutMsg" class="success-msg" style="display:none"></div>
           </div>
         </section>
 
         <!-- ACCOUNT -->
         <section id="page-account" class="page">
           <h2 class="section-title">My Account</h2>
-          <div id="accountArea" style="color:var(--muted)">Not signed in.</div>
+          <div id="accountArea" class="account-area"></div>
         </section>
       </div>
     </main>
 
-    <footer style="max-width:var(--max);margin:28px auto 40px;padding:12px;color:var(--muted);text-align:center">
-      &copy; <span id="year"></span> Unicleya
+    <footer class="site-footer">
+      <div class="footer-inner">
+        <div class="footer-left">
+          <img src="assets/logo.svg" alt="" class="footer-logo" />
+          <div>
+            <strong>Unicleya</strong><br/>
+            <span class="muted">Refurbished tech marketplace</span>
+          </div>
+        </div>
+        <div class="footer-right">
+          <a href="#" aria-label="Twitter" class="soc">X</a>
+          <a href="#" aria-label="Instagram" class="soc">IG</a>
+          <a href="#" aria-label="Facebook" class="soc">Fb</a>
+          <a href="#" aria-label="LinkedIn" class="soc">In</a>
+        </div>
+      </div>
+      <div class="footer-bottom">© 2023 Unicleya. All rights reserved.</div>
     </footer>
   </div>
 
