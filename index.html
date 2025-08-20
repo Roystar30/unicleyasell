@@ -2,169 +2,282 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Unicleya — Second‑hand Tech Market</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Unicleya — Buy & Sell Refurbished Tech</title>
   <meta name="description" content="Unicleya — buy & sell refurbished mobiles & computers." />
   <link rel="stylesheet" href="stylesheet.css" />
   <style>
-    /* Keep the polished look from your current page while removing demo-only styles */
     :root{
-      --bg-1:#0f1724; --bg-2:#071022; --card:#0f1724; --accent:#6EE7B7; --accent-2:#60A5FA; --glass: rgba(255,255,255,0.04);
-      --muted: #9aa6b2; --soft:#e6eef8; --max:1200px;
+      /* Palette */
+      --accent:#69cec4;
+      --accent-2:#57b8a9;
+      --bg-grad:linear-gradient(135deg,#667eea 0%,#764ba2 100%);
+      --glass: rgba(255,255,255,0.08);
+      --text:#111;
+      --muted:#5f6b7a;
+      --soft:#1f2937;
+      --max:1200px;
+      --radius:16px;
     }
-    *{box-sizing:border-box}
-    html,body{height:100%;margin:0;font-family:Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, 'Helvetica Neue', Arial;color:var(--soft);background:linear-gradient(180deg,var(--bg-1),var(--bg-2));}
+    *{box-sizing:border-box;}
+    html,body{height:100%;margin:0;font-family:Inter, Roboto, system-ui, -apple-system, "Segoe UI", Arial;color:var(--text);}
     a{color:inherit;text-decoration:none}
     img{max-width:100%;display:block}
 
-    .app{position:relative;min-height:100vh;display:flex;flex-direction:column}
-    header{position:sticky;top:0;backdrop-filter:blur(6px);background:linear-gradient(90deg, rgba(12,18,30,0.4), rgba(6,10,18,0.35));border-bottom:1px solid rgba(255,255,255,0.03);z-index:40}
-    .header-inner{max-width:var(--max);margin:0 auto;display:flex;align-items:center;gap:16px;padding:12px 20px}
+    /* Header */
+    .page-wrapper{display:flex;flex-direction:column;min-height:100vh}
+    header{position:sticky;top:0;left:0;right:0;background:var(--bg-grad);color:#fff;z-index:1000;box-shadow:0 6px 20px rgba(0,0,0,.12)}
+    .header-content{max-width:var(--max);margin:0 auto;padding:14px 24px;display:flex;align-items:center;gap:16px;justify-content:space-between}
+    .header-left{display:flex;align-items:center;gap:14px}
     .logo{display:flex;align-items:center;gap:12px;cursor:pointer}
-    .logo:focus{outline:2px solid var(--accent-2);outline-offset:4px;border-radius:10px}
-    .logo .brand{font-weight:800;font-size:20px;background:linear-gradient(90deg,var(--accent-2),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-    .tag{font-size:12px;color:var(--muted)}
+    .logo .mark{width:42px;height:42px;border-radius:10px;background:linear-gradient(135deg,var(--accent),var(--accent-2));display:flex;align-items:center;justify-content:center;font-weight:900;color:#053b3a}
+    .logo h1{margin:0;font-size:22px;font-weight:800;background:linear-gradient(45deg,#fff,#e0e0e0);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+    .tagline{font-size:12px;color:rgba(255,255,255,.85)}
 
-    .search{flex:1;display:flex;align-items:center;justify-content:center}
-    .search input{width:100%;max-width:560px;padding:10px 14px;border-radius:999px;border:1px solid rgba(255,255,255,0.06);background:rgba(8,12,20,0.6);color:var(--soft);outline:none}
-    .search input::placeholder{color:#b6c2cf}
-    .search .clear{margin-left:-40px;cursor:pointer;border:none;background:transparent;color:#cfd8e3;font-size:18px;display:none}
-    .search.has-text .clear{display:inline}
+    .hamburger-btn{width:46px;height:40px;border-radius:8px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.06);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:6px;cursor:pointer}
+    .hamburger-btn span{display:block;height:3px;width:22px;background:#fff;border-radius:2px;transition:transform .25s,opacity .25s}
+    .hamburger-btn.active span:nth-child(1){transform:rotate(45deg) translate(4px,4px)}
+    .hamburger-btn.active span:nth-child(2){opacity:0;transform:translateX(-8px)}
+    .hamburger-btn.active span:nth-child(3){transform:rotate(-45deg) translate(4px,-4px)}
 
-    .actions{display:flex;align-items:center;gap:10px}
-    .btn{padding:8px 14px;border-radius:10px;border:none;cursor:pointer;background:linear-gradient(90deg,var(--accent),var(--accent-2));color:#05243a;font-weight:700}
-    .ghost{background:transparent;border:1px solid rgba(255,255,255,0.06);padding:8px 12px;border-radius:10px;color:var(--soft)}
+    .search-container{flex:1;max-width:560px;position:relative}
+    .search-bar{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.12);border-radius:999px;padding:8px 12px;border:1px solid rgba(255,255,255,.08)}
+    #searchInput{flex:1;background:transparent;border:none;color:#fff;font-size:15px;outline:none}
+    .clear-btn{background:none;border:none;color:rgba(255,255,255,.9);font-size:18px;cursor:pointer;display:none}
+    .clear-btn.show{display:inline}
 
-    main{max-width:var(--max);margin:28px auto;padding:12px}
-    .listings{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px;margin-top:18px}
-    .listing{background:linear-gradient(180deg, rgba(0,0,0,0.25), rgba(0,0,0,0.18));padding:12px;border-radius:12px;border:1px solid rgba(255,255,255,0.03)}
-    .listing h4{margin:0 0 8px 0}
-    .listing p{margin:0 0 12px 0;color:var(--muted)}
+    .header-right{display:flex;align-items:center;gap:10px}
+    .pill{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.12);padding:8px 14px;border-radius:22px;color:#fff;cursor:pointer}
+    .pill.primary{background:linear-gradient(135deg,var(--accent),var(--accent-2));color:#06343a;font-weight:800;border:none}
 
-    /* Modal */
-    .modal{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;z-index:60;backdrop-filter:blur(8px);}
-    .modal .sheet{width:430px;max-width:92%;background:linear-gradient(180deg, rgba(12,18,30,0.96), rgba(6,10,18,0.98));border-radius:12px;padding:18px;border:1px solid rgba(255,255,255,0.04);box-shadow:0 20px 40px rgba(2,6,23,0.7);transform:translateY(10px);opacity:0;transition:all .28s;position:relative}
-    .modal.show .sheet{transform:none;opacity:1}
-    .close-x{position:absolute;right:10px;top:10px;width:34px;height:34px;border-radius:8px;border:1px solid rgba(255,255,255,0.08);background:rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:center;font-size:20px;cursor:pointer}
-    .close-x:focus{outline:2px solid var(--accent)}
+    /* Side nav & overlay */
+    .side-nav{position:fixed;left:-320px;top:0;width:300px;height:100%;background:rgba(18,20,30,.96);color:#fff;z-index:1002;transition:left .35s ease-in-out;display:flex;flex-direction:column}
+    .side-nav.show{left:0}
+    .side-nav-header{padding:22px;border-bottom:1px solid rgba(255,255,255,.06);display:flex;align-items:center;justify-content:space-between}
+    .side-nav-content{padding:10px 0;overflow:auto;flex:1;-webkit-overflow-scrolling:touch}
+    .nav-item{display:block;padding:14px 22px;color:rgba(255,255,255,.9);text-decoration:none;border-radius:10px;margin:6px 10px;font-weight:600}
+    .nav-item:hover{background:rgba(105,206,196,.08);color:var(--accent)}
+    .nav-item.active{background:rgba(105,206,196,.12);color:var(--accent)}
+    .side-nav-footer{padding:12px;border-top:1px solid rgba(255,255,255,.06)}
 
-    .tabs{display:flex;gap:6px;margin-bottom:12px}
-    .tab{flex:1;padding:10px;border-radius:8px;text-align:center;background:rgba(255,255,255,0.02);cursor:pointer}
-    .tab.active{background:linear-gradient(90deg,var(--accent),var(--accent-2));color:#05243a;font-weight:800}
-    .form-row{display:flex;flex-direction:column;gap:8px;margin-bottom:8px}
-    input,select{padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.05);background:transparent;color:var(--soft);outline:none}
-    .form-actions{display:flex;gap:8px;align-items:center;justify-content:space-between}
-    .small{font-size:13px;color:var(--muted)}
+    .overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);backdrop-filter:blur(6px);z-index:1001;display:none}
+    .overlay.show{display:block}
 
-    .chips{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
-    .chip{padding:8px 12px;border-radius:999px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.03);cursor:pointer;display:inline-flex;align-items:center;gap:8px;transition:transform .2s,box-shadow .2s}
-    .chip.selected{transform:translateY(-3px);box-shadow:0 14px 30px rgba(0,0,0,0.28);background:linear-gradient(90deg,var(--accent),var(--accent-2));color:#05243a;font-weight:700}
-
-    .progress{position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,var(--accent),var(--accent-2));width:0;z-index:100}
-    .loader-spot{position:fixed;right:20px;bottom:20px;background:linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02));padding:12px;border-radius:999px;display:flex;align-items:center;gap:10px;border:1px solid rgba(255,255,255,0.04)}
-    .spinner{width:34px;height:34px;border-radius:50%;border:4px solid rgba(255,255,255,0.06);border-top-color:var(--accent-2);animation:spin 1s linear infinite}
+    /* Progress & loader */
+    .progress{position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,var(--accent),var(--accent-2));width:0;z-index:1100}
+    .loader-spot{position:fixed;right:20px;bottom:20px;background:rgba(0,0,0,0.8);color:#fff;padding:12px 14px;border-radius:999px;display:none;align-items:center;gap:10px;border:1px solid rgba(255,255,255,0.08);box-shadow:0 12px 30px rgba(0,0,0,.25)}
+    .spinner{width:28px;height:28px;border-radius:50%;border:3px solid rgba(255,255,255,0.25);border-top-color:#fff;animation:spin 1s linear infinite}
     @keyframes spin{to{transform:rotate(360deg)}}
+
+    /* Main */
+    .main-content{margin-top:8px;flex:1}
+    .container{max-width:var(--max);margin:0 auto;padding:22px}
+
+    .chips{display:flex;gap:10px;flex-wrap:wrap;margin:8px 0 16px}
+    .chip{padding:8px 12px;border-radius:999px;background:#f2f6ff;border:1px solid #e7ecfd;color:#374151;cursor:pointer;display:inline-flex;align-items:center;gap:8px}
+    .chip.selected{background:linear-gradient(135deg,var(--accent),var(--accent-2));color:#07353a;font-weight:700;border:none}
+
+    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px}
+
+    /* Wide product cards */
+    .product-card{display:flex;gap:16px;align-items:center;background:#fff;border:1px solid #eee;border-radius:16px;padding:14px;box-shadow:0 10px 28px rgba(0,0,0,.06);transition:transform .2s, box-shadow .2s}
+    .product-card:hover{transform:translateY(-6px);box-shadow:0 20px 40px rgba(0,0,0,.10)}
+    .product-media{width:160px;min-width:160px;height:160px;border-radius:12px;background:#f7f9ff;display:flex;align-items:center;justify-content:center;overflow:hidden;border:1px solid #f0f0f0}
+    .product-media img{width:100%;height:100%;object-fit:contain}
+    .product-body{flex:1;min-width:0}
+    .product-title{margin:0 0 4px 0;font-size:18px;font-weight:800;color:#111}
+    .product-desc{margin:0;color:#5f6b7a}
+    .specs{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+    .spec{background:#f4f6fb;border:1px solid #e7ebf6;border-radius:999px;padding:6px 10px;font-size:12px;color:#394150}
+    .product-actions{display:flex;flex-direction:column;gap:10px;align-items:flex-end}
+    .price{font-weight:900;color:#0b3b39;font-size:20px}
+    .btn{padding:10px 14px;border-radius:10px;border:none;cursor:pointer;font-weight:700}
+    .btn.primary{background:linear-gradient(135deg,var(--accent),var(--accent-2));color:#06343a}
+    .btn.ghost{background:#fff;border:1px solid #e5e7eb}
+
+    /* Section titles */
+    .section-title{font-size:28px;text-align:center;margin:8px 0;background:linear-gradient(135deg,#667eea,#764ba2);-webkit-background-clip:text;color:transparent;font-weight:800}
+    .section-subtitle{text-align:center;color:var(--muted);margin-bottom:18px}
+
+    /* Pages */
+    .page{display:none}
+    .page.show{display:block}
+
+    /* Cart page */
+    .cart-list{display:grid;grid-template-columns:1fr;gap:12px}
+    .cart-row{display:flex;gap:12px;align-items:center;background:#fff;border:1px solid #eee;border-radius:12px;padding:12px}
+    .cart-thumb{width:74px;height:74px;border-radius:8px;background:#f7f9ff;border:1px solid #f0f0f0;display:flex;align-items:center;justify-content:center;overflow:hidden}
+    .cart-thumb img{width:100%;height:100%;object-fit:contain}
+    .cart-info{flex:1}
+    .qty{display:inline-flex;align-items:center;border:1px solid #e5e7eb;border-radius:999px}
+    .qty button{width:30px;height:30px;border:none;background:#f3f4f6;cursor:pointer;border-radius:999px}
+    .qty input{width:44px;border:none;text-align:center}
+    .row-price{font-weight:800}
+    .cart-footer{position:sticky;bottom:0;background:rgba(255,255,255,0.9);backdrop-filter:blur(6px);border-top:1px solid #eee;padding:12px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+
+    /* Checkout */
+    .form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+    .form-grid label{display:block;font-weight:600}
+    .form-grid input,.form-grid textarea,.form-grid select{width:100%;padding:10px;border-radius:8px;border:1px solid #e6e6e6;background:#fff}
+    .summary-card{background:#fff;border:1px solid #eee;border-radius:12px;padding:12px}
+
+    /* Footer */
+    footer{background:#111;color:#ddd;padding:14px;text-align:center;margin-top:auto}
+
+    /* Small screens */
+    @media (max-width:720px){
+      .header-content{padding:12px}
+      .logo h1{font-size:18px}
+      .search-container{order:3;width:100%;margin-top:8px}
+      .product-card{flex-direction:column;align-items:flex-start}
+      .product-actions{width:100%;align-items:stretch}
+    }
   </style>
 </head>
 <body>
-  <div class="app">
+  <div class="page-wrapper">
     <div class="progress" id="progress"></div>
 
     <header>
-      <div class="header-inner">
-        <div class="logo" id="homeLogo" tabindex="0" role="button" aria-label="Go to home">
-          <div style="width:44px;height:44px;border-radius:10px;background:linear-gradient(90deg,var(--accent),var(--accent-2));display:flex;align-items:center;justify-content:center;font-weight:900;color:#05243a">U</div>
-          <div>
-            <div class="brand">Unicleya</div>
-            <div class="tag">Second-hand tech market</div>
+      <div class="header-content">
+        <div class="header-left">
+          <button class="hamburger-btn" id="hamburger" aria-label="Open menu">
+            <span></span><span></span><span></span>
+          </button>
+          <div class="logo" id="homeLogo" tabindex="0" role="button" aria-label="Go to home">
+            <div class="mark">U</div>
+            <div>
+              <h1>Unicleya</h1>
+              <div class="tagline">Second‑hand tech market</div>
+            </div>
           </div>
         </div>
 
-        <div class="search" id="searchWrap">
-          <input id="searchInput" placeholder="Search devices, e.g. iPhone 12, Dell" aria-label="Search products" />
-          <button id="clearSearch" class="clear" title="Clear search" aria-label="Clear search">×</button>
+        <div class="search-container">
+          <div class="search-bar">
+            <input id="searchInput" placeholder="Search devices, e.g. iPhone 12, Dell" aria-label="Search products" />
+            <button id="clearSearch" class="clear-btn" title="Clear search" aria-label="Clear search">×</button>
+          </div>
         </div>
 
-        <div class="actions">
-          <button class="ghost" id="accountBtn" type="button">Account</button>
-          <button class="btn" id="loginBtn" type="button">Sign in / Register</button>
+        <div class="header-right">
+          <button class="pill" id="accountBtn">Account</button>
+          <button class="pill primary" id="cartBtn">Cart <span id="cartCount" style="margin-left:6px;background:#083f3c;color:#bff5ec;border-radius:999px;padding:2px 8px;display:inline-block;min-width:24px;text-align:center">0</span></button>
+          <button class="pill" id="loginBtn">Sign in</button>
         </div>
       </div>
     </header>
 
-    <main>
-      <!-- HOME -->
-      <section id="page-home" class="page show" style="display:block;opacity:1;transform:none">
-        <div style="display:flex;align-items:center;justify-content:space-between">
-          <h3 style="margin:0">Listings</h3>
-          <div id="resultMeta" class="small"></div>
+    <!-- Side Nav -->
+    <aside class="side-nav" id="sideNav" aria-hidden="true">
+      <div class="side-nav-header">
+        <div style="display:flex;align-items:center;gap:10px">
+          <div class="mark" style="width:34px;height:34px;border-radius:8px">U</div>
+          <strong>Menu</strong>
         </div>
+        <button class="pill" id="closeNav">Close</button>
+      </div>
+      <div class="side-nav-content">
+        <a class="nav-item active" data-route="home">🏠 Home</a>
+        <a class="nav-item" data-route="cart">🛒 Cart</a>
+        <a class="nav-item" data-route="checkout">💳 Checkout</a>
+        <a class="nav-item" data-route="account">👤 Account</a>
+      </div>
+      <div class="side-nav-footer">
+        <small>© <span id="year"></span> Unicleya</small>
+      </div>
+    </aside>
+    <div class="overlay" id="overlay"></div>
 
-        <div style="margin-top:10px">
+    <div class="loader-spot" id="loader" aria-hidden="true">
+      <div class="spinner"></div>
+      <div style="font-size:13px">Working...</div>
+    </div>
+
+    <main class="main-content">
+      <div class="container">
+        <!-- HOME -->
+        <section id="page-home" class="page show">
+          <h2 class="section-title">Shop Refurbished Tech</h2>
+          <div class="section-subtitle">Quality checked mobiles, computers, and accessories — priced right.</div>
+
           <div class="chips" id="categoryChips">
             <div class="chip selected" data-cat="all">🌐 All</div>
             <div class="chip" data-cat="mobiles">📱 Mobiles</div>
             <div class="chip" data-cat="computers">💻 Computers</div>
             <div class="chip" data-cat="accessories">🎧 Accessories</div>
           </div>
-        </div>
 
-        <div class="listings" id="listings" aria-live="polite"></div>
-      </section>
+          <div id="resultMeta" style="margin:6px 0 12px;color:var(--muted)"></div>
+          <div class="grid" id="listings" aria-live="polite"></div>
+        </section>
 
-      <section id="page-account" class="page" style="display:none">
-        <h2>My Account</h2>
-        <div id="accountArea">Not signed in</div>
-      </section>
-    </main>
-
-    <div class="loader-spot" id="loader" aria-hidden="true" style="display:none">
-      <div class="spinner"></div>
-      <div style="font-size:13px;color:var(--muted)">Working...</div>
-    </div>
-
-    <!-- Login/Register Modal -->
-    <div class="modal" id="authModal" style="display:none" aria-modal="true" role="dialog" aria-labelledby="authTitle">
-      <div class="sheet">
-        <button class="close-x" id="authClose" aria-label="Close">×</button>
-        <div class="tabs" role="tablist">
-          <div class="tab active" data-tab="login" role="tab" aria-selected="true">Sign in</div>
-          <div class="tab" data-tab="register" role="tab" aria-selected="false">Create account</div>
-        </div>
-
-        <div id="tabBody">
-          <!-- login form -->
-          <form id="loginForm" autocomplete="on">
-            <h3 id="authTitle" style="margin:6px 0 8px 0;">Welcome back</h3>
-            <div class="form-row"><input name="email" type="email" placeholder="Email or mobile number" required></div>
-            <div class="form-row"><input name="password" type="password" placeholder="Password" required minlength="6"></div>
-            <div class="form-actions">
-              <div style="display:flex;gap:8px">
-                <button class="btn" type="submit" id="loginSubmit">Sign in</button>
-                <button type="button" class="ghost" id="toRegister">New here?</button>
-              </div>
-              <a href="#" class="small">Forgot password?</a>
+        <!-- CART -->
+        <section id="page-cart" class="page">
+          <h2 class="section-title">Your Cart</h2>
+          <div class="section-subtitle">Review items and adjust quantities.</div>
+          <div id="cartEmpty" style="display:none;color:var(--muted);text-align:center;margin:10px 0">Your cart is empty.</div>
+          <div class="cart-list" id="cartList"></div>
+          <div class="cart-footer" id="cartFooter" style="display:none">
+            <div><strong>Total:</strong> <span id="cartTotal">₹0</span></div>
+            <div style="display:flex;gap:8px">
+              <button class="btn ghost" id="clearCartBtn">Clear</button>
+              <button class="btn primary" id="toCheckoutBtn">Proceed to Checkout</button>
             </div>
-            <div class="small" id="loginError" style="color:#ffb4b4;display:none"></div>
-          </form>
+          </div>
+        </section>
 
-          <!-- register form -->
-          <form id="registerForm" style="display:none">
-            <h3 style="margin:6px 0 8px 0;">Create account</h3>
-            <div class="form-row"><input name="name" type="text" placeholder="Full name" required></div>
-            <div class="form-row"><input name="email" type="email" placeholder="Email" required></div>
-            <div class="form-row"><input name="phone" type="tel" placeholder="Mobile (optional)"></div>
-            <div class="form-row"><input name="password" type="password" placeholder="Create password" required minlength="6"></div>
-            <div class="form-row"><input name="confirm" type="password" placeholder="Re-enter password" required minlength="6"></div>
-            <div class="form-actions">
-              <button class="btn" type="submit" id="registerSubmit">Create account</button>
-              <button type="button" class="ghost" id="toLogin">Back to login</button>
+        <!-- CHECKOUT -->
+        <section id="page-checkout" class="page">
+          <h2 class="section-title">Checkout</h2>
+          <div class="section-subtitle">Enter your details and confirm your order.</div>
+          <div class="form-grid" style="margin-bottom:12px">
+            <div>
+              <label>Full Name</label>
+              <input id="coName" placeholder="Your name" required>
             </div>
-            <div class="small" id="registerError" style="color:#ffb4b4;display:none"></div>
-          </form>
-        </div>
+            <div>
+              <label>Mobile</label>
+              <input id="coPhone" placeholder="e.g. 7057257971" required>
+            </div>
+            <div>
+              <label>Email</label>
+              <input id="coEmail" type="email" placeholder="you@example.com" required>
+            </div>
+            <div style="grid-column:1/-1">
+              <label>Address</label>
+              <textarea id="coAddress" rows="3" placeholder="Flat, Street, City, PIN" required></textarea>
+            </div>
+            <div>
+              <label>Payment</label>
+              <select id="coPayment">
+                <option value="cod">Cash on Delivery</option>
+                <option value="upi">UPI</option>
+                <option value="card">Card</option>
+              </select>
+            </div>
+          </div>
+          <div class="summary-card">
+            <div style="display:flex;align-items:center;justify-content:space-between">
+              <strong>Order Summary</strong>
+              <strong id="coTotal">₹0</strong>
+            </div>
+            <div id="coItems" style="margin-top:8px;color:var(--muted)"></div>
+            <div style="margin-top:12px;display:flex;gap:8px">
+              <button class="btn ghost" id="backToCart">Back to Cart</button>
+              <button class="btn primary" id="placeOrderBtn">Place Order</button>
+            </div>
+            <div id="checkoutMsg" style="margin-top:8px;color:#0b6b46;display:none"></div>
+          </div>
+        </section>
+
+        <!-- ACCOUNT -->
+        <section id="page-account" class="page">
+          <h2 class="section-title">My Account</h2>
+          <div id="accountArea" style="color:var(--muted)">Not signed in.</div>
+        </section>
       </div>
-    </div>
+    </main>
 
     <footer style="max-width:var(--max);margin:28px auto 40px;padding:12px;color:var(--muted);text-align:center">
       &copy; <span id="year"></span> Unicleya
