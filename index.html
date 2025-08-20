@@ -212,6 +212,50 @@
           <div class="grid" id="listings" aria-live="polite"></div>
         </section>
 
+         <!-- Login/Register Modal -->
+    <div class="modal" id="authModal" style="display:none" aria-modal="true" role="dialog" aria-labelledby="authTitle">
+      <div class="sheet">
+        <button class="close-x" id="authClose" aria-label="Close">×</button>
+        <div class="tabs" role="tablist">
+          <div class="tab active" data-tab="login" role="tab" aria-selected="true">Sign in</div>
+          <div class="tab" data-tab="register" role="tab" aria-selected="false">Create account</div>
+        </div>
+
+        <div id="tabBody">
+          <!-- login form -->
+          <form id="loginForm" autocomplete="on">
+            <h3 id="authTitle" style="margin:6px 0 8px 0;">Welcome back</h3>
+            <div class="form-row"><input name="email" type="email" placeholder="Email or mobile number" required></div>
+            <div class="form-row"><input name="password" type="password" placeholder="Password" required minlength="6"></div>
+            <div class="form-actions">
+              <div style="display:flex;gap:8px">
+                <button class="btn" type="submit" id="loginSubmit">Sign in</button>
+                <button type="button" class="ghost" id="toRegister">New here?</button>
+              </div>
+              <a href="#" class="small">Forgot password?</a>
+            </div>
+            <div class="small" id="loginError" style="color:#ffb4b4;display:none"></div>
+          </form>
+
+          <!-- register form -->
+          <form id="registerForm" style="display:none">
+            <h3 style="margin:6px 0 8px 0;">Create account</h3>
+            <div class="form-row"><input name="name" type="text" placeholder="Full name" required></div>
+            <div class="form-row"><input name="email" type="email" placeholder="Email" required></div>
+            <div class="form-row"><input name="phone" type="tel" placeholder="Mobile (optional)"></div>
+            <div class="form-row"><input name="password" type="password" placeholder="Create password" required minlength="6"></div>
+            <div class="form-row"><input name="confirm" type="password" placeholder="Re-enter password" required minlength="6"></div>
+            <div class="form-actions">
+              <button class="btn" type="submit" id="registerSubmit">Create account</button>
+              <button type="button" class="ghost" id="toLogin">Back to login</button>
+            </div>
+            <div class="small" id="registerError" style="color:#ffb4b4;display:none"></div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+
         <!-- CART -->
         <section id="page-cart" class="page">
           <h2 class="section-title">Your Cart</h2>
