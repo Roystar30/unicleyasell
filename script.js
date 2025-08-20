@@ -14,11 +14,6 @@
     const clearSearchBtn = $('#clearSearch');
     const categoryWrap = $('#categoryChips');
 
-    const pageHome = $('#page-home');
-    const pageCart = $('#page-cart');
-    const pageCheckout = $('#page-checkout');
-    const pageAccount = $('#page-account');
-
     const cartBtn = $('#cartBtn');
     const cartCountEl = $('#cartCount');
 
@@ -31,6 +26,23 @@
     const coTotal = $('#coTotal');
 
     const accountArea = $('#accountArea');
+
+    // Auth elements
+    const authModal = $('#authModal');
+    const loginForm = $('#loginForm');
+    const registerForm = $('#registerForm');
+    const loginBtn = $('#loginBtn');
+    const accountBtn = $('#accountBtn');
+    const authClose = $('#authClose');
+    const tabs = $$('.tab');
+    const loginError = $('#loginError');
+    const registerError = $('#registerError');
+    
+    // Pages
+    const pageHome = $('#page-home');
+    const pageCart = $('#page-cart');
+    const pageCheckout = $('#page-checkout');
+    const pageAccount = $('#page-account');
 
     // ===== State =====
     let allProducts = [];
@@ -75,13 +87,10 @@
         allProducts = Array.isArray(data) ? data : (data.products || []);
       }catch(err){
         console.error('Failed to load products', err);
-        // graceful demo fallback
-        allProducts = [
-          { id:'demo1', title:'iPhone 12', description:'Refurbished • 128GB • Excellent', price:28000, category:'mobiles', image:'https://images.unsplash.com/photo-1603899122775-f7131b04384a?q=80&w=800&auto=format&fit=crop' },
-          { id:'demo2', title:'Dell Inspiron 15', description:'Core i5 • 8GB • 512GB SSD', price:32000, category:'computers', image:'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?q=80&w=800&auto=format&fit=crop' },
-          { id:'demo3', title:'Sony WH-1000XM3', description:'Noise Cancelling • 30h battery', price:6500, category:'accessories', image:'https://images.unsplash.com/photo-1518447432257-2b1e0b3b8c18?q=80&w=800&auto=format&fit=crop' },
-        ];
-      }finally{ hideLoader(); hideProgress(); renderListings(); }
+        allProducts = [];
+      }finally{
+         hideLoader(); hideProgress(); renderListings(); 
+        }
     }
 
     function productToCard(p){
@@ -121,19 +130,41 @@
       });
     }
 
-    function renderListings(){
-      const items = getFiltered();
-      resultMeta.textContent = items.length ? `${items.length} item(s)` : 'No results';
-      listingsRoot.innerHTML = items.map(productToCard).join('');
+function renderListings(){
+  const items = getFiltered();
+  resultMeta.textContent = items.length ? `${items.length} item(s)` : 'No results';
+  listingsRoot.innerHTML = items.map(it => {
+    const price = typeof it.price === 'number' ? `₹${it.price}` : (it.price || '—');
+    const desc = it.desc || it.description || '';
+    const title = it.title || it.name || 'Untitled';
+    const id = it._id || it.id || '';
+    return `
+      <div class="listing">
+        <h4>${escapeHtml(title)}</h4>
+        <p>${escapeHtml(desc)}</p>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-top:8px">
+          <div style="color:var(--accent);font-weight:800">${price}</div>
+          <div style="display:flex;gap:8px">
+            <button class="btn" data-id="${id}" data-action="add">Add</button>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
+  // wire buttons (no demo cart; stub only)
+  $$('#listings [data-action="add"]').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      toast('Added to cart');
+      btn.disabled = true;
+      setTimeout(()=>{ btn.disabled=false; }, 800);
+    });
+  });
+}
 
-      // wire buttons
-      $$('#listings [data-action="add"]').forEach(btn => {
-        btn.addEventListener('click', ()=> addToCart(btn.dataset.id));
-      });
-      $$('#listings [data-action="view"]').forEach(btn => {
-        btn.addEventListener('click', ()=> toast('Details coming soon'));
-      });
-    }
+function escapeHtml(s){
+  return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
+}
+
 
     // ===== Cart =====
     function persistCart(){ localStorage.setItem('unicleya_cart', JSON.stringify(cart)); updateCartBadge(); }
@@ -259,6 +290,53 @@
       renderListings();
     });
 
+    // ---------- Auth Modal ----------
+function openAuth(){
+  authModal.style.display='flex';
+  setTimeout(()=> authModal.classList.add('show'), 10);
+}
+function closeAuth(){
+  authModal.classList.remove('show');
+  setTimeout(()=> authModal.style.display='none', 180);
+}
+loginBtn.addEventListener('click', openAuth);
+authClose.addEventListener('click', closeAuth);
+// close on outside click
+authModal.addEventListener('click', (e)=>{
+  if(e.target === authModal) closeAuth();
+});
+document.addEventListener('keydown', (e)=>{ if(e.key==='Escape') closeAuth(); });
+
+tabs.forEach(t => t.addEventListener('click', ()=>{
+  tabs.forEach(x=>x.classList.remove('active'));
+  t.classList.add('active');
+  const tab = t.dataset.tab;
+  const loginOn = tab==='login';
+  loginForm.style.display = loginOn ? 'block' : 'none';
+  registerForm.style.display = loginOn ? 'none' : 'block';
+  loginError.style.display = 'none';
+  registerError.style.display = 'none';
+}));
+
+$('#toRegister').addEventListener('click', ()=> tabs[1].click());
+$('#toLogin').addEventListener('click', ()=> tabs[0].click());
+
+function toast(msg){
+  const el = document.createElement('div');
+  el.textContent = msg;
+  el.style.position='fixed';
+  el.style.left='50%';
+  el.style.transform='translateX(-50%)';
+  el.style.bottom='28px';
+  el.style.background='rgba(0,0,0,0.6)';
+  el.style.color='var(--soft)';
+  el.style.padding='10px 16px';
+  el.style.borderRadius='10px';
+  el.style.zIndex=120;
+  document.body.appendChild(el);
+  setTimeout(()=> el.remove(), 2200);
+}
+
     // ===== Nav & overlay =====
     const hamburger = $('#hamburger');
     const sideNav = $('#sideNav');
@@ -292,23 +370,106 @@
     $('#homeLogo').addEventListener('click', ()=> routeTo('page-home'));
     $('#homeLogo').addEventListener('keydown', (e)=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); routeTo('page-home'); } });
 
-    // Account render (simple local preview)
-    function renderAccount(){
-      const user = JSON.parse(localStorage.getItem('unicleya_user')||'null');
-      if(user){
-        accountArea.innerHTML = `
-          <div style="display:flex;align-items:center;justify-content:space-between">
-            <div>
-              <div style="font-weight:800">${escapeHtml(user.name || user.email || 'User')}</div>
-              <div style="color:var(--muted)">${escapeHtml(user.email || '')}</div>
-            </div>
-            <div><button class="pill" id="signout">Sign out</button></div>
-          </div>`;
-        $('#signout').addEventListener('click', ()=>{ localStorage.removeItem('unicleya_user'); localStorage.removeItem('unicleya_token'); renderAccount(); toast('Signed out'); });
-      }else{
-        accountArea.innerHTML = `<div style="color:var(--muted)">You are not signed in.</div>`;
-      }
+   // Render account
+function renderAccount(){
+  const user = JSON.parse(localStorage.getItem('unicleya_user')||'null');
+  if(user){
+    accountArea.innerHTML = `
+      <div style="display:flex;align-items:center;justify-content:space-between">
+        <div>
+          <div style="font-weight:800">${escapeHtml(user.name || user.email || 'User')}</div>
+          <div class="small">${escapeHtml(user.email || '')}</div>
+        </div>
+        <div><button class="ghost" id="signout">Sign out</button></div>
+      </div>`;
+    $('#signout').addEventListener('click', ()=>{
+      localStorage.removeItem('unicleya_user');
+      localStorage.removeItem('unicleya_token');
+      renderAccount();
+      toast('Signed out');
+    });
+  }else{
+    accountArea.innerHTML = `<div style="color:var(--muted)">You are not signed in.</div>
+      <div style="margin-top:8px"><button class="btn" id="openAuthFromAcc">Sign in / Register</button></div>`;
+    $('#openAuthFromAcc')?.addEventListener('click', openAuth);
+  }
+}
+// Login submit
+loginForm.addEventListener('submit', async (e)=>{
+  e.preventDefault();
+  loginError.style.display='none';
+  const btn = $('#loginSubmit');
+  btn.disabled = true;
+  try{
+    const fd = new FormData(loginForm);
+    const payload = { email: fd.get('email'), password: fd.get('password') };
+    const res = await fetch(`${API_BASE}/api/login`, {
+      method: 'POST',
+      headers: { 'Content-Type':'application/json' },
+      body: JSON.stringify(payload)
+    });
+    const data = await res.json();
+    if(data && (data.success || data.user)){
+      if(data.token) localStorage.setItem('unicleya_token', data.token);
+      localStorage.setItem('unicleya_user', JSON.stringify(data.user || { email: payload.email }));
+      renderAccount();
+      closeAuth();
+      toast('Signed in');
+    }else{
+      loginError.textContent = data?.message || 'Login failed';
+      loginError.style.display='block';
     }
+  }catch(err){
+    console.error(err);
+    loginError.textContent = 'Network error. Try again.';
+    loginError.style.display='block';
+  }finally{
+    btn.disabled = false;
+  }
+});
+
+// Register submit (calls backend if available)
+registerForm.addEventListener('submit', async (e)=>{
+  e.preventDefault();
+  registerError.style.display='none';
+  const btn = $('#registerSubmit');
+  btn.disabled = true;
+  try{
+    const fd = new FormData(registerForm);
+    const name = fd.get('name');
+    const email = fd.get('email');
+    const mobile = fd.get('phone');
+    const password = fd.get('password');
+    const confirm = fd.get('confirm');
+    if(password !== confirm){
+      registerError.textContent = 'Passwords do not match';
+      registerError.style.display='block';
+      return;
+    }
+    const res = await fetch(`${API_BASE}/api/register`, {
+      method: 'POST',
+      headers: { 'Content-Type':'application/json' },
+      body: JSON.stringify({ name, email, mobile, password })
+    });
+    const data = await res.json();
+    if(data && (data.success || data.user)){
+      if(data.token) localStorage.setItem('unicleya_token', data.token);
+      localStorage.setItem('unicleya_user', JSON.stringify(data.user || { name, email }));
+      renderAccount();
+      closeAuth();
+      toast('Account created');
+    }else{
+      registerError.textContent = data?.message || 'Registration failed';
+      registerError.style.display='block';
+    }
+  }catch(err){
+    console.error(err);
+    registerError.textContent = 'Network error. Try again.';
+    registerError.style.display='block';
+  }finally{
+    btn.disabled = false;
+  }
+});
 
     // ===== Init =====
     (function init(){
