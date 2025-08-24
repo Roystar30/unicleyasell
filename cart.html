@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Cart — Unicleya</title>
+  <link rel="stylesheet" href="stylesheet.css" />
+</head>
+<body>
+  <header>
+    <div class="header-content">
+      <a href="index.html" class="logo">Unicleya</a>
+      <div class="header-right">
+        <a class="pill" href="account.html">Account</a>
+        <a class="pill primary" href="cart.html">Cart</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="main-content">
+    <section>
+      <h2>Your Cart</h2>
+      <div id="cartEmpty">Your cart is empty.</div>
+      <div id="cartList"></div>
+      <div id="cartFooter">
+        <div><strong>Total:</strong> <span id="cartTotal">₹0</span></div>
+        <button id="clearCartBtn">Clear</button>
+        <a href="checkout.html" class="btn primary">Proceed to Checkout</a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-bottom">© <span id="year"></span> Unicleya</div>
+  </footer>
+
+  <script src="cart.js"></script>
+</body>
+</html>
