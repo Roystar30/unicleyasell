@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Your Cart — Unicleya</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 text-gray-800">
+
+  <!-- Header -->
+  <header class="bg-white shadow p-4 flex justify-between items-center">
+    <h1 class="text-2xl font-bold text-indigo-600">Unicleya</h1>
+    <div class="flex gap-3">
+      <button onclick="window.location.href='index.html'" class="px-4 py-2 rounded-full bg-gray-200 hover:bg-gray-300">Home</button>
+      <button onclick="window.location.href='cart.html'" class="px-4 py-2 rounded-full bg-indigo-600 text-white hover:bg-indigo-700">Cart</button>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="max-w-6xl mx-auto mt-8 p-4">
+    <h2 class="text-3xl font-semibold mb-6">Shopping Cart</h2>
+
+    <!-- Cart Container -->
+    <div id="cartItems" class="grid md:grid-cols-2 gap-6">
+      <!-- Example Cart Item -->
+      <!-- These will be dynamically filled from cart.js -->
+      <div class="bg-white rounded-2xl shadow p-4 flex gap-4 items-center">
+        <img src="https://via.placeholder.com/120" alt="Product Image" class="w-28 h-28 object-cover rounded-xl">
+        <div class="flex-1">
+          <h3 class="font-semibold text-lg">Dell Inspiron 15</h3>
+          <p class="text-gray-500">Refurbished Laptop</p>
+          <p class="mt-1 text-indigo-600 font-bold">₹42,000</p>
+          <div class="mt-2 flex items-center gap-2">
+            <button class="px-2 py-1 bg-gray-200 rounded hover:bg-gray-300" onclick="updateQuantity(this, -1)">-</button>
+            <span class="font-medium">1</span>
+            <button class="px-2 py-1 bg-gray-200 rounded hover:bg-gray-300" onclick="updateQuantity(this, 1)">+</button>
+            <button class="ml-auto text-red-500 hover:underline" onclick="removeItem(this)">Remove</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Cart Summary -->
+    <div class="mt-10 bg-white shadow rounded-2xl p-6 max-w-md ml-auto">
+      <h3 class="text-xl font-semibold mb-4">Order Summary</h3>
+      <div class="flex justify-between mb-2">
+        <span>Subtotal</span>
+        <span id="subtotal" class="font-medium">₹42,000</span>
+      </div>
+      <div class="flex justify-between mb-2">
+        <span>Shipping</span>
+        <span class="font-medium">₹199</span>
+      </div>
+      <hr class="my-3">
+      <div class="flex justify-between text-lg font-bold">
+        <span>Total</span>
+        <span id="total">₹42,199</span>
+      </div>
+      <button class="w-full mt-6 bg-indigo-600 text-white py-3 rounded-2xl hover:bg-indigo-700 transition" onclick="checkout()">
+        Proceed to Checkout
+      </button>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="mt-12 py-6 text-center text-gray-500">
+    © 2025 Unicleya — Refurbished Tech Marketplace
+  </footer>
+
+  <!-- Scripts -->
+  <script>
+    function updateQuantity(el, change) {
+      let quantityEl = el.parentElement.querySelector('span');
+      let qty = parseInt(quantityEl.innerText) + change;
+      if (qty < 1) qty = 1;
+      quantityEl.innerText = qty;
+      // TODO: update backend & totals
+    }
+
+    function removeItem(el) {
+      el.closest('.bg-white').remove();
+      // TODO: update backend & totals
+    }
+
+    function checkout() {
+      window.location.href = "checkout.html";
+    }
+  </script>
+</body>
+</html>
