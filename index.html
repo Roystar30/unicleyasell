@@ -38,13 +38,40 @@
         </div>
 
         <div class="header-right">
-          <button class="pill" id="accountBtn" onclick="window.location.href='account.html'">Account</button>
+          <button class="pill" id="accountBtn">Account</button>
           <button class="pill primary" id="cartBtn" onclick="window.location.href='cart.html'">Cart <span id="cartCount" class="cart-badge">0</span></button>
           <button class="pill" id="loginBtn">Sign in</button>
         </div>
       </div>
     </header>
 
+
+    <!-- ===== Account Popup ===== -->
+<div id="accountPopup" class="popup-overlay">
+  <div class="popup-box">
+    <button class="close-btn" id="closePopup">&times;</button>
+    <h2>My Account</h2>
+    
+    <!-- Show account details -->
+    <div id="accountDetails">
+      <p><strong>Name:</strong> <span id="accName">Loading...</span></p>
+      <p><strong>Email:</strong> <span id="accEmail">Loading...</span></p>
+      <p><strong>Phone:</strong> <span id="accPhone">Loading...</span></p>
+    </div>
+
+    <!-- Modify account form -->
+    <form id="accountForm" style="margin-top:15px;">
+      <h3>Edit Details</h3>
+      <input type="text" id="editName" placeholder="Full Name" required />
+      <input type="email" id="editEmail" placeholder="Email" required />
+      <input type="tel" id="editPhone" placeholder="Phone" required />
+      <button type="submit" class="btn primary">Save Changes</button>
+    </form>
+
+    <!-- Logout button -->
+    <button id="logoutBtn" class="btn danger" style="margin-top:15px;">Logout</button>
+  </div>
+</div>
     <!-- Side Nav -->
     <aside class="side-nav" id="sideNav" aria-hidden="true">
       <div class="side-nav-header">
