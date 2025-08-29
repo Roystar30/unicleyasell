@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Your Orders - Unicleya</title>
+  <link rel="stylesheet" href="stylesheet.css"/>
+</head>
+<body>
+  <div class="page-wrapper">
+    <div class="progress" id="progress"></div>
+    <header>
+      <div class="header-content">
+        <div class="logo" id="homeLogo" tabindex="0" role="button">
+          <a href="index.html"><img src="logo.png" alt="Unicleya"/></a>
+          <h2>Your Orders</h2>
+        </div>
+        <div class="header-right">
+          <button class="pill" id="accountBtn">Account</button>
+          <button class="pill primary" id="cartBtn">Cart <span id="cartCount" class="cart-badge">0</span></button>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <h2>Order History</h2>
+      <div id="ordersList" class="orders-list"></div>
+    </main>
+  </div>
+
+  <script src="script.js"></script>
+  <script>
+    async function loadOrders(){
+      try {
+        const data = await apiFetch('/api/orders');
+        const ordersList = document.getElementById('ordersList');
+        if(!Array.isArray(data) || data.length===0){
+          ordersList.innerHTML = '<p>No orders found.</p>';
+          return;
+        }
+        ordersList.innerHTML = data.map(o=>`
+          <div class="order-card">
+            <h3>Order #${o._id}</h3>
+            <p><strong>Name:</strong> ${o.name}</p>
+            <p><strong>Email:</strong> ${o.email}</p>
+            <p><strong>Phone:</strong> ${o.phone}</p>
+            <p><strong>Address:</strong> ${o.address}</p>
+            <p><strong>Payment:</strong> ${o.payment}</p>
+            <div><strong>Items:</strong>
+              ${o.items.map(i=>`<div>×${i.qty} — ${i.title} (${formatCurrency(i.price)})</div>`).join('')}
+            </div>
+            <p><strong>Total:</strong> ${formatCurrency(o.totals?.total||0)}</p>
+            <hr>
+          </div>
+        `).join('');
+      }catch(err){
+        console.error(err);
+        document.getElementById('ordersList').innerHTML = '<p>Failed to load orders.</p>';
+      }
+    }
+    loadOrders();
+  </script>
+</body>
+</html>
