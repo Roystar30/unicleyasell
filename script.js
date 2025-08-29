@@ -372,6 +372,14 @@ function updateHeaderAuthUI(){
     if(accountBtn) accountBtn.textContent = 'Account';
   }
 }
+// popup function for account details
+function toggleAccountPopup(show) {
+  const popup = document.getElementById("accountPopup");
+  if (!popup) return;
+  popup.style.display = show ? "flex" : "none";
+  if (show) renderAccount(); // fill details when opened
+}
+
 
 // Render account
 function renderAccount(){
@@ -527,7 +535,7 @@ overlay?.addEventListener('click', ()=>{ hamburger?.classList.remove('active'); 
 
 // Header buttons (on MPA, we use links; keep hooks just in case)
 cartBtn?.addEventListener('click', ()=> window.location.href='cart.html');
-accountBtn?.addEventListener('click', ()=> window.location.href='account.html');
+accountBtn?.addEventListener('click', ()=> toggleAccountPopup(true));
 loginBtn?.addEventListener('click', openAuth);
 
 // Cart footer buttons
