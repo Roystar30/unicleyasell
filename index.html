@@ -46,11 +46,15 @@
     </header>
 
 
-    <!-- ===== Account Popup ===== -->
-<div id="accountPopup" class="popup-overlay">
-  <div class="popup-box">
-    <button class="close-btn" id="closePopup">&times;</button>
-    <h2>My Account</h2>
+    <!-- Account Popup -->
+    <div id="accountPopup" class="popup-overlay">
+      <div class="popup-box">
+        <button class="close-btn" onclick="toggleAccountPopup(false)">×</button>
+        <h2>My Account</h2>
+        <div id="accountArea"></div>
+      </div>
+    </div>
+
     
     <!-- Show account details -->
     <div id="accountDetails">
