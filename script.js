@@ -488,6 +488,33 @@ if(tabs.length){
 $('#toLogin')?.addEventListener('click', ()=> tabs[0]?.click());
 switchToRegister?.addEventListener('click', (e)=>{ e.preventDefault(); tabs[1]?.click(); });
 
+// new account page script
+document.addEventListener("DOMContentLoaded", () => {
+  if (document.body.classList.contains("account-page")) {
+    // Load user data from localStorage
+    const user = JSON.parse(localStorage.getItem("user")) || {
+      name: "Guest",
+      email: "guest@example.com",
+      mobile: "",
+      address: ""
+    };
+
+    document.getElementById("userName").textContent = user.name;
+    document.getElementById("userEmail").textContent = user.email;
+    document.getElementById("userMobile").value = user.mobile;
+    document.getElementById("userAddress").value = user.address;
+
+    // Save updated info
+    document.getElementById("saveAccount").addEventListener("click", () => {
+      user.mobile = document.getElementById("userMobile").value;
+      user.address = document.getElementById("userAddress").value;
+      localStorage.setItem("user", JSON.stringify(user));
+      alert("Account info updated successfully ✅");
+    });
+  }
+});
+
+
 // Step1 submit
 loginStep1?.addEventListener('submit', (e)=>{
   e.preventDefault();
