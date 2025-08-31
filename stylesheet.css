@@ -148,7 +148,7 @@ header{position:sticky;top:0;left:0;right:0;background:var(--bg-grad);color:#fff
 .price{font-weight:900;color:#0b3b39;font-size:20px}
 .result-meta{margin:6px 0 12px;color:var(--muted)}
 
-/* Empty & sticky cart footer */
+/* 
 .empty{display:none;color:var(--muted);text-align:center;margin:10px 0}
 .cart-list{display:grid;grid-template-columns:1fr;gap:12px}
 .cart-row{display:flex;gap:12px;align-items:center;background:#fff;border:1px solid #eee;border-radius:12px;padding:12px}
@@ -160,7 +160,7 @@ header{position:sticky;top:0;left:0;right:0;background:var(--bg-grad);color:#fff
 .qty input{width:44px;border:none;text-align:center}
 .row-price{font-weight:800}
 .cart-footer{position:sticky;bottom:0;background:rgba(255,255,255,0.95);backdrop-filter:blur(6px);border-top:1px solid #eee;padding:12px;display:none;align-items:center;justify-content:space-between;gap:12px}
-
+ */
 /* Checkout */
 .form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-bottom:12px}
 .form-grid .full{grid-column:1/-1}
@@ -170,6 +170,79 @@ header{position:sticky;top:0;left:0;right:0;background:var(--bg-grad);color:#fff
 .summary-head{display:flex;align-items:center;justify-content:space-between}
 .summary-items{margin-top:8px;color:var(--muted)}
 .summary-actions{margin-top:12px;display:flex;gap:8px}
+
+/*account page*/
+
+.account-page {
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 1rem;
+}
+
+.info-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 1rem 1.5rem;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.info-card h3 {
+  margin-top: 0;
+}
+
+.info-card label {
+  display: block;
+  margin: 0.5rem 0;
+}
+
+.info-card input,
+.info-card textarea {
+  width: 100%;
+  padding: 0.5rem;
+  margin-top: 0.3rem;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+}
+
+.info-card button {
+  margin-top: 1rem;
+}
+
+/* cart page style for new page i"ve made */
+.cart-card {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background: #fff;
+  border-radius: 12px;
+  padding: 1rem;
+  margin: 0.5rem 0;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  opacity: 0;
+  transform: translateY(10px);
+  animation: fadeInUp 0.4s forwards;
+}
+
+.cart-img {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.cart-info h4 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+@keyframes fadeInUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 
 /* Modal (light themed, elevated) */
 .modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;z-index:60;background:rgba(12,18,30,0.28);backdrop-filter:blur(4px)}
