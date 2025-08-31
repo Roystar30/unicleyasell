@@ -573,94 +573,222 @@ registerForm?.addEventListener('submit', async (e)=>{
 });
 
 //checkout page payment logic
+// ==========================
+// Global State
+// ==========================
+let allProducts = [];
+// ==========================
+// Helpers
+// ==========================
+const $ = (s) => document.querySelector(s);
+const $$ = (s) => Array.from(document.querySelectorAll(s));
 
-document.addEventListener("DOMContentLoaded", () => {
-  if (!document.querySelector("#page-checkout")) return; // Only on checkout.html
+function persistCart() {
+  localStorage.setItem('unicleya_cart', JSON.stringify(cart));
+}
 
-  const emailInput = document.getElementById("coEmail");
-  const paymentSelect = document.getElementById("coPayment");
-  const placeOrderBtn = document.getElementById("placeOrderBtn");
-  const checkoutMsg = document.getElementById("checkoutMsg");
-  const coTotalEl = document.getElementById("coTotal");
+function updateCartBadge() {
+  const cartCount = $('#cartCount');
+  if (cartCount) cartCount.textContent = cart.length;
+}
 
-  // Load global cart and calculate total
-  const total = cart.reduce((sum, i) => sum + i.price * i.qty, 0);
-  coTotalEl.textContent = "₹" + total;
+function findProductById(id) {
+  return allProducts.find(p => p.id === id);
+}
 
-  // ========== 1. Validate email & COD ==========
-  placeOrderBtn.addEventListener("click", (e) => {
-    const emailVal = emailInput.value.trim();
-    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+// ==========================
+// Cart Functions
+// ==========================
+function renderCart() {
+  const list = $('#cartList');
+  if (!list) return;
 
-    if (!regex.test(emailVal)) {
-      e.preventDefault();
-      flashMessage("❌ Please enter a valid email address", "error");
-      return;
-    }
+  list.innerHTML = '';
 
-    if (paymentSelect.value === "cod" && total > 500) {
-      e.preventDefault();
-      flashMessage("⚠️ COD not allowed above ₹500", "error");
-      return;
-    }
-
-    flashMessage("✅ Order placed successfully!", "success");
-    placeOrder();   // uses your global placeOrder()
-    renderCheckout(); // refresh UI
-  });
-
-  // ========== 2. Disable COD if > 500 ==========
-  if (total > 500) {
-    const codOption = paymentSelect.querySelector('option[value="cod"]');
-    if (codOption) codOption.disabled = true;
-    if (paymentSelect.value === "cod") paymentSelect.value = "upi";
+  if (cart.length === 0) {
+    list.innerHTML = `<p class="text-gray-500">Your cart is empty.</p>`;
+    renderCartTotals();
+    return;
   }
 
-  // ========== 3. Payment Popup (Razorpay) ==========
-  const paymentPopupBtn = document.createElement("button");
-  paymentPopupBtn.textContent = "Pay Now";
-  paymentPopupBtn.className = "btn accent";
-  paymentSelect.insertAdjacentElement("afterend", paymentPopupBtn);
+  cart.forEach(item => {
+    const product = findProductById(item.id);
+    if (!product) return;
 
-  paymentPopupBtn.addEventListener("click", () => {
-    if (paymentSelect.value === "cod") {
-      flashMessage("❌ COD does not need online payment", "error");
-      return;
-    }
-    openRazorpay(total);
+    const li = document.createElement('li');
+    li.className = 'cart-card';
+    li.innerHTML = `
+      <img src="${product.image}" alt="${product.name}" class="cart-img"/>
+      <div class="cart-info">
+        <h4>${product.name}</h4>
+        <p>₹${product.price} × ${item.qty}</p>
+      </div>
+      <button class="removeBtn">✖</button>
+    `;
+    li.querySelector('.removeBtn').addEventListener('click', () => {
+      cart = cart.filter(c => c.id !== item.id);
+      persistCart();
+      renderCart();
+      updateCartBadge();
+    });
+    list.appendChild(li);
   });
 
-  // ========== Utility: Razorpay checkout ==========
-  function openRazorpay(amount) {
+  renderCartTotals();
+}
+
+function cartTotals() {
+  return cart.reduce((sum, i) => {
+    const p = findProductById(i.id);
+    return sum + (p ? p.price * i.qty : 0);
+  }, 0);
+}
+
+function renderCartTotals() {
+  const el = $('#cartTotal');
+  if (!el) return;
+  el.textContent = `₹${cartTotals()}`;
+}
+
+// ==========================
+// Checkout
+// ==========================
+function renderCheckout() {
+  const itemsEl = $('#coItems');
+  const totalEl = $('#coTotal');
+  if (!itemsEl || !totalEl) return;
+
+  itemsEl.innerHTML = '';
+  if (cart.length === 0) {
+    itemsEl.innerHTML = `<p class="text-gray-500">Cart is empty.</p>`;
+    totalEl.textContent = '₹0';
+    return;
+  }
+
+  cart.forEach(item => {
+    const p = findProductById(item.id);
+    if (!p) return;
+    const div = document.createElement('div');
+    div.className = 'checkout-item';
+    div.innerHTML = `${p.name} × ${item.qty} — ₹${p.price * item.qty}`;
+    itemsEl.appendChild(div);
+  });
+
+  totalEl.textContent = `₹${cartTotals()}`;
+}
+
+async function placeOrder(paymentMethod) {
+  if (!cart.length) return alert('Your cart is empty!');
+
+  const order = {
+    id: Date.now(),
+    items: cart,
+    total: cartTotals(),
+    method: paymentMethod,
+  };
+
+  // save order to localStorage (or send to backend later)
+  let orders = JSON.parse(localStorage.getItem('unicleya_orders') || '[]');
+  orders.push(order);
+  localStorage.setItem('unicleya_orders', JSON.stringify(orders));
+
+  // clear cart
+  cart = [];
+  persistCart();
+  renderCart();
+  renderCheckout();
+  updateCartBadge();
+
+  alert(`Order placed via ${paymentMethod}!`);
+}
+
+// ==========================
+// Razorpay Checkout
+// ==========================
+function initRazorpayCheckout() {
+  const btn = $('#placeOrderBtn');
+  if (!btn) return;
+
+  btn.addEventListener('click', () => {
+    if (!cart.length) return alert('Cart empty!');
+
+    const amount = cartTotals() * 100; // in paise
     const options = {
-      key: "rzp_test_1234567890abcdef", // Replace later
-      amount: amount * 100,
+      key: "rzp_test_1234567890abcdef", // test key
+      amount,
       currency: "INR",
-      name: "Unicleya TechFix",
+      name: "Unicleya",
       description: "Order Payment",
       handler: function (response) {
-        flashMessage("💳 Payment successful!", "success");
-        placeOrder();
-        renderCheckout();
+        placeOrder("Razorpay");
       },
       prefill: {
-        name: document.getElementById("coName")?.value || "Customer",
-        email: emailInput.value || "test@example.com",
-        contact: document.getElementById("coMobile")?.value || "9999999999",
+        name: "Test User",
+        email: "test@example.com",
+        contact: "9999999999",
       },
       theme: { color: "#3399cc" },
     };
-    const rzp1 = new Razorpay(options);
-    rzp1.open();
-  }
 
-  function flashMessage(msg, type) {
-    checkoutMsg.style.display = "block";
-    checkoutMsg.textContent = msg;
-    checkoutMsg.className = type === "error" ? "error-msg" : "success-msg";
-    setTimeout(() => (checkoutMsg.style.display = "none"), 4000);
+    const rzp = new Razorpay(options);
+    rzp.open();
+  });
+}
+
+// ==========================
+// Products
+// ==========================
+async function loadProducts() {
+  try {
+    const res = await fetch(`${API_BASE}/products`);
+    const data = await res.json();
+    allProducts = data.products || [];
+
+    if ($('#listings')) renderListings();
+    if ($('#cartList')) renderCart();
+    if ($('#coItems')) renderCheckout();
+  } catch (err) {
+    console.error('Product fetch error', err);
   }
-});
+}
+
+function productToCard(p) {
+  const div = document.createElement('div');
+  div.className = 'product-card';
+  div.innerHTML = `
+    <img src="${p.image}" alt="${p.name}"/>
+    <h3>${p.name}</h3>
+    <p>₹${p.price}</p>
+    <button class="addBtn">Add to Cart</button>
+  `;
+
+  div.querySelector('.addBtn').addEventListener('click', () => {
+    const exist = cart.find(c => c.id === p.id);
+    if (exist) exist.qty++;
+    else cart.push({ id: p.id, qty: 1 });
+    persistCart();
+    updateCartBadge();
+    renderCart();
+  });
+
+  return div;
+}
+
+function renderListings() {
+  const wrap = $('#listings');
+  if (!wrap) return;
+  wrap.innerHTML = '';
+  allProducts.forEach(p => wrap.appendChild(productToCard(p)));
+}
+
+// ==========================
+// Init
+// ==========================
+(function init() {
+  updateCartBadge();
+  loadProducts();
+  initRazorpayCheckout();
+})();
 
 // ===== Nav & overlay =====
 const hamburger = $('#hamburger');
