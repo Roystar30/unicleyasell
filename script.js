@@ -434,7 +434,10 @@ function renderAccount(){
   }else{
     accountArea.innerHTML = `<div class="small">You are not signed in.</div>
       <div style="margin-top:8px"><button class="btn" id="openAuthFromAcc">Sign in / Register</button></div>`;
-    $('#openAuthFromAcc')?.addEventListener('click', openAuth);
+   $('#openAuthFromAcc')?.addEventListener('click', () => {
+  toggleAccountPopup(false); // 🔴 close "My Account" popup
+  openAuth();                // 🟢 then open Sign in/Register modal
+});
   }
 }
 
