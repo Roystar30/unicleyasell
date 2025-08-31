@@ -10,7 +10,7 @@
   <div class="page-wrapper">
     <div class="progress" id="progress"></div>
 
-    <header>
+<header>
       <div class="header-content">
         <div class="header-left">
           <button class="hamburger-btn" id="hamburger" aria-label="Open menu">
@@ -18,7 +18,7 @@
           </button>
           <div class="logo" id="homeLogo" tabindex="0" role="button" aria-label="Go to home">
             <a href="index.html" class="brand" aria-label="Unicleya home">
-              <img src="logo.png" alt="Unicleya logo" class="brand-logo" />
+              <img src="logo.png" alt="Unicleya logo" class="brand-logo" width="512" height="160" decoding="async" fetchpriority="high" loading="eager" />
             </a>
             <div>
               <h1>Unicleya</h1>
@@ -27,14 +27,22 @@
           </div>
         </div>
 
+        <div class="search-container">
+          <form id="searchForm" class="search-bar" role="search">
+            <input id="searchInput" placeholder="Search devices, e.g. iPhone 12, Dell" aria-label="Search products" autocomplete="off" />
+            <button id="clearSearch" class="clear-btn" type="button" title="Clear search" aria-label="Clear search">×</button>
+            <button id="doSearch" class="search-btn" type="submit" aria-label="Search">Search</button>
+          </form>
+          <div id="searchSuggestions" class="search-suggestions" role="listbox" aria-label="Recent & popular searches"></div>
+        </div>
+
         <div class="header-right">
-          <button class="pill" id="accountBtn" onclick="window.location.href='account.html'">Account</button>
+          <button class="pill" id="accountBtn">Account</button>
           <button class="pill primary" id="cartBtn" onclick="window.location.href='cart.html'">Cart <span id="cartCount" class="cart-badge">0</span></button>
           <button class="pill" id="loginBtn">Sign in</button>
         </div>
       </div>
     </header>
-
      <!-- Account Popup -->
     <div id="accountPopup" class="popup-overlay">
       <div class="popup-box">
