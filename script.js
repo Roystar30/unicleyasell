@@ -572,36 +572,10 @@ registerForm?.addEventListener('submit', async (e)=>{
   }
 });
 
-// new account page script
-document.addEventListener("DOMContentLoaded", () => {
-  if (document.body.classList.contains("account-page")) {
-    // Load user data from localStorage
-    const user = JSON.parse(localStorage.getItem("user")) || {
-      name: "Guest",
-      email: "guest@example.com",
-      mobile: "",
-      address: ""
-    };
-
-    document.getElementById("userName").textContent = user.name;
-    document.getElementById("userEmail").textContent = user.email;
-    document.getElementById("userMobile").value = user.mobile;
-    document.getElementById("userAddress").value = user.address;
-
-    // Save updated info
-    document.getElementById("saveAccount").addEventListener("click", () => {
-      user.mobile = document.getElementById("userMobile").value;
-      user.address = document.getElementById("userAddress").value;
-      localStorage.setItem("user", JSON.stringify(user));
-      alert("Account info updated successfully ✅");
-    });
-  }
-});
-
 //checkout page payment logic//
 
 document.addEventListener("DOMContentLoaded", () => {
-  if (!document.querySelector("#page-checkout")) return; // Only run on checkout.html
+  if (!document.querySelector("#page-checkout")) return; // Only on checkout.html
 
   const emailInput = document.getElementById("coEmail");
   const paymentSelect = document.getElementById("coPayment");
@@ -609,87 +583,98 @@ document.addEventListener("DOMContentLoaded", () => {
   const checkoutMsg = document.getElementById("checkoutMsg");
   const coTotalEl = document.getElementById("coTotal");
 
-  // Example: assume total comes from localStorage (already filled by your script)
+  // Load cart and calculate total
   const cart = JSON.parse(localStorage.getItem("cart")) || [];
   const total = cart.reduce((sum, i) => sum + i.price * i.qty, 0);
   coTotalEl.textContent = "₹" + total;
 
-  // 1. Email format validation
+  // ========== 1. Validate email & COD ==========
   placeOrderBtn.addEventListener("click", (e) => {
     const emailVal = emailInput.value.trim();
     const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
     if (!regex.test(emailVal)) {
       e.preventDefault();
       flashMessage("❌ Please enter a valid email address", "error");
       return;
     }
 
-    // 4. COD restriction validation
     if (paymentSelect.value === "cod" && total > 500) {
       e.preventDefault();
-      flashMessage("⚠️ COD is not available for orders above ₹500", "error");
+      flashMessage("⚠️ COD not allowed above ₹500", "error");
       return;
     }
 
-    // Otherwise allow order
-    flashMessage("✅ Order placed successfully", "success");
-    // your existing order placing logic here...
+    flashMessage("✅ Order placed successfully!", "success");
+    // 👉 your backend order API call goes here
   });
 
-  // 2. Disable COD if total > 500
+  // ========== 2. Disable COD if > 500 ==========
   if (total > 500) {
     const codOption = paymentSelect.querySelector('option[value="cod"]');
-    if (codOption) {
-      codOption.disabled = true;
-      if (paymentSelect.value === "cod") {
-        paymentSelect.value = "upi"; // fallback
-      }
-    }
+    if (codOption) codOption.disabled = true;
+    if (paymentSelect.value === "cod") paymentSelect.value = "upi";
   }
 
-  // 3. Payment popup button (for UPI/Card)
+  // ========== 3. Payment Popup (Razorpay) ==========
   const paymentPopupBtn = document.createElement("button");
   paymentPopupBtn.textContent = "Pay Now";
   paymentPopupBtn.className = "btn accent";
   paymentSelect.insertAdjacentElement("afterend", paymentPopupBtn);
 
-  paymentPopupBtn.addEventListener("click", async () => {
+  paymentPopupBtn.addEventListener("click", () => {
     if (paymentSelect.value === "cod") {
       flashMessage("❌ COD does not need online payment", "error");
       return;
     }
-
-    try {
-      // 🚀 Razorpay integration (dummy example)
-      const result = await openRazorpay(total);
-      if (result.success) {
-        flashMessage("💳 Payment successful", "success");
-        placeOrderBtn.click(); // auto trigger order
-      } else {
-        flashMessage("❌ Payment failed, try again", "error");
-      }
-    } catch (err) {
-      flashMessage("❌ Payment could not be started", "error");
-    }
+    openRazorpay(total);
   });
 
-  // Utility: flash message
+  // ========== Utility: Razorpay checkout ==========
+  function openRazorpay(amount) {
+    const options = {
+      key: "rzp_test_1234567890abcdef", // ⚠️ Replace with your real key later
+      amount: amount * 100, // amount in paise
+      currency: "INR",
+      name: "Unicleya TechFix",
+      description: "Order Payment",
+      image: "https://yourcdn.com/logo.png", // optional
+      handler: function (response) {
+        // Payment success
+        console.log("Payment ID:", response.razorpay_payment_id);
+        flashMessage("💳 Payment successful!", "success");
+
+        // Auto trigger order placement
+        setTimeout(() => {
+          placeOrderBtn.click();
+        }, 500);
+      },
+      prefill: {
+        name: document.getElementById("coName")?.value || "Customer",
+        email: emailInput.value || "test@example.com",
+        contact: document.getElementById("coMobile")?.value || "9999999999",
+      },
+      theme: { color: "#3399cc" },
+      modal: {
+        ondismiss: function () {
+          flashMessage("⚠️ Payment popup closed", "error");
+        },
+      },
+    };
+
+    const rzp1 = new Razorpay(options);
+    rzp1.open();
+  }
+
+  // ========== Utility: Flash messages ==========
   function flashMessage(msg, type) {
     checkoutMsg.style.display = "block";
     checkoutMsg.textContent = msg;
     checkoutMsg.className = type === "error" ? "error-msg" : "success-msg";
     setTimeout(() => (checkoutMsg.style.display = "none"), 4000);
   }
-
-  // Dummy Razorpay handler (replace with real integration)
-  function openRazorpay(amount) {
-    return new Promise((resolve) => {
-      // Here you integrate Razorpay checkout script
-      // For demo, simulate success after 2s
-      setTimeout(() => resolve({ success: true }), 2000);
-    });
-  }
 });
+
 
 // ===== Nav & overlay =====
 const hamburger = $('#hamburger');
