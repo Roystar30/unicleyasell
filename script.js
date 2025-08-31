@@ -488,33 +488,6 @@ if(tabs.length){
 $('#toLogin')?.addEventListener('click', ()=> tabs[0]?.click());
 switchToRegister?.addEventListener('click', (e)=>{ e.preventDefault(); tabs[1]?.click(); });
 
-// new account page script
-document.addEventListener("DOMContentLoaded", () => {
-  if (document.body.classList.contains("account-page")) {
-    // Load user data from localStorage
-    const user = JSON.parse(localStorage.getItem("user")) || {
-      name: "Guest",
-      email: "guest@example.com",
-      mobile: "",
-      address: ""
-    };
-
-    document.getElementById("userName").textContent = user.name;
-    document.getElementById("userEmail").textContent = user.email;
-    document.getElementById("userMobile").value = user.mobile;
-    document.getElementById("userAddress").value = user.address;
-
-    // Save updated info
-    document.getElementById("saveAccount").addEventListener("click", () => {
-      user.mobile = document.getElementById("userMobile").value;
-      user.address = document.getElementById("userAddress").value;
-      localStorage.setItem("user", JSON.stringify(user));
-      alert("Account info updated successfully ✅");
-    });
-  }
-});
-
-
 // Step1 submit
 loginStep1?.addEventListener('submit', (e)=>{
   e.preventDefault();
@@ -596,6 +569,125 @@ registerForm?.addEventListener('submit', async (e)=>{
     if(registerError){ registerError.textContent = 'Network error. Try again.'; registerError.style.display='block'; }
   }finally{
     if(btn) btn.disabled = false;
+  }
+});
+
+// new account page script
+document.addEventListener("DOMContentLoaded", () => {
+  if (document.body.classList.contains("account-page")) {
+    // Load user data from localStorage
+    const user = JSON.parse(localStorage.getItem("user")) || {
+      name: "Guest",
+      email: "guest@example.com",
+      mobile: "",
+      address: ""
+    };
+
+    document.getElementById("userName").textContent = user.name;
+    document.getElementById("userEmail").textContent = user.email;
+    document.getElementById("userMobile").value = user.mobile;
+    document.getElementById("userAddress").value = user.address;
+
+    // Save updated info
+    document.getElementById("saveAccount").addEventListener("click", () => {
+      user.mobile = document.getElementById("userMobile").value;
+      user.address = document.getElementById("userAddress").value;
+      localStorage.setItem("user", JSON.stringify(user));
+      alert("Account info updated successfully ✅");
+    });
+  }
+});
+
+//checkout page payment logic//
+
+document.addEventListener("DOMContentLoaded", () => {
+  if (!document.querySelector("#page-checkout")) return; // Only run on checkout.html
+
+  const emailInput = document.getElementById("coEmail");
+  const paymentSelect = document.getElementById("coPayment");
+  const placeOrderBtn = document.getElementById("placeOrderBtn");
+  const checkoutMsg = document.getElementById("checkoutMsg");
+  const coTotalEl = document.getElementById("coTotal");
+
+  // Example: assume total comes from localStorage (already filled by your script)
+  const cart = JSON.parse(localStorage.getItem("cart")) || [];
+  const total = cart.reduce((sum, i) => sum + i.price * i.qty, 0);
+  coTotalEl.textContent = "₹" + total;
+
+  // 1. Email format validation
+  placeOrderBtn.addEventListener("click", (e) => {
+    const emailVal = emailInput.value.trim();
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!regex.test(emailVal)) {
+      e.preventDefault();
+      flashMessage("❌ Please enter a valid email address", "error");
+      return;
+    }
+
+    // 4. COD restriction validation
+    if (paymentSelect.value === "cod" && total > 500) {
+      e.preventDefault();
+      flashMessage("⚠️ COD is not available for orders above ₹500", "error");
+      return;
+    }
+
+    // Otherwise allow order
+    flashMessage("✅ Order placed successfully", "success");
+    // your existing order placing logic here...
+  });
+
+  // 2. Disable COD if total > 500
+  if (total > 500) {
+    const codOption = paymentSelect.querySelector('option[value="cod"]');
+    if (codOption) {
+      codOption.disabled = true;
+      if (paymentSelect.value === "cod") {
+        paymentSelect.value = "upi"; // fallback
+      }
+    }
+  }
+
+  // 3. Payment popup button (for UPI/Card)
+  const paymentPopupBtn = document.createElement("button");
+  paymentPopupBtn.textContent = "Pay Now";
+  paymentPopupBtn.className = "btn accent";
+  paymentSelect.insertAdjacentElement("afterend", paymentPopupBtn);
+
+  paymentPopupBtn.addEventListener("click", async () => {
+    if (paymentSelect.value === "cod") {
+      flashMessage("❌ COD does not need online payment", "error");
+      return;
+    }
+
+    try {
+      // 🚀 Razorpay integration (dummy example)
+      const result = await openRazorpay(total);
+      if (result.success) {
+        flashMessage("💳 Payment successful", "success");
+        placeOrderBtn.click(); // auto trigger order
+      } else {
+        flashMessage("❌ Payment failed, try again", "error");
+      }
+    } catch (err) {
+      flashMessage("❌ Payment could not be started", "error");
+    }
+  });
+
+  // Utility: flash message
+  function flashMessage(msg, type) {
+    checkoutMsg.style.display = "block";
+    checkoutMsg.textContent = msg;
+    checkoutMsg.className = type === "error" ? "error-msg" : "success-msg";
+    setTimeout(() => (checkoutMsg.style.display = "none"), 4000);
+  }
+
+  // Dummy Razorpay handler (replace with real integration)
+  function openRazorpay(amount) {
+    return new Promise((resolve) => {
+      // Here you integrate Razorpay checkout script
+      // For demo, simulate success after 2s
+      setTimeout(() => resolve({ success: true }), 2000);
+    });
   }
 });
 
