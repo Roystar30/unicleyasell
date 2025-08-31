@@ -342,9 +342,11 @@ function renderSuggestions(){
 
 // ===== Auth Modal (2-step) =====
 function openAuth(){
+  closeAccountPopup();
   if(!authModal) return;
   authModal.style.display='flex';
-  setTimeout(()=> authModal.classList.add('show'), 10);
+  requestAnimationFrame(()=> authModal.classList.add('show'));
+  // setTimeout(()=> authModal.classList.add('show'), 10);
   if(loginStep1){ loginStep1.style.display='block'; }
   if(loginStep2){ loginStep2.style.display='none'; }
   if(loginError){ loginError.style.display='none'; }
@@ -382,17 +384,37 @@ function updateHeaderAuthUI(){
 // Toggle Account Popup
 function toggleAccountPopup(show) {
   const accountPopup = document.getElementById("accountPopup");
-  const authModal = document.getElementById("authModal");
+    if (!accountPopup) return;
+  // const authModal = document.getElementById("authModal");
 
   if (show) {
-    // Close auth modal if it's open
-    if (authModal && authModal.style.display === "block") {
-      authModal.style.display = "none";
-    }
-    accountPopup.style.display = "flex"; // or "block" depending on CSS
+    // Always close auth when opening account (Safari-safe)
+    closeAuth();
+    accountPopup.style.display = "flex";
+    accountPopup.classList.add("show");
+    renderAccount();
   } else {
-    accountPopup.style.display = "none";
+    closeAccountPopup();
   }
+}
+
+//   if (show) {
+//     // Close auth modal if it's open
+//     if (authModal && authModal.style.display === "block") {
+//       authModal.style.display = "none";
+//     }
+//     accountPopup.style.display = "flex"; // or "block" depending on CSS
+//   } else {
+//     accountPopup.style.display = "none";
+//   }
+// }
+
+// --- Helpers (add near your other utils) ---
+function closeAccountPopup() {
+  const accountPopup = document.getElementById("accountPopup");
+  if (!accountPopup) return;
+  accountPopup.classList.remove("show");
+  accountPopup.style.display = "none";
 }
 
 // Example: hook to Account button
@@ -434,10 +456,13 @@ function renderAccount(){
   }else{
     accountArea.innerHTML = `<div class="small">You are not signed in.</div>
       <div style="margin-top:8px"><button class="btn" id="openAuthFromAcc">Sign in / Register</button></div>`;
-   $('#openAuthFromAcc')?.addEventListener('click', () => {
-  toggleAccountPopup(false); // 🔴 close "My Account" popup
-  openAuth();                // 🟢 then open Sign in/Register modal
+
+$('#openAuthFromAcc')?.addEventListener('click', (e) => {
+  e.preventDefault();
+  closeAccountPopup(); // close "My Account" first (works reliably in Safari)
+  openAuth();          // then open the Sign in/Register modal
 });
+
   }
 }
 
@@ -557,9 +582,20 @@ closeNav?.addEventListener('click', ()=>{ hamburger?.classList.remove('active');
 overlay?.addEventListener('click', ()=>{ hamburger?.classList.remove('active'); sideNav?.classList.remove('show'); overlay?.classList.remove('show'); });
 
 // Header buttons (on MPA, we use links; keep hooks just in case)
+// cartBtn?.addEventListener('click', ()=> window.location.href='cart.html');
+// accountBtn?.addEventListener('click', ()=> toggleAccountPopup(true));
+// loginBtn?.addEventListener('click', openAuth);
+// Header buttons (Safari/Chrome safe)
 cartBtn?.addEventListener('click', ()=> window.location.href='cart.html');
 accountBtn?.addEventListener('click', ()=> toggleAccountPopup(true));
-loginBtn?.addEventListener('click', openAuth);
+
+// Always close Account before opening Auth
+loginBtn?.addEventListener('click', (e)=> { 
+  e.preventDefault(); 
+  closeAccountPopup(); 
+  openAuth(); 
+});
+
 
 // Cart footer buttons
 $('#clearCartBtn')?.addEventListener('click', ()=>{ cart=[]; persistCart(); renderCart(); });
