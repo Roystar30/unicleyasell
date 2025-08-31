@@ -373,12 +373,32 @@ function updateHeaderAuthUI(){
   }
 }
 // popup function for account details
+// function toggleAccountPopup(show) {
+//   const popup = document.getElementById("accountPopup");
+//   if (!popup) return;
+//   popup.style.display = show ? "flex" : "none";
+//   if (show) renderAccount(); // fill details when opened
+// }
+// Toggle Account Popup
 function toggleAccountPopup(show) {
-  const popup = document.getElementById("accountPopup");
-  if (!popup) return;
-  popup.style.display = show ? "flex" : "none";
-  if (show) renderAccount(); // fill details when opened
+  const accountPopup = document.getElementById("accountPopup");
+  const authModal = document.getElementById("authModal");
+
+  if (show) {
+    // Close auth modal if it's open
+    if (authModal && authModal.style.display === "block") {
+      authModal.style.display = "none";
+    }
+    accountPopup.style.display = "flex"; // or "block" depending on CSS
+  } else {
+    accountPopup.style.display = "none";
+  }
 }
+
+// Example: hook to Account button
+document.getElementById("accountBtn").addEventListener("click", () => {
+  toggleAccountPopup(true);
+});
 
 
 // Render account
