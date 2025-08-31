@@ -7,37 +7,46 @@
   <script defer src="script.js"></script>
 </head>
 <body>
-  <!-- ===== HEADER (same as index.html) ===== -->
-  <header class="header">
-    <div class="header-left">
-      <!-- 🔽 Replace with your actual logo markup from index.html -->
-      <a href="index.html">
-        <img src="logo.png" alt="Unicleya Logo" class="logo">
-      </a>
-    </div>
-    <div class="header-right">
-      <button class="pill" id="accountBtn">Account</button>
-      <button class="pill primary" id="cartBtn" onclick="window.location.href='cart.html'">
-        Cart <span id="cartCount">(0)</span>
-      </button>
-    </div>
-  </header>
+  <!-- ===== HEADER (reuse from index.html) ===== -->
+  <!-- 🔽 Paste your full header code from index.html -->
+  <header>
+      <div class="header-content">
+        <div class="header-left">
+          <button class="hamburger-btn" id="hamburger" aria-label="Open menu">
+            <span></span><span></span><span></span>
+          </button>
+          <div class="logo" id="homeLogo" tabindex="0" role="button" aria-label="Go to home">
+            <a href="index.html" class="brand" aria-label="Unicleya home">
+              <img src="logo.png" alt="Unicleya logo" class="brand-logo" width="512" height="160" decoding="async" fetchpriority="high" loading="eager" />
+            </a>
+            <div>
+              <h1>Unicleya</h1>
+              <div class="tagline">Second‑hand tech market</div>
+            </div>
+          </div>
+        </div>
 
-  <!-- ===== ACCOUNT POPUP (required for accountBtn to work) ===== -->
-  <div id="accountPopup" class="popup hidden">
-    <div class="popup-content">
-      <button class="close" onclick="toggleAccountPopup(false)">×</button>
-      <h3>Your Account</h3>
-      <p>Manage your profile, orders, and settings here.</p>
-      <button id="loginBtn" class="pill primary">Login</button>
-    </div>
-  </div>
+        <div class="search-container">
+          <form id="searchForm" class="search-bar" role="search">
+            <input id="searchInput" placeholder="Search devices, e.g. iPhone 12, Dell" aria-label="Search products" autocomplete="off" />
+            <button id="clearSearch" class="clear-btn" type="button" title="Clear search" aria-label="Clear search">×</button>
+            <button id="doSearch" class="search-btn" type="submit" aria-label="Search">Search</button>
+          </form>
+          <div id="searchSuggestions" class="search-suggestions" role="listbox" aria-label="Recent & popular searches"></div>
+        </div>
 
+        <div class="header-right">
+          <button class="pill" id="accountBtn">Account</button>
+          <button class="pill primary" id="cartBtn" onclick="window.location.href='cart.html'">Cart <span id="cartCount" class="cart-badge">0</span></button>
+          <button class="pill" id="loginBtn">Sign in</button>
+        </div>
+      </div>
+    </header>
   <!-- ===== MAIN CART CONTENT ===== -->
   <main class="cart-page">
     <h2>Your Shopping Cart</h2>
     
-    <!-- Cart items injected by script.js -->
+    <!-- Cart items injected dynamically -->
     <div id="cartItems" class="cart-items"></div>
 
     <!-- Cart summary -->
@@ -50,10 +59,25 @@
     </div>
   </main>
 
-  <!-- ===== FOOTER ===== -->
-  <footer class="footer">
-    <p>© 2025 Unicleya • Refurbished Tech Marketplace</p>
-  </footer>
-
+  <!-- ===== FOOTER (reuse from index.html) ===== -->
+  <!-- 🔽 Paste your full footer code from index.html -->
+ <footer class="site-footer">
+      <div class="footer-inner">
+        <div class="footer-left">
+          <img src="logo.png" alt="" class="footer-logo" />
+          <div>
+            <strong>Unicleya</strong><br/>
+            <span class="muted">Refurbished tech marketplace</span>
+          </div>
+        </div>
+        <div class="footer-right">
+          <a href="#" aria-label="Twitter" class="soc">X</a>
+          <a href="#" aria-label="Instagram" class="soc">IG</a>
+          <a href="#" aria-label="Facebook" class="soc">Fb</a>
+          <a href="#" aria-label="LinkedIn" class="soc">In</a>
+        </div>
+      </div>
+      <div class="footer-bottom">© <span id="year2"></span> Unicleya. All rights reserved.</div>
+    </footer>
 </body>
 </html>
