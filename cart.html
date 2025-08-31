@@ -3,6 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <title>Your Cart - Unicleya</title>
+    <link rel="stylesheet" href="style.css">
+  </head>
+  <body>
+  <div class="page-wrapper">
+    <div class="progress" id="progress"></div>
+
    <header>
       <div class="header-content">
         <div class="header-left">
@@ -36,9 +42,93 @@
         </div>
       </div>
     </header>
-  <link rel="stylesheet" href="style.css">
-</head>
-<body>
+    <!-- Account Popup -->
+    <div id="accountPopup" class="popup-overlay">
+      <div class="popup-box">
+        <button class="close-btn" onclick="toggleAccountPopup(false)">×</button>
+        <h2>My Account</h2>
+        <div id="accountArea"></div>
+      </div>
+    </div>
+    <!-- Side Nav -->
+    <aside class="side-nav" id="sideNav" aria-hidden="true">
+      <div class="side-nav-header">
+        <div class="side-brand">
+          <img src="logo.png" alt="Unicleya" />
+          <strong>Unicleya</strong>
+        </div>
+        <button class="pill" id="closeNav">Close</button>
+      </div>
+      <nav class="side-nav-content">
+        <a class="nav-item active" href="index.html">🏠 Home</a>
+        <a class="nav-item" href="cart.html">🛒 Cart</a>
+        <a class="nav-item" href="checkout.html">💳 Checkout</a>
+        <a class="nav-item" href="account.html">👤 Account</a>
+      </nav>
+      <div class="side-nav-footer">
+        <a class="nav-item contact" href="mailto:support@unicleya.com">✉️ Contact us</a>
+        <small>© <span id="year"></span> Unicleya</small>
+      </div>
+    </aside>
+    <div class="overlay" id="overlay"></div>
+
+    <div class="loader-spot" id="loader" aria-hidden="true">
+      <div class="spinner"></div>
+      <div class="loader-text">Working...</div>
+    </div>
+
+    <!-- Auth Modal (2-step) -->
+    <div class="modal" id="authModal" style="display:none" aria-modal="true" role="dialog" aria-labelledby="authTitle">
+      <div class="sheet">
+        <button class="close-x" id="authClose" aria-label="Close">×</button>
+        <div class="tabs" role="tablist">
+          <div class="tab active" data-tab="login" role="tab" aria-selected="true">Sign in</div>
+          <div class="tab" data-tab="register" role="tab" aria-selected="false">Create account</div>
+        </div>
+
+        <div id="tabBody">
+          <!-- Step 1: Identifier -->
+          <form id="loginFormStep1" autocomplete="on">
+            <h3 id="authTitle" class="modal-title">Welcome back</h3>
+            <p class="modal-sub">Enter email or mobile</p>
+            <div class="form-row"><input name="identifier" type="text" placeholder="Email or mobile number" required></div>
+            <div class="form-actions between">
+              <button class="btn" type="submit" id="loginNext">Continue</button>
+              <a href="#" id="switchToRegister" class="small">New here? Create account</a>
+            </div>
+            <div class="small err" id="loginError" style="display:none"></div>
+          </form>
+
+          <!-- Step 2: Password -->
+          <form id="loginFormStep2" style="display:none">
+            <h3 class="modal-title">Enter password</h3>
+            <p class="modal-sub" id="whoLabel"></p>
+            <div class="form-row"><input name="password" type="password" placeholder="Password" required minlength="6"></div>
+            <div class="form-actions between">
+              <button class="btn" type="submit" id="loginSubmit">Sign in</button>
+              <a href="#" class="small" id="forgotPass">Forgot password?</a>
+            </div>
+            <div class="small err" id="loginError2" style="display:none"></div>
+          </form>
+
+          <!-- register form -->
+          <form id="registerForm" style="display:none">
+            <h3 class="modal-title">Create account</h3>
+            <div class="form-row"><input name="name" type="text" placeholder="Full name" required></div>
+            <div class="form-row"><input name="email" type="email" placeholder="Email" required></div>
+            <div class="form-row"><input name="phone" type="tel" placeholder="Mobile (optional)"></div>
+            <div class="form-row"><input name="password" type="password" placeholder="Create password" required minlength="6"></div>
+            <div class="form-row"><input name="confirm" type="password" placeholder="Re-enter password" required minlength="6"></div>
+            <div class="form-actions">
+              <button class="btn" type="submit" id="registerSubmit">Create account</button>
+              <button type="button" class="ghost" id="toLogin">Back to login</button>
+            </div>
+            <div class="small err" id="registerError" style="display:none"></div>
+          </form>
+        </div>
+      </div>
+    </div>
+
   <!-- ===== HEADER (reuse from index.html) ===== -->
   <!-- 🔽 Paste your full header code from index.html -->
  
