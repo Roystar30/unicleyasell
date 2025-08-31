@@ -1,29 +1,44 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Your Account - Unicleya</title>
-  <link rel="stylesheet" href="stylesheet.css"/>
-</head>
-<body>
-  <div class="page-wrapper">
-    <div class="progress" id="progress"></div>
-    <header>
-      <div class="header-content">
-        <div class="logo" id="homeLogo" tabindex="0" role="button">
-          <h2>Account</h2>
-        </div>
-        <div class="header-right">
-          <button class="pill primary" id="cartBtn">Cart <span id="cartCount" class="cart-badge">0</span></button>
-        </div>
-      </div>
-    </header>
+  <link rel="stylesheet" href="stylesheet.css">
 
-    <main>
-      <section id="accountArea"></section>
-    </main>
-  </div>
+</head>
+  <body>
+    <header id="header"></header>
+
+
+  <main class="account-page">
+    <h2>My Account</h2>
+
+    <section class="account-info">
+      <div class="info-card">
+        <h3>Personal Information</h3>
+        <p><strong>Name:</strong> <span id="userName">Guest</span></p>
+        <p><strong>Email:</strong> <span id="userEmail">guest@example.com</span></p>
+      </div>
+
+      <div class="info-card">
+        <h3>Contact Details</h3>
+        <label>
+          Mobile:
+          <input type="text" id="userMobile" value="">
+        </label>
+        <label>
+          Address:
+          <textarea id="userAddress"></textarea>
+        </label>
+        <button class="pill primary" id="saveAccount">Save Changes</button>
+      </div>
+    </section>
+  </main>
+
+  <!-- Reuse your site footer -->
+  <footer id="footer"></footer>
+
   <script src="script.js"></script>
 </body>
 </html>
