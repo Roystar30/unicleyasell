@@ -1,44 +1,149 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Your Account - Unicleya</title>
-  <link rel="stylesheet" href="stylesheet.css">
-
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>My Account - Unicleya</title>
+  <link rel="stylesheet" href="stylesheet.css" />
 </head>
-  <body>
-    <header id="header"></header>
+<body>
+  <div class="page-wrapper">
+    <div class="progress" id="progress"></div>
 
+    <!-- ===== Header (same as index.html) ===== -->
+    <header>
+      <div class="header-content">
+        <div class="header-left">
+          <button class="hamburger-btn" id="hamburger" aria-label="Open menu">
+            <span></span><span></span><span></span>
+          </button>
+          <div class="logo" id="homeLogo" tabindex="0" role="button">
+            <a href="index.html" class="brand">
+              <img src="logo.png" alt="Unicleya logo" class="brand-logo" width="512" height="160" />
+            </a>
+            <div>
+              <h1>Unicleya</h1>
+              <div class="tagline">Second-hand tech market</div>
+            </div>
+          </div>
+        </div>
 
-  <main class="account-page">
-    <h2>My Account</h2>
+        <div class="search-container">
+          <form id="searchForm" class="search-bar" role="search">
+            <input id="searchInput" placeholder="Search devices, e.g. iPhone 12, Dell" aria-label="Search" />
+            <button id="clearSearch" class="clear-btn" type="button">×</button>
+            <button id="doSearch" class="search-btn" type="submit">Search</button>
+          </form>
+          <div id="searchSuggestions" class="search-suggestions"></div>
+        </div>
 
-    <section class="account-info">
-      <div class="info-card">
-        <h3>Personal Information</h3>
-        <p><strong>Name:</strong> <span id="userName">Guest</span></p>
-        <p><strong>Email:</strong> <span id="userEmail">guest@example.com</span></p>
+        <div class="header-right">
+          <button class="pill" id="accountBtn">Account</button>
+          <button class="pill primary" id="cartBtn" onclick="window.location.href='cart.html'">Cart <span id="cartCount" class="cart-badge">0</span></button>
+          <button class="pill" id="loginBtn">Sign in</button>
+        </div>
       </div>
+    </header>
 
-      <div class="info-card">
-        <h3>Contact Details</h3>
-        <label>
-          Mobile:
-          <input type="text" id="userMobile" value="">
-        </label>
-        <label>
-          Address:
-          <textarea id="userAddress"></textarea>
-        </label>
-        <button class="pill primary" id="saveAccount">Save Changes</button>
+    <!-- ===== Side nav (same as index.html) ===== -->
+    <aside class="side-nav" id="sideNav" aria-hidden="true">
+      <div class="side-nav-header">
+        <div class="side-brand">
+          <img src="logo.png" alt="Unicleya" />
+          <strong>Unicleya</strong>
+        </div>
+        <button class="pill" id="closeNav">Close</button>
       </div>
-    </section>
-  </main>
+      <nav class="side-nav-content">
+        <a class="nav-item" href="index.html">🏠 Home</a>
+        <a class="nav-item" href="cart.html">🛒 Cart</a>
+        <a class="nav-item" href="checkout.html">💳 Checkout</a>
+        <a class="nav-item active" href="account.html">👤 Account</a>
+      </nav>
+      <div class="side-nav-footer">
+        <a class="nav-item contact" href="mailto:support@unicleya.com">✉️ Contact us</a>
+        <small>© <span id="year"></span> Unicleya</small>
+      </div>
+    </aside>
+    <div class="overlay" id="overlay"></div>
 
-  <!-- Reuse your site footer -->
-  <footer id="footer"></footer>
+    <!-- ===== Main account content ===== -->
+    <main class="main-content">
+      <div class="container">
+        <section id="page-account" class="page show account-page">
+          <h2 class="section-title">My Account</h2>
 
+          <div class="account-info">
+            <div class="info-card">
+              <h3>Personal Information</h3>
+              <p><strong>Name:</strong> <span id="userName">Guest</span></p>
+              <p><strong>Email:</strong> <span id="userEmail">guest@example.com</span></p>
+            </div>
+
+            <div class="info-card">
+              <h3>Contact Details</h3>
+              <label>
+                Mobile:
+                <input type="text" id="userMobile" value="">
+              </label>
+              <label>
+                Address:
+                <textarea id="userAddress"></textarea>
+              </label>
+              <button class="pill primary" id="saveAccount">Save Changes</button>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <!-- ===== Footer (same as index.html) ===== -->
+    <footer class="site-footer">
+      <div class="footer-inner">
+        <div class="footer-left">
+          <img src="logo.png" alt="" class="footer-logo" />
+          <div>
+            <strong>Unicleya</strong><br/>
+            <span class="muted">Refurbished tech marketplace</span>
+          </div>
+        </div>
+        <div class="footer-right">
+          <a href="#" class="soc">X</a>
+          <a href="#" class="soc">IG</a>
+          <a href="#" class="soc">Fb</a>
+          <a href="#" class="soc">In</a>
+        </div>
+      </div>
+      <div class="footer-bottom">© <span id="year2"></span> Unicleya. All rights reserved.</div>
+    </footer>
+  </div>
+
+  <!-- Scripts -->
   <script src="script.js"></script>
+  <script>
+    // Account page specific script
+    document.addEventListener("DOMContentLoaded", () => {
+      if (document.querySelector(".account-page")) {
+        const user = JSON.parse(localStorage.getItem("user")) || {
+          name: "Guest",
+          email: "guest@example.com",
+          mobile: "",
+          address: ""
+        };
+
+        document.getElementById("userName").textContent = user.name;
+        document.getElementById("userEmail").textContent = user.email;
+        document.getElementById("userMobile").value = user.mobile;
+        document.getElementById("userAddress").value = user.address;
+
+        document.getElementById("saveAccount").addEventListener("click", () => {
+          user.mobile = document.getElementById("userMobile").value;
+          user.address = document.getElementById("userAddress").value;
+          localStorage.setItem("user", JSON.stringify(user));
+          alert("✅ Account info updated successfully");
+        });
+      }
+    });
+  </script>
 </body>
 </html>
