@@ -124,34 +124,22 @@
     </div>
 
     <!-- ===== Main account content ===== -->
-    <main class="main-content">
-      <div class="container">
-        <section id="page-account" class="page show account-page">
-          <h2 class="section-title">My Account</h2>
+   <main class="container">
+    <h2>👤 My Account</h2>
 
-          <div class="account-info">
-            <div class="info-card">
-              <h3>Personal Information</h3>
-              <p><strong>Name:</strong> <span id="userName">Guest</span></p>
-              <p><strong>Email:</strong> <span id="userEmail">guest@example.com</span></p>
-            </div>
+    <div class="account-box">
+      <p><strong>Name:</strong> <span id="userName">—</span></p>
+      <p><strong>Email:</strong> <span id="userEmail">—</span></p>
 
-            <div class="info-card">
-              <h3>Contact Details</h3>
-              <label>
-                Mobile:
-                <input type="text" id="userMobile" value="">
-              </label>
-              <label>
-                Address:
-                <textarea id="userAddress"></textarea>
-              </label>
-              <button class="pill primary" id="saveAccount">Save Changes</button>
-            </div>
-          </div>
-        </section>
-      </div>
-    </main>
+      <label for="userMobile">Mobile</label>
+      <input type="tel" id="userMobile" placeholder="Enter mobile number">
+
+      <label for="userAddress">Address</label>
+      <textarea id="userAddress" placeholder="Enter your address"></textarea>
+
+      <button id="saveAccount" class="btn primary" style="margin-top:12px;">Save Changes</button>
+    </div>
+  </main>
 
     <!-- ===== Footer (same as index.html) ===== -->
     <footer class="site-footer">
