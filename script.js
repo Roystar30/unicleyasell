@@ -572,26 +572,71 @@ registerForm?.addEventListener('submit', async (e)=>{
   }
 });
 
-//checkout page payment logic//
+//checkout page payment logic
+// ================== GLOBAL CART ==================
+let cart = JSON.parse(localStorage.getItem('unicleya_cart') || '[]');
 
+function persistCart() {
+  localStorage.setItem('unicleya_cart', JSON.stringify(cart));
+  updateCartBadge();
+}
+
+function updateCartBadge() {
+  const badge = document.getElementById("cartBadge");
+  if (badge) badge.textContent = cart.reduce((sum, i) => sum + i.qty, 0);
+}
+
+function renderCheckout() {
+  const summaryEl = document.querySelector("#checkoutSummary");
+  const totalEl = document.getElementById("coTotal");
+  if (!summaryEl || !totalEl) return;
+
+  summaryEl.innerHTML = "";
+  let total = 0;
+
+  if (cart.length === 0) {
+    summaryEl.innerHTML = "<p>Your cart is empty.</p>";
+    totalEl.textContent = "₹0";
+    return;
+  }
+
+  cart.forEach((item) => {
+    const row = document.createElement("div");
+    row.className = "checkout-row";
+    row.innerHTML = `
+      <span>${item.name} × ${item.qty}</span>
+      <span>₹${item.price * item.qty}</span>
+    `;
+    summaryEl.appendChild(row);
+    total += item.price * item.qty;
+  });
+
+  totalEl.textContent = "₹" + total;
+}
+
+function placeOrder() {
+  cart = [];
+  persistCart();
+  renderCheckout();
+  flashMessage("✅ Order placed successfully!", "success");
+}
+
+// ================== CHECKOUT LOGIC ==================
 document.addEventListener("DOMContentLoaded", () => {
-  if (!document.querySelector("#page-checkout")) return; // Only on checkout.html
+  if (!document.querySelector("#page-checkout")) return;
 
   const emailInput = document.getElementById("coEmail");
   const paymentSelect = document.getElementById("coPayment");
   const placeOrderBtn = document.getElementById("placeOrderBtn");
   const checkoutMsg = document.getElementById("checkoutMsg");
-  const coTotalEl = document.getElementById("coTotal");
 
-  // Load cart and calculate total
-  const cart = JSON.parse(localStorage.getItem("cart")) || [];
-  const total = cart.reduce((sum, i) => sum + i.price * i.qty, 0);
-  coTotalEl.textContent = "₹" + total;
+  renderCheckout(); // initial load
 
-  // ========== 1. Validate email & COD ==========
+  // ----- Place Order button -----
   placeOrderBtn.addEventListener("click", (e) => {
     const emailVal = emailInput.value.trim();
     const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const total = cart.reduce((sum, i) => sum + i.price * i.qty, 0);
 
     if (!regex.test(emailVal)) {
       e.preventDefault();
@@ -605,49 +650,24 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    flashMessage("✅ Order placed successfully!", "success");
-    // 👉 your backend order API call goes here
-  });
-
-  // ========== 2. Disable COD if > 500 ==========
-  if (total > 500) {
-    const codOption = paymentSelect.querySelector('option[value="cod"]');
-    if (codOption) codOption.disabled = true;
-    if (paymentSelect.value === "cod") paymentSelect.value = "upi";
-  }
-
-  // ========== 3. Payment Popup (Razorpay) ==========
-  const paymentPopupBtn = document.createElement("button");
-  paymentPopupBtn.textContent = "Pay Now";
-  paymentPopupBtn.className = "btn accent";
-  paymentSelect.insertAdjacentElement("afterend", paymentPopupBtn);
-
-  paymentPopupBtn.addEventListener("click", () => {
     if (paymentSelect.value === "cod") {
-      flashMessage("❌ COD does not need online payment", "error");
-      return;
+      placeOrder();
+    } else {
+      openRazorpay(total);
     }
-    openRazorpay(total);
   });
 
-  // ========== Utility: Razorpay checkout ==========
+  // ----- Razorpay integration -----
   function openRazorpay(amount) {
     const options = {
-      key: "rzp_test_1234567890abcdef", // ⚠️ Replace with your real key later
-      amount: amount * 100, // amount in paise
+      key: "rzp_test_1234567890abcdef", // Replace later
+      amount: amount * 100,
       currency: "INR",
       name: "Unicleya TechFix",
       description: "Order Payment",
-      image: "https://yourcdn.com/logo.png", // optional
       handler: function (response) {
-        // Payment success
-        console.log("Payment ID:", response.razorpay_payment_id);
         flashMessage("💳 Payment successful!", "success");
-
-        // Auto trigger order placement
-        setTimeout(() => {
-          placeOrderBtn.click();
-        }, 500);
+        placeOrder();
       },
       prefill: {
         name: document.getElementById("coName")?.value || "Customer",
@@ -655,18 +675,12 @@ document.addEventListener("DOMContentLoaded", () => {
         contact: document.getElementById("coMobile")?.value || "9999999999",
       },
       theme: { color: "#3399cc" },
-      modal: {
-        ondismiss: function () {
-          flashMessage("⚠️ Payment popup closed", "error");
-        },
-      },
     };
-
-    const rzp1 = new Razorpay(options);
-    rzp1.open();
+    const rzp = new Razorpay(options);
+    rzp.open();
   }
 
-  // ========== Utility: Flash messages ==========
+  // ----- Utility: flash messages -----
   function flashMessage(msg, type) {
     checkoutMsg.style.display = "block";
     checkoutMsg.textContent = msg;
@@ -674,7 +688,6 @@ document.addEventListener("DOMContentLoaded", () => {
     setTimeout(() => (checkoutMsg.style.display = "none"), 4000);
   }
 });
-
 
 // ===== Nav & overlay =====
 const hamburger = $('#hamburger');
