@@ -277,7 +277,8 @@ function renderCartTotals(){
 //   updateCartBadge();
 // }
 
-===== Checkout =====
+// ===== Checkout =====
+
 function renderCheckout(){
   if(!coItems || !coTotal) return;
   const { subtotal, shipping, total } = cartTotals();
@@ -376,52 +377,78 @@ finally{
 }
 
   // ==== Razorpay Checkout ====
+
+document.addEventListener("DOMContentLoaded", () => {
+  const placeOrderBtn = document.getElementById("placeOrderBtn");
+  if (placeOrderBtn) {
+    placeOrderBtn.addEventListener("click", startRazorpayCheckout);
+  }
+});
+
 async function startRazorpayCheckout() {
-  if (cart.length === 0) {
-    toast('Your cart is empty');
+  if (!cart || cart.length === 0) {
+    alert("Your cart is empty");
     return;
   }
 
   const { total } = cartTotals();
-  const amount = total * 100; // in paise (₹1 = 100 paise)
+  const amount = total * 100; // convert to paise
 
-  try {
-    const options = {
-      key: "rzp_test_1234567890abcdef", // 🔑 Replace later with live key
-      amount: amount.toString(),
-      currency: "INR",
-      name: "Unicleya",
-      description: "Order Payment",
-      handler: async function (response) {
-        // 🔹 Integrating with placeOrder()
-        await placeOrder("Razorpay", {
-          paymentId: response.razorpay_payment_id,
-          orderId: response.razorpay_order_id,
-          signature: response.razorpay_signature,
-        });
-      },
-      prefill: {
-        name: $("#coName")?.value || "Guest",
-        email: $("#coEmail")?.value || "guest@example.com",
-        contact: $("#coPhone")?.value || "",
-      },
-      theme: { color: "#3399cc" },
-    };
+  // 1. Create Razorpay order from backend
+  const orderResponse = await fetch(`${API_BASE}/payments/create-order`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ amount })
+  });
 
-    const rzp = new Razorpay(options);
-    rzp.open();
-
-    rzp.on("payment.failed", function (response) {
-      toast("Payment failed: " + response.error.description);
-      console.error("Razorpay failed:", response.error);
-    });
-
-  } catch (err) {
-    console.error("Razorpay error:", err);
-    toast("Something went wrong while starting payment");
+  const orderData = await orderResponse.json();
+  if (!orderData.success) {
+    alert("Failed to create order");
+    return;
   }
-}
 
+  // 2. Razorpay options
+  const options = {
+    key: "rzp_test_1234567890abcdef", // replace later with live
+    amount: orderData.order.amount,
+    currency: orderData.order.currency,
+    order_id: orderData.order.id,
+    name: "Unicleya",
+    description: "Order Payment",
+    handler: async function (response) {
+      // 3. Send payment details back to backend for verification + save order
+      const verifyResponse = await fetch(`${API_BASE}/payments/verify`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          razorpay_payment_id: response.razorpay_payment_id,
+          razorpay_order_id: response.razorpay_order_id,
+          razorpay_signature: response.razorpay_signature,
+          cart,
+          total
+        })
+      });
+
+      const verifyData = await verifyResponse.json();
+      if (verifyData.success) {
+        alert("Payment successful ✅");
+        localStorage.removeItem("cart"); // clear cart
+        window.location.href = "orders.html"; // redirect to orders page
+      } else {
+        alert("Payment verification failed ❌");
+      }
+    },
+    prefill: {
+      name: document.querySelector("#coName")?.value || "Guest",
+      email: document.querySelector("#coEmail")?.value || "guest@example.com",
+      contact: document.querySelector("#coPhone")?.value || ""
+    },
+    theme: { color: "#3399cc" }
+  };
+
+  const rzp = new Razorpay(options);
+  rzp.open();
+}
 // ===== Search (with history + suggestions) =====
 function saveRecentSearch(q){
   q = (q||'').trim();
