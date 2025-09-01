@@ -1,166 +1,153 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>My Account - Unicleya</title>
-  <link rel="stylesheet" href="stylesheet.css" />
+  <link rel="stylesheet" href="styles.css"> <!-- your existing css -->
+  <style>
+    body {
+      font-family: "Segoe UI", Arial, sans-serif;
+      margin: 0;
+      background: #f9fafb;
+      color: #333;
+    }
+    header {
+      background: #111;
+      color: #fff;
+      padding: 1rem;
+      text-align: center;
+    }
+    .account-header {
+      padding: 1.5rem;
+      text-align: center;
+      background: #fff;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    }
+    .account-header h1 {
+      margin: 0;
+      font-size: 1.8rem;
+    }
+    .account-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 20px;
+      padding: 2rem;
+      max-width: 1200px;
+      margin: auto;
+    }
+    .card {
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      padding: 2rem 1.5rem;
+      text-align: center;
+      transition: transform 0.2s, box-shadow 0.2s;
+      cursor: pointer;
+    }
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 18px rgba(0,0,0,0.12);
+    }
+    .card-icon {
+      font-size: 2.2rem;
+      margin-bottom: 1rem;
+      color: #111;
+    }
+    .card h3 {
+      margin-bottom: 0.6rem;
+      font-size: 1.2rem;
+      color: #222;
+    }
+    .card p {
+      font-size: 0.95rem;
+      color: #666;
+      min-height: 40px;
+    }
+    .card a {
+      display: inline-block;
+      margin-top: 1rem;
+      padding: 8px 16px;
+      background: #111;
+      color: #fff;
+      border-radius: 6px;
+      text-decoration: none;
+      font-size: 0.9rem;
+    }
+    .card a:hover {
+      background: #333;
+    }
+    footer {
+      background: #111;
+      color: #fff;
+      text-align: center;
+      padding: 1rem;
+      margin-top: 2rem;
+    }
+  </style>
 </head>
 <body>
-  <div class="page-wrapper">
-    <div class="progress" id="progress"></div>
+  <header>
+    <h1>Unicleya</h1>
+  </header>
 
-    <!-- ===== Header (same as index.html) ===== -->
-    <header>
-      <div class="header-content">
-        <div class="header-left">
-          <button class="hamburger-btn" id="hamburger" aria-label="Open menu">
-            <span></span><span></span><span></span>
-          </button>
-          <div class="logo" id="homeLogo" tabindex="0" role="button">
-            <a href="index.html" class="brand">
-              <img src="logo.png" alt="Unicleya logo" class="brand-logo" width="512" height="160" />
-            </a>
-            <div>
-              <h1>Unicleya</h1>
-              <div class="tagline">Second-hand tech market</div>
-            </div>
-          </div>
-        </div>
-
-        <div class="search-container">
-          <form id="searchForm" class="search-bar" role="search">
-            <input id="searchInput" placeholder="Search devices, e.g. iPhone 12, Dell" aria-label="Search" />
-            <button id="clearSearch" class="clear-btn" type="button">×</button>
-            <button id="doSearch" class="search-btn" type="submit">Search</button>
-          </form>
-          <div id="searchSuggestions" class="search-suggestions"></div>
-        </div>
-
-        <div class="header-right">
-          <button class="pill" id="accountBtn">Account</button>
-          <button class="pill primary" id="cartBtn" onclick="window.location.href='cart.html'">Cart <span id="cartCount" class="cart-badge">0</span></button>
-          <button class="pill" id="loginBtn">Sign in</button>
-        </div>
-      </div>
-    </header>
-
-    <!-- ===== Side nav (same as index.html) ===== -->
-    <aside class="side-nav" id="sideNav" aria-hidden="true">
-      <div class="side-nav-header">
-        <div class="side-brand">
-          <img src="logo.png" alt="Unicleya" />
-          <strong>Unicleya</strong>
-        </div>
-        <button class="pill" id="closeNav">Close</button>
-      </div>
-      <nav class="side-nav-content">
-        <a class="nav-item" href="index.html">🏠 Home</a>
-        <a class="nav-item" href="cart.html">🛒 Cart</a>
-        <a class="nav-item" href="checkout.html">💳 Checkout</a>
-        <a class="nav-item active" href="account.html">👤 Account</a>
-      </nav>
-      <div class="side-nav-footer">
-        <a class="nav-item contact" href="mailto:support@unicleya.com">✉️ Contact us</a>
-        <small>© <span id="year"></span> Unicleya</small>
-      </div>
-    </aside>
-    <div class="overlay" id="overlay"></div>
-    <div class="loader-spot" id="loader" aria-hidden="true">
-      <div class="spinner"></div>
-      <div class="loader-text">Working...</div>
-    </div>
-
-    <!-- Auth Modal (2-step) -->
-    <div class="modal" id="authModal" style="display:none" aria-modal="true" role="dialog" aria-labelledby="authTitle">
-      <div class="sheet">
-        <button class="close-x" id="authClose" aria-label="Close">×</button>
-        <div class="tabs" role="tablist">
-          <div class="tab active" data-tab="login" role="tab" aria-selected="true">Sign in</div>
-          <div class="tab" data-tab="register" role="tab" aria-selected="false">Create account</div>
-        </div>
-
-        <div id="tabBody">
-          <!-- Step 1: Identifier -->
-          <form id="loginFormStep1" autocomplete="on">
-            <h3 id="authTitle" class="modal-title">Welcome back</h3>
-            <p class="modal-sub">Enter email or mobile</p>
-            <div class="form-row"><input name="identifier" type="text" placeholder="Email or mobile number" required></div>
-            <div class="form-actions between">
-              <button class="btn" type="submit" id="loginNext">Continue</button>
-              <a href="#" id="switchToRegister" class="small">New here? Create account</a>
-            </div>
-            <div class="small err" id="loginError" style="display:none"></div>
-          </form>
-
-          <!-- Step 2: Password -->
-          <form id="loginFormStep2" style="display:none">
-            <h3 class="modal-title">Enter password</h3>
-            <p class="modal-sub" id="whoLabel"></p>
-            <div class="form-row"><input name="password" type="password" placeholder="Password" required minlength="6"></div>
-            <div class="form-actions between">
-              <button class="btn" type="submit" id="loginSubmit">Sign in</button>
-              <a href="#" class="small" id="forgotPass">Forgot password?</a>
-            </div>
-            <div class="small err" id="loginError2" style="display:none"></div>
-          </form>
-
-          <!-- register form -->
-          <form id="registerForm" style="display:none">
-            <h3 class="modal-title">Create account</h3>
-            <div class="form-row"><input name="name" type="text" placeholder="Full name" required></div>
-            <div class="form-row"><input name="email" type="email" placeholder="Email" required></div>
-            <div class="form-row"><input name="phone" type="tel" placeholder="Mobile (optional)"></div>
-            <div class="form-row"><input name="password" type="password" placeholder="Create password" required minlength="6"></div>
-            <div class="form-row"><input name="confirm" type="password" placeholder="Re-enter password" required minlength="6"></div>
-            <div class="form-actions">
-              <button class="btn" type="submit" id="registerSubmit">Create account</button>
-              <button type="button" class="ghost" id="toLogin">Back to login</button>
-            </div>
-            <div class="small err" id="registerError" style="display:none"></div>
-          </form>
-        </div>
-      </div>
-    </div>
-
-    <!-- ===== Main account content ===== -->
-   <main class="container">
-    <h2>👤 My Account</h2>
-
-    <div class="account-box">
-      <p><strong>Name:</strong> <span id="userName">—</span></p>
-      <p><strong>Email:</strong> <span id="userEmail">—</span></p>
-
-      <label for="userMobile">Mobile</label>
-      <input type="tel" id="userMobile" placeholder="Enter mobile number">
-
-      <label for="userAddress">Address</label>
-      <textarea id="userAddress" placeholder="Enter your address"></textarea>
-
-      <button id="saveAccount" class="btn primary" style="margin-top:12px;">Save Changes</button>
-    </div>
-  </main>
-
-    <!-- ===== Footer (same as index.html) ===== -->
-    <footer class="site-footer">
-      <div class="footer-inner">
-        <div class="footer-left">
-          <img src="logo.png" alt="" class="footer-logo" />
-          <div>
-            <strong>Unicleya</strong><br/>
-            <span class="muted">Refurbished tech marketplace</span>
-          </div>
-        </div>
-        <div class="footer-right">
-          <a href="#" class="soc">X</a>
-          <a href="#" class="soc">IG</a>
-          <a href="#" class="soc">Fb</a>
-          <a href="#" class="soc">In</a>
-        </div>
-      </div>
-      <div class="footer-bottom">© <span id="year2"></span> Unicleya. All rights reserved.</div>
-    </footer>
+  <div class="account-header">
+    <h1>My Account Dashboard</h1>
+    <p>Manage your profile, orders, and requests all in one place</p>
   </div>
- <script src="script.js"></script>
+
+  <section class="account-container">
+    <!-- My Account -->
+    <div class="card" onclick="location.href='/profile.html'">
+      <div class="card-icon">👤</div>
+      <h3>My Account</h3>
+      <p>View and edit your profile details, addresses, and preferences.</p>
+      <a href="/profile.html">Go</a>
+    </div>
+
+    <!-- My Orders -->
+    <div class="card" onclick="location.href='/orders.html'">
+      <div class="card-icon">📦</div>
+      <h3>My Orders</h3>
+      <p>Check your past and current orders, and manage them easily.</p>
+      <a href="/orders.html">Go</a>
+    </div>
+
+    <!-- Returns & Refunds -->
+    <div class="card" onclick="location.href='/returns.html'">
+      <div class="card-icon">💸</div>
+      <h3>Returns & Refunds</h3>
+      <p>Track your return requests and refunds in one place.</p>
+      <a href="/returns.html">Go</a>
+    </div>
+
+    <!-- Track Orders -->
+    <div class="card" onclick="location.href='/track.html'">
+      <div class="card-icon">🚚</div>
+      <h3>Track Orders</h3>
+      <p>Track your shipments and deliveries in real-time.</p>
+      <a href="/track.html">Go</a>
+    </div>
+
+    <!-- Complaints & Requests -->
+    <div class="card" onclick="location.href='/complaints.html'">
+      <div class="card-icon">📝</div>
+      <h3>Complaints & Requests</h3>
+      <p>Submit and manage complaints or special service requests.</p>
+      <a href="/complaints.html">Go</a>
+    </div>
+
+    <!-- Support / Help Center -->
+    <div class="card" onclick="location.href='/support.html'">
+      <div class="card-icon">💬</div>
+      <h3>Help & Support</h3>
+      <p>Need assistance? Contact support or check FAQs.</p>
+      <a href="/support.html">Go</a>
+    </div>
+  </section>
+
+  <footer>
+    <p>&copy; 2025 Unicleya. All rights reserved.</p>
+  </footer>
 </body>
 </html>
