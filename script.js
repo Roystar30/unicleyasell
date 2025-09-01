@@ -378,13 +378,6 @@ finally{
 
   // ==== Razorpay Checkout ====
 
-document.addEventListener("DOMContentLoaded", () => {
-  const placeOrderBtn = document.getElementById("placeOrderBtn");
-  if (placeOrderBtn) {
-    placeOrderBtn.addEventListener("click", startRazorpayCheckout);
-  }
-});
-
 async function startRazorpayCheckout() {
   if (!cart || cart.length === 0) {
     alert("Your cart is empty");
@@ -432,7 +425,8 @@ async function startRazorpayCheckout() {
       const verifyData = await verifyResponse.json();
       if (verifyData.success) {
         alert("Payment successful ✅");
-        localStorage.removeItem("cart"); // clear cart
+       cart = [];
+        persistCart(); // clear cart
         window.location.href = "orders.html"; // redirect to orders page
       } else {
         alert("Payment verification failed ❌");
