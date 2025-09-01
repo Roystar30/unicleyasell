@@ -165,7 +165,7 @@ function renderListings(){
   $$('#listings [data-action="buy"]').forEach(btn=>{
     btn.addEventListener('click', ()=> { addToCart(btn.dataset.id); window.location.href='checkout.html'; });
   });
-
+  
   // recent views capture (save first 10)
   $$('#listings .product-card').forEach(card=>{
     card.addEventListener('click', ()=>{
@@ -265,12 +265,19 @@ function cartTotals(){
 
 function renderCartTotals(){
   if(!cartTotalEl) return;
-  const { total } = cartTotals();
-  cartTotalEl.textContent = formatCurrency(total);
+  const { subtotal, shipping, total } = cartTotals();
+  cartTotalEl.textContent = `${formatCurrency(total)} (Subtotal: ${formatCurrency(subtotal)} + Shipping: ${formatCurrency(shipping)})`;
   updateCartBadge();
 }
 
-// ===== Checkout =====
+// function renderCartTotals(){
+//   if(!cartTotalEl) return;
+//   const { total } = cartTotals();
+//   cartTotalEl.textContent = formatCurrency(total);
+//   updateCartBadge();
+// }
+
+===== Checkout =====
 function renderCheckout(){
   if(!coItems || !coTotal) return;
   const { subtotal, shipping, total } = cartTotals();
@@ -283,28 +290,136 @@ function renderCheckout(){
   `<div style="margin-top:8px">Subtotal: ${formatCurrency(subtotal)} • Shipping: ${formatCurrency(shipping)}</div>`;
 }
 
-async function placeOrder(){
-  if(cart.length===0){ toast('Your cart is empty'); return; }
-  const name = $('#coName')?.value?.trim();
-  const phone = $('#coPhone')?.value?.trim();
-  const email = $('#coEmail')?.value?.trim();
-  const address = $('#coAddress')?.value?.trim();
-  const payment = $('#coPayment')?.value;
-  if(!name || !phone || !email || !address){ toast('Please fill all details'); return; }
+async function placeOrder(method, paymentData = {}) {
+  try {
+    const order = {
+      items: cart,
+      total: cartTotals().total,
+      customer: {
+        name: $("#coName")?.value || "Guest",
+        email: $("#coEmail")?.value || "guest@example.com",
+        phone: $("#coPhone")?.value || "",
+        address: $("#coAddress")?.value || "",
+      },
+      payment: {
+        method,
+        ...paymentData
+      }
+    };
 
-  const order = { name, phone, email, address, payment, items: cart, totals: cartTotals() };
+    const res = await fetch(`${API_BASE}/orders`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(order),
+    });
 
-  try{
-    showLoader();
-    const data = await apiFetch('/api/orders', { method:'POST', body: JSON.stringify(order) });
-    const msgEl = $('#checkoutMsg');
-    if(msgEl){
-      msgEl.style.display='block';
-      msgEl.textContent = data?.message || 'Order placed! We\'ll contact you shortly.';
+    const data = await res.json();
+    if (data.success) {
+      toast("Order placed successfully!");
+      cart = [];
+      saveCart();
+      window.location.href = "account.html"; // redirect to account/orders page
+    } else {
+      toast("Order failed: " + data.error);
     }
-    cart = []; persistCart(); updateCartBadge();
-  }catch(err){ console.error(err); toast('Could not place order: ' + err.message); }
-  finally{ hideLoader(); }
+  } catch (err) {
+    console.error("Order error:", err);
+    toast("Something went wrong placing order");
+  }
+}
+
+// async function placeOrder(method="COD", paymentResp={}){
+//   if(cart.length===0){ toast('Your cart is empty'); return; }
+//   const name = $('#coName')?.value?.trim();
+//   const phone = $('#coPhone')?.value?.trim();
+//   const email = $('#coEmail')?.value?.trim();
+//   const address = $('#coAddress')?.value?.trim();
+//   const payment = $('#coPayment')?.value;
+//   if(!name || !phone || !email || !address){ toast('Please fill all details'); return; }
+
+//  const order = {
+//     name: $('#coName')?.value?.trim(),
+//     phone: $('#coPhone')?.value?.trim(),
+//     email: $('#coEmail')?.value?.trim(),
+//     address: $('#coAddress')?.value?.trim(),
+//     payment: method,
+//     razorpay: paymentResp, // store payment id/signature
+//     items: cart,
+//     totals: cartTotals(),
+//   };
+  
+// try {
+//   showLoader();
+//   const data = await apiFetch('/api/orders', { 
+//     method:'POST', 
+//     body: JSON.stringify(order) 
+//   });
+
+//   const msgEl = $('#checkoutMsg');
+//   if (msgEl) {
+//     msgEl.style.display = 'block';
+//     msgEl.textContent = data?.message || 'Order placed! We\'ll contact you shortly.';
+//   } else {
+//     toast(data?.message || 'Order placed!');
+//   }
+
+//   cart = []; 
+//   persistCart(); 
+//   updateCartBadge();
+// }
+// catch(err){ 
+//   console.error(err); 
+//   toast('Could not place order: ' + err.message); 
+// }
+finally{ 
+  hideLoader(); 
+}
+
+  // ==== Razorpay Checkout ====
+async function startRazorpayCheckout() {
+  if (cart.length === 0) {
+    toast('Your cart is empty');
+    return;
+  }
+
+  const { total } = cartTotals();
+  const amount = total * 100; // in paise (₹1 = 100 paise)
+
+  try {
+    const options = {
+      key: "rzp_test_1234567890abcdef", // 🔑 Replace later with live key
+      amount: amount.toString(),
+      currency: "INR",
+      name: "Unicleya",
+      description: "Order Payment",
+      handler: async function (response) {
+        // 🔹 Integrating with placeOrder()
+        await placeOrder("Razorpay", {
+          paymentId: response.razorpay_payment_id,
+          orderId: response.razorpay_order_id,
+          signature: response.razorpay_signature,
+        });
+      },
+      prefill: {
+        name: $("#coName")?.value || "Guest",
+        email: $("#coEmail")?.value || "guest@example.com",
+        contact: $("#coPhone")?.value || "",
+      },
+      theme: { color: "#3399cc" },
+    };
+
+    const rzp = new Razorpay(options);
+    rzp.open();
+
+    rzp.on("payment.failed", function (response) {
+      toast("Payment failed: " + response.error.description);
+      console.error("Razorpay failed:", response.error);
+    });
+
+  } catch (err) {
+    console.error("Razorpay error:", err);
+    toast("Something went wrong while starting payment");
+  }
 }
 
 // ===== Search (with history + suggestions) =====
@@ -572,9 +687,6 @@ registerForm?.addEventListener('submit', async (e)=>{
   }
 });
 
-//checkout page payment logic
-
-
 // ===== Nav & overlay =====
 const hamburger = $('#hamburger');
 const sideNav = $('#sideNav');
@@ -598,6 +710,9 @@ loginBtn?.addEventListener('click', (e)=> {
   closeAccountPopup(); 
   openAuth(); 
 });
+
+//checkout page payment logic
+
 
 // Cart footer buttons
 $('#clearCartBtn')?.addEventListener('click', ()=>{ cart=[]; persistCart(); renderCart(); });
