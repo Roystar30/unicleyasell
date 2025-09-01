@@ -720,7 +720,7 @@ $('#toCheckoutBtn')?.addEventListener('click', ()=> window.location.href='checko
 
 // Checkout buttons
 $('#backToCart')?.addEventListener('click', ()=> window.location.href='cart.html');
-$('#placeOrderBtn')?.addEventListener('click', placeOrder);
+$("#placeOrderBtn")?.addEventListener("click", startRazorpayCheckout);
 
 // Home logo
 $('#homeLogo')?.addEventListener('click', ()=> window.location.href='index.html');
