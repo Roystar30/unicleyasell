@@ -270,12 +270,6 @@ function renderCartTotals(){
   updateCartBadge();
 }
 
-// function renderCartTotals(){
-//   if(!cartTotalEl) return;
-//   const { total } = cartTotals();
-//   cartTotalEl.textContent = formatCurrency(total);
-//   updateCartBadge();
-// }
 
 // ===== Checkout =====
 
@@ -317,8 +311,8 @@ async function placeOrder(method, paymentData = {}) {
     const data = await res.json();
     if (data.success) {
       toast("Order placed successfully!");
-      cart = [];
-      saveCart();
+     cart = [];
+persistCart();
       window.location.href = "account.html"; // redirect to account/orders page
     } else {
       toast("Order failed: " + data.error);
@@ -327,53 +321,9 @@ async function placeOrder(method, paymentData = {}) {
     console.error("Order error:", err);
     toast("Something went wrong placing order");
   }
-}
-
-// async function placeOrder(method="COD", paymentResp={}){
-//   if(cart.length===0){ toast('Your cart is empty'); return; }
-//   const name = $('#coName')?.value?.trim();
-//   const phone = $('#coPhone')?.value?.trim();
-//   const email = $('#coEmail')?.value?.trim();
-//   const address = $('#coAddress')?.value?.trim();
-//   const payment = $('#coPayment')?.value;
-//   if(!name || !phone || !email || !address){ toast('Please fill all details'); return; }
-
-//  const order = {
-//     name: $('#coName')?.value?.trim(),
-//     phone: $('#coPhone')?.value?.trim(),
-//     email: $('#coEmail')?.value?.trim(),
-//     address: $('#coAddress')?.value?.trim(),
-//     payment: method,
-//     razorpay: paymentResp, // store payment id/signature
-//     items: cart,
-//     totals: cartTotals(),
-//   };
-  
-// try {
-//   showLoader();
-//   const data = await apiFetch('/api/orders', { 
-//     method:'POST', 
-//     body: JSON.stringify(order) 
-//   });
-
-//   const msgEl = $('#checkoutMsg');
-//   if (msgEl) {
-//     msgEl.style.display = 'block';
-//     msgEl.textContent = data?.message || 'Order placed! We\'ll contact you shortly.';
-//   } else {
-//     toast(data?.message || 'Order placed!');
-//   }
-
-//   cart = []; 
-//   persistCart(); 
-//   updateCartBadge();
-// }
-// catch(err){ 
-//   console.error(err); 
-//   toast('Could not place order: ' + err.message); 
-// }
-finally{ 
+  finally{ 
   hideLoader(); 
+  }
 }
 
   // ==== Razorpay Checkout ====
@@ -427,7 +377,7 @@ async function startRazorpayCheckout() {
         alert("Payment successful ✅");
        cart = [];
         persistCart(); // clear cart
-        window.location.href = "orders.html"; // redirect to orders page
+        window.location.href = "account.html"; // redirect to orders page
       } else {
         alert("Payment verification failed ❌");
       }
@@ -510,13 +460,7 @@ function updateHeaderAuthUI(){
     if(accountBtn) accountBtn.textContent = 'Account';
   }
 }
-// popup function for account details
-// function toggleAccountPopup(show) {
-//   const popup = document.getElementById("accountPopup");
-//   if (!popup) return;
-//   popup.style.display = show ? "flex" : "none";
-//   if (show) renderAccount(); // fill details when opened
-// }
+
 // Toggle Account Popup
 function toggleAccountPopup(show) {
   const accountPopup = document.getElementById("accountPopup");
@@ -534,16 +478,6 @@ function toggleAccountPopup(show) {
   }
 }
 
-//   if (show) {
-//     // Close auth modal if it's open
-//     if (authModal && authModal.style.display === "block") {
-//       authModal.style.display = "none";
-//     }
-//     accountPopup.style.display = "flex"; // or "block" depending on CSS
-//   } else {
-//     accountPopup.style.display = "none";
-//   }
-// }
 
 // --- Helpers (add near your other utils) ---
 function closeAccountPopup() {
@@ -552,12 +486,6 @@ function closeAccountPopup() {
   accountPopup.classList.remove("show");
   accountPopup.style.display = "none";
 }
-
-// Example: hook to Account button
-document.getElementById("accountBtn").addEventListener("click", () => {
-  toggleAccountPopup(true);
-});
-
 
 // Render account
 function renderAccount(){
@@ -717,11 +645,6 @@ hamburger?.addEventListener('click', ()=>{ hamburger.classList.toggle('active');
 closeNav?.addEventListener('click', ()=>{ hamburger?.classList.remove('active'); sideNav?.classList.remove('show'); overlay?.classList.remove('show'); });
 overlay?.addEventListener('click', ()=>{ hamburger?.classList.remove('active'); sideNav?.classList.remove('show'); overlay?.classList.remove('show'); });
 
-// Header buttons (on MPA, we use links; keep hooks just in case)
-// cartBtn?.addEventListener('click', ()=> window.location.href='cart.html');
-// accountBtn?.addEventListener('click', ()=> toggleAccountPopup(true));
-// loginBtn?.addEventListener('click', openAuth);
-// Header buttons (Safari/Chrome safe)
 cartBtn?.addEventListener('click', ()=> window.location.href='cart.html');
 accountBtn?.addEventListener('click', ()=> toggleAccountPopup(true));
 
