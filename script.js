@@ -725,44 +725,6 @@ categoryWrap?.addEventListener('click', (e)=>{
   renderListings();
 });
 
-// product model and close functins when card is open
-
-const productModal = document.getElementById('productModal');
-const productClose = document.getElementById('productClose');
-
-listingsRoot.addEventListener('click', (e) => {
-  const card = e.target.closest('.product-card');
-  if (card && !e.target.closest('button')) { // Avoid triggering on buttons like Add to Cart
-    const productId = card.dataset.id;
-    const product = allProducts.find(p => (p._id || p.id) === productId);
-    if (product) {
-      document.getElementById('productTitle').textContent = product.title || product.name;
-      document.getElementById('productDesc').textContent = product.desc || product.description;
-      const specsList = document.getElementById('productSpecs');
-      specsList.innerHTML = (product.specs || []).map(spec => `<li>${escapeHtml(spec)}</li>`).join('');
-      const gallery = document.getElementById('productGallery');
-      const images = product.images || [product.image || 'https://placehold.co/300x300/png?text=No+Image'];
-      gallery.innerHTML = `<img src="${escapeHtml(images[0])}" class="gallery-main" alt="${escapeHtml(product.title || '')}"> 
-        <div class="gallery-thumbs">${images.map((img, i) => `<img src="${escapeHtml(img)}" class="gallery-thumb ${i===0?'active':''}" data-index="${i}">`).join('')}</div>`;
-      // Thumbnail click handler
-      gallery.querySelectorAll('.gallery-thumb').forEach(thumb => {
-        thumb.addEventListener('click', () => {
-          gallery.querySelectorAll('.gallery-thumb').forEach(t => t.classList.remove('active'));
-          thumb.classList.add('active');
-          gallery.querySelector('.gallery-main').src = thumb.src;
-        });
-      });
-      productModal.style.display = 'flex';
-    }
-  }
-});
-
-productClose.addEventListener('click', () => { productModal.style.display = 'none'; });
-
-const maximizeProduct = document.getElementById('maximizeProduct');
-maximizeProduct.addEventListener('click', () => {
-  productModal.classList.toggle('fullscreen');
-});
 // ===== Init =====
 (function init(){
   const y = new Date().getFullYear();
