@@ -89,22 +89,22 @@
           <div class="tab active" data-tab="login" role="tab" aria-selected="true">Sign in</div>
           <div class="tab" data-tab="register" role="tab" aria-selected="false">Create account</div>
         </div>
-
-        <div class="modal" id="productModal" style="display:none" aria-modal="true" role="dialog">
-  <div class="sheet">
-    <button class="maximize-btn" id="maximizeProduct" aria-label="Maximize">⛶</button>
-    <button class="close-x" id="productClose" aria-label="Close">×</button>
-    <div id="productGallery" class="gallery"></div> <!-- For images -->
-    <h3 id="productTitle" class="modal-title"></h3>
-    <p id="productDesc" class="modal-sub"></p>
-    <ul id="productSpecs" class="specs-list"></ul>
-    <div class="product-actions">
-      <button class="btn buy-btn">Buy Now</button>
-      <button class="btn cart-btn">Add to Cart</button>
-    </div>
+<div class="view-sort-bar">
+  <div class="view-options">
+    <button class="view-btn" data-view="grid">🔳 Grid</button>
+    <button class="view-btn" data-view="list">📋 List</button>
+    <button class="view-btn" data-view="columns">🗂 Columns</button>
+    <button class="view-btn" data-view="gallery">🖼 Gallery</button>
+  </div>
+  <div class="sort-options">
+    <select id="sortSelect">
+      <option value="newest">Newest</option>
+      <option value="priceLow">Price: Low → High</option>
+      <option value="priceHigh">Price: High → Low</option>
+    </select>
   </div>
 </div>
-        
+
         <div id="tabBody">
           <!-- Step 1: Identifier -->
           <form id="loginFormStep1" autocomplete="on">
@@ -162,17 +162,6 @@
               <div class="chip" data-cat="accessories">🎧 Accessories</div>
             </div>
           </div>
-<div class="view-options">
-  <button class="view-btn active" data-view="icons">Icons</button>
-  <button class="view-btn" data-view="list">List</button>
-  <button class="view-btn" data-view="columns">Columns</button>
-  <button class="view-btn" data-view="gallery">Gallery</button>
-</div>
-          <select id="sortSelect" class="sort-dropdown">
-  <option value="price-asc">Price: Low to High</option>
-  <option value="price-desc">Price: High to Low</option>
-  <option value="newest">Newly Added</option>
-</select>
           <div id="resultMeta" class="result-meta"></div>
           <div class="grid" id="listings" aria-live="polite"></div>
         </section>
