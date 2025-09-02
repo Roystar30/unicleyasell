@@ -178,33 +178,6 @@ function renderListings(){
   });
 }
 
-
-// view action and listner of view buttons
-const viewButtons = document.querySelectorAll('.view-btn');
-const listings = document.getElementById('listings');
-
-viewButtons.forEach(btn => {
-  btn.addEventListener('click', () => {
-    viewButtons.forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    listings.className = 'grid'; // Reset to base class
-    listings.classList.add(btn.dataset.view);
-    // No need for re-render; CSS handles reflow
-  });
-});
-
-const sortSelect = document.getElementById('sortSelect');
-
-sortSelect.addEventListener('change', () => {
-  const sortValue = sortSelect.value;
-  allProducts.sort((a, b) => {
-    if (sortValue === 'price-asc') return (a.price || 0) - (b.price || 0);
-    if (sortValue === 'price-desc') return (b.price || 0) - (a.price || 0);
-    if (sortValue === 'newest') return new Date(b.addedDate || 0) - new Date(a.addedDate || 0); // Assume addedDate is a date string or timestamp
-  });
-  renderListings();
-});
-
 // ===== Cart (local + backend sync) =====
 function persistCart(){ localStorage.setItem('unicleya_cart', JSON.stringify(cart)); updateCartBadge(); }
 function updateCartBadge(){ if(!cartCountEl) return; const count = cart.reduce((a,c)=>a + Number(c.qty||0), 0); cartCountEl.textContent = String(count); }
