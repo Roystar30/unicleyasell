@@ -31,11 +31,17 @@ img{max-width:100%;display:block}
 
 /* Layout */
 .page-wrapper{display:flex;flex-direction:column;min-height:100vh}
-main{max-width:var(--max);margin:28px auto;padding:12px}
+main{
+  max-width: 100%;     /* allow full width */
+  margin: 28px auto;   /* vertical spacing, still centered horizontally */
+  padding: 20px;       /* breathing space */
+  width: 100%;
+}
 .container {
   max-width: 100%;  /* allow full width */
   margin: 0 auto;
   padding: 20px;
+  width: 100%;
 }
 
 /* Header */
