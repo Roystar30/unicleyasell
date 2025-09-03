@@ -166,7 +166,7 @@ function productToCard(p){
 }
 
 
-function getFiltered(){
+function getFilteredSorted(){
   const q = searchText.trim().toLowerCase();
   return allProducts.filter(p => {
     const inCat = activeCategory==='all' || (p.category||'').toLowerCase()===activeCategory;
@@ -178,7 +178,7 @@ function getFiltered(){
 
 function getSorted(items){
   const list = [...items];
-  const priceOf = (p)=> Number(p.price)||0;
+  const numericPrice = (p)=> Number(p.price)||0;
   const createdVal = (p)=>{
     // Prefer createdAt/addedAt if present; fallback to _id/id string for rough chronology
     const d = p.createdAt || p.addedAt;
@@ -191,14 +191,14 @@ function getSorted(items){
     return Number(id)||0;
   };
 
-  if (sortMode === 'price-asc') return list.sort((a,b)=> priceOf(a)-priceOf(b));
-  if (sortMode === 'price-desc') return list.sort((a,b)=> priceOf(b)-priceOf(a));
+  if (sortMode === 'price-asc') return list.sort((a,b)=> numericPrice(a) - numericPrice(b));
+  if (sortMode === 'price-desc') return list.sort((a,b)=> numericPrice(b) - numericPrice(a));
   // 'new' default: newest first
   return list.sort((a,b)=> createdVal(b)-createdVal(a));
 }
 
 function getFilteredSorted(){
-  return getSorted(getFiltered());
+  return getSorted(getFilteredSorted());
 }
 
 function numericPrice(p){
@@ -214,7 +214,7 @@ function numericPrice(p){
 
 function renderListings(){
   if(!listingsRoot || !resultMeta) return;
-  const items = getFiltered();
+  const items = getFilteredSorted();
   resultMeta.textContent = items.length ? `${items.length} item(s)` : 'No results';
   listingsRoot.innerHTML = items.map(productToCard).join('');
 
