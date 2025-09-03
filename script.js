@@ -166,51 +166,47 @@ function productToCard(p){
 }
 
 
-function getFilteredSorted(){
+function getFiltered(){
   const q = searchText.trim().toLowerCase();
   return allProducts.filter(p => {
-    const inCat = activeCategory==='all' || (p.category||'').toLowerCase()===activeCategory;
-    const text = `${p.title||''} ${p.desc||p.description||''}`.toLowerCase();
+    const inCat = activeCategory === 'all' || (p.category || '').toLowerCase() === activeCategory;
+    const text = `${p.title || ''} ${p.desc || p.description || ''}`.toLowerCase();
     const inSearch = !q || text.includes(q);
     return inCat && inSearch;
   });
-}
-
-function getFilteredSorted(items){
-  const list = [...items];
-  const numericPrice = (p)=> Number(p.price)||0;
-  const createdVal = (p)=>{
-    // Prefer createdAt/addedAt if present; fallback to _id/id string for rough chronology
-    const d = p.createdAt || p.addedAt;
-    if (d) {
-      const t = new Date(d).getTime();
-      return isNaN(t) ? 0 : t;
-    }
-    // crude fallback: parse last 6 chars numeric-ish from id, else keep original order
-    const id = (p._id || p.id || '').replace(/\D/g,'').slice(-6);
-    return Number(id)||0;
-  };
-
-  if (sortMode === 'price-asc') return list.sort((a,b)=> numericPrice(a) - numericPrice(b));
-  if (sortMode === 'price-desc') return list.sort((a,b)=> numericPrice(b) - numericPrice(a));
-  // 'new' default: newest first
-  return list.sort((a,b)=> createdVal(b)-createdVal(a));
-}
-
-function getFilteredSorted(){
-  return getSorted(getFilteredSorted());
 }
 
 function numericPrice(p){
   const raw = p.price;
   if (typeof raw === 'number') return raw;
   if (typeof raw === 'string'){
-    const n = Number(raw.replace(/[^\d.]/g,''));
+    const n = Number(raw.replace(/[^\d.]/g, ''));
     return isNaN(n) ? 0 : n;
   }
   return 0;
 }
 
+function getSorted(items){
+  const list = [...items];
+  const createdVal = (p)=>{
+    const d = p.createdAt || p.addedAt;
+    if (d) {
+      const t = new Date(d).getTime();
+      return isNaN(t) ? 0 : t;
+    }
+    const id = (p._id || p.id || '').replace(/\D/g,'').slice(-6);
+    return Number(id) || 0;
+  };
+
+  if (sortMode === 'price-asc') return list.sort((a,b)=> numericPrice(a) - numericPrice(b));
+  if (sortMode === 'price-desc') return list.sort((a,b)=> numericPrice(b) - numericPrice(a));
+  // default: newest first
+  return list.sort((a,b)=> createdVal(b) - createdVal(a));
+}
+
+function getFilteredSorted(){
+  return getSorted(getFiltered());
+}
 
 function renderListings(){
   if(!listingsRoot || !resultMeta) return;
@@ -218,7 +214,6 @@ function renderListings(){
   resultMeta.textContent = items.length ? `${items.length} item(s)` : 'No results';
   listingsRoot.innerHTML = items.map(productToCard).join('');
 
-  // 👇 Call it here
   applyViewMode();
 
   // Wire actions
@@ -231,29 +226,26 @@ function renderListings(){
       window.location.href='checkout.html'; 
     });
   });
-  
-// Open modal when clicking media/body; keep buttons working
-$$('#listings .product-card').forEach(card=>{
-  const id = card.dataset.id;
-  const p = findProductById(id) || {};
 
-  // Save recent views once
-  card.addEventListener('click', ()=>{
-    const entry = { id, title: p.title || p.name || 'Item', image: p.image || (p.images && p.images[0]) || '' };
-    recentViews = [entry, ...recentViews.filter(e=>e.id!==id)].slice(0,10);
-    localStorage.setItem('unicleya_recent_views', JSON.stringify(recentViews));
-  }, { once:true });
+  $$('#listings .product-card').forEach(card=>{
+    const id = card.dataset.id;
+    const p = findProductById(id) || {};
 
-  // Open modal when clicking non-button areas
-  card.querySelectorAll('[data-open]').forEach(hit=>{
-    hit.addEventListener('click', ()=>{
-      openProductModal(p);
+    card.addEventListener('click', ()=>{
+      const entry = { id, title: p.title || p.name || 'Item', image: p.image || (p.images && p.images[0]) || '' };
+      recentViews = [entry, ...recentViews.filter(e=>e.id!==id)].slice(0,10);
+      localStorage.setItem('unicleya_recent_views', JSON.stringify(recentViews));
+    }, { once:true });
+
+    card.querySelectorAll('[data-open]').forEach(hit=>{
+      hit.addEventListener('click', ()=>{
+        openProductModal(p);
+      });
     });
   });
-});
 }
 
-// 👉 Keep this OUTSIDE renderListings
+// 👉 Outside renderListings
 function applyViewMode(){
   if(!listingsRoot) return;
   listingsRoot.classList.remove('view-icons','view-list','view-columns','view-gallery');
@@ -263,6 +255,7 @@ function applyViewMode(){
   root.classList.remove('icons-mode','list-mode','columns-mode','gallery-mode');
   root.classList.add(`${viewMode}-mode`);
 }
+
 
 
 // ===== Cart (local + backend sync) =====
