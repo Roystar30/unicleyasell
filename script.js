@@ -9,7 +9,23 @@ const $$ = (s) => Array.from(document.querySelectorAll(s));
 const progress = $('#progress');
 const loader = $('#loader');
 const listingsRoot = $('#listings');
+const viewSortBar = $('#viewSortBar');
+const sortSelect = $('#sortSelect');
 const resultMeta = $('#resultMeta');
+
+// Product modal refs
+const pm = $('#productModal');
+const pmClose = $('#pmClose');
+const pmMax = $('#pmMax');
+const pmMainImg = $('#pmMainImg');
+const pmThumbs = $('#pmThumbs');
+const pmTitle = $('#pmTitle');
+const pmPrice = $('#pmPrice');
+const pmDesc = $('#pmDesc');
+const pmSpecs = $('#pmSpecs');
+const pmAdd = $('#pmAdd');
+const pmBuy = $('#pmBuy');
+
 const searchInput = $('#searchInput');
 const clearSearchBtn = $('#clearSearch');
 const searchForm = $('#searchForm');
@@ -47,6 +63,8 @@ const registerForm = $('#registerForm');
 // ===== State =====
 let allProducts = [];
 let activeCategory = 'all';
+let viewMode = 'icons';    // 'icons' | 'list' | 'columns' | 'gallery'
+let sortMode = 'new';      // 'new' | 'price-asc' | 'price-desc'
 let searchText = '';
 let cart = JSON.parse(localStorage.getItem('unicleya_cart') || '[]'); // [{id,qty,price,title,image}]
 let recentSearches = JSON.parse(localStorage.getItem('unicleya_recent_searches') || '[]'); // [q1,q2,...]
@@ -118,16 +136,21 @@ async function loadProducts(){
 function productToCard(p){
   const price = typeof p.price === 'number' ? `₹${p.price}` : (p.price || '—');
   const title = p.title || p.name || 'Untitled';
-  const desc = p.desc || p.description || '';
+  const fullDesc = p.desc || p.description || '';
+  const desc = fullDesc.length > 160 ? (fullDesc.slice(0,157) + '…') : fullDesc;
   const id = p._id || p.id || '';
   const image = p.image || (p.images && p.images[0]) || 'https://placehold.co/300x300/png?text=No+Image';
-
   const specs = [p.ram, p.storage, p.processor, p.condition].filter(Boolean).slice(0,4);
 
+  // data-images helps the modal quickly read images without extra API calls
+  const imagesAttr = (p.images && Array.isArray(p.images)) ? ` data-images='${JSON.stringify(p.images).replace(/'/g,"&#39;")}'` : '';
+
   return `
-    <div class="product-card" data-id="${escapeHtml(id)}">
-      <div class="product-media"><img src="${escapeHtml(image)}" alt="${escapeHtml(title)}" loading="lazy"></div>
-      <div class="product-body">
+    <div class="product-card" data-id="${escapeHtml(id)}"${imagesAttr}>
+      <div class="product-media" data-open>
+        <img src="${escapeHtml(image)}" alt="${escapeHtml(title)}" loading="lazy">
+      </div>
+      <div class="product-body" data-open>
         <h4 class="product-title" title="${escapeHtml(title)}">${escapeHtml(title)}</h4>
         <p class="product-desc">${escapeHtml(desc)}</p>
         <div class="specs">
@@ -142,6 +165,7 @@ function productToCard(p){
     </div>`;
 }
 
+
 function getFiltered(){
   const q = searchText.trim().toLowerCase();
   return allProducts.filter(p => {
@@ -152,31 +176,94 @@ function getFiltered(){
   });
 }
 
+function getSorted(items){
+  const list = [...items];
+  const priceOf = (p)=> Number(p.price)||0;
+  const createdVal = (p)=>{
+    // Prefer createdAt/addedAt if present; fallback to _id/id string for rough chronology
+    const d = p.createdAt || p.addedAt;
+    if (d) {
+      const t = new Date(d).getTime();
+      return isNaN(t) ? 0 : t;
+    }
+    // crude fallback: parse last 6 chars numeric-ish from id, else keep original order
+    const id = (p._id || p.id || '').replace(/\D/g,'').slice(-6);
+    return Number(id)||0;
+  };
+
+  if (sortMode === 'price-asc') return list.sort((a,b)=> priceOf(a)-priceOf(b));
+  if (sortMode === 'price-desc') return list.sort((a,b)=> priceOf(b)-priceOf(a));
+  // 'new' default: newest first
+  return list.sort((a,b)=> createdVal(b)-createdVal(a));
+}
+
+function getFilteredSorted(){
+  return getSorted(getFiltered());
+}
+
+function numericPrice(p){
+  const raw = p.price;
+  if (typeof raw === 'number') return raw;
+  if (typeof raw === 'string'){
+    const n = Number(raw.replace(/[^\d.]/g,''));
+    return isNaN(n) ? 0 : n;
+  }
+  return 0;
+}
+
+
 function renderListings(){
   if(!listingsRoot || !resultMeta) return;
   const items = getFiltered();
   resultMeta.textContent = items.length ? `${items.length} item(s)` : 'No results';
   listingsRoot.innerHTML = items.map(productToCard).join('');
 
+  // 👇 Call it here
+  applyViewMode();
+
   // Wire actions
   $$('#listings [data-action="add"]').forEach(btn=>{
     btn.addEventListener('click', ()=> addToCart(btn.dataset.id));
   });
   $$('#listings [data-action="buy"]').forEach(btn=>{
-    btn.addEventListener('click', ()=> { addToCart(btn.dataset.id); window.location.href='checkout.html'; });
+    btn.addEventListener('click', ()=> { 
+      addToCart(btn.dataset.id); 
+      window.location.href='checkout.html'; 
+    });
   });
   
-  // recent views capture (save first 10)
-  $$('#listings .product-card').forEach(card=>{
-    card.addEventListener('click', ()=>{
-      const id = card.dataset.id;
-      const p = findProductById(id) || {};
-      const entry = { id, title: p.title || p.name || 'Item', image: p.image || (p.images && p.images[0]) || '' };
-      recentViews = [entry, ...recentViews.filter(e=>e.id!==id)].slice(0,10);
-      localStorage.setItem('unicleya_recent_views', JSON.stringify(recentViews));
-    }, { once:true });
+// Open modal when clicking media/body; keep buttons working
+$$('#listings .product-card').forEach(card=>{
+  const id = card.dataset.id;
+  const p = findProductById(id) || {};
+
+  // Save recent views once
+  card.addEventListener('click', ()=>{
+    const entry = { id, title: p.title || p.name || 'Item', image: p.image || (p.images && p.images[0]) || '' };
+    recentViews = [entry, ...recentViews.filter(e=>e.id!==id)].slice(0,10);
+    localStorage.setItem('unicleya_recent_views', JSON.stringify(recentViews));
+  }, { once:true });
+
+  // Open modal when clicking non-button areas
+  card.querySelectorAll('[data-open]').forEach(hit=>{
+    hit.addEventListener('click', ()=>{
+      openProductModal(p);
+    });
   });
+});
 }
+
+// 👉 Keep this OUTSIDE renderListings
+function applyViewMode(){
+  if(!listingsRoot) return;
+  listingsRoot.classList.remove('view-icons','view-list','view-columns','view-gallery');
+  listingsRoot.classList.add(`view-${viewMode}`);
+
+  const root = listingsRoot;
+  root.classList.remove('icons-mode','list-mode','columns-mode','gallery-mode');
+  root.classList.add(`${viewMode}-mode`);
+}
+
 
 // ===== Cart (local + backend sync) =====
 function persistCart(){ localStorage.setItem('unicleya_cart', JSON.stringify(cart)); updateCartBadge(); }
@@ -220,41 +307,6 @@ function setQty(id, qty){ const it = cart.find(x=>x.id===id); if(!it) return; it
 
 function formatCurrency(n){ if(isNaN(n)) return '₹0'; return `₹${Number(n).toLocaleString('en-IN')}`; }
 
-function renderCart(){
-  if(!cartList || !cartFooter || !cartEmpty) return;
-  cartList.innerHTML = '';
-  if(cart.length===0){ cartEmpty.style.display='block'; cartFooter.style.display='none'; return; }
-  cartEmpty.style.display='none'; cartFooter.style.display='flex';
-
-  cart.forEach(item=>{
-    const p = findProductById(item.id) || {};
-    const title = escapeHtml(item.title || p.title || 'Item');
-    const image = escapeHtml(item.image || p.image || 'https://placehold.co/100x100/png');
-    const price = Number(item.price || p.price || 0);
-    const row = document.createElement('div');
-    row.className = 'cart-row';
-    row.innerHTML = `
-      <div class="cart-thumb"><img src="${image}" alt="${title}"></div>
-      <div class="cart-info">
-        <div style="font-weight:700">${title}</div>
-        <div class="row-price">${formatCurrency(price)}</div>
-      </div>
-      <div class="qty">
-        <button aria-label="Decrease">−</button>
-        <input type="number" min="1" value="${item.qty}">
-        <button aria-label="Increase">+</button>
-      </div>
-      <button class="btn ghost" data-remove>Remove</button>
-    `;
-    const [minus, input, plus] = row.querySelectorAll('.qty button, .qty input');
-    minus.addEventListener('click', ()=> setQty(item.id, Number(input.value)-1));
-    plus.addEventListener('click', ()=> setQty(item.id, Number(input.value)+1));
-    input.addEventListener('change', ()=> setQty(item.id, Number(input.value)));
-    row.querySelector('[data-remove]').addEventListener('click', ()=> removeFromCart(item.id));
-    cartList.appendChild(row);
-  });
-  renderCartTotals();
-}
 
 function cartTotals(){
   const subtotal = cart.reduce((a,c)=> a + (Number(c.price)||0) * (Number(c.qty)||0), 0);
@@ -480,12 +532,53 @@ function toggleAccountPopup(show) {
 
 
 // --- Helpers (add near your other utils) ---
+
 function closeAccountPopup() {
   const accountPopup = document.getElementById("accountPopup");
   if (!accountPopup) return;
   accountPopup.classList.remove("show");
   accountPopup.style.display = "none";
 }
+
+function openProductModal(p){
+  if(!pm) return;
+  const title = p.title || p.name || 'Untitled';
+  pmTitle.textContent = title;
+  pmPrice.textContent = typeof p.price === 'number' ? `₹${p.price}` : (p.price || '—');
+  pmDesc.textContent = p.desc || p.description || '';
+  const specList = [p.ram, p.storage, p.processor, p.condition].filter(Boolean);
+  pmSpecs.innerHTML = specList.map(s=>`<span class="spec">${escapeHtml(s)}</span>`).join('');
+
+  // Images
+  const imgs = (Array.isArray(p.images) && p.images.length ? p.images : [p.image]).filter(Boolean);
+  const first = imgs[0] || 'https://placehold.co/800x600/png?text=No+Image';
+  pmMainImg.src = first;
+  pmMainImg.alt = title;
+  pmThumbs.innerHTML = imgs.map((src,i)=>`
+    <div class="pm-thumb ${i===0?'active':''}" data-src="${escapeHtml(src)}">
+      <img src="${escapeHtml(src)}" alt="">
+    </div>`).join('');
+
+  // Actions
+  pmAdd.onclick = ()=>{ addToCart(p._id||p.id); toast('Added to cart'); };
+  pmBuy.onclick = ()=>{ addToCart(p._id||p.id); window.location.href='checkout.html'; };
+
+  // Show
+  pm.style.display = 'flex';
+  requestAnimationFrame(()=> pm.classList.add('show'));
+}
+
+function closeProductModal(){
+  if(!pm) return;
+  pm.classList.remove('show','full');
+  setTimeout(()=> pm.style.display='none', 180);
+}
+
+function toggleMaxProductModal(){
+  if(!pm) return;
+  pm.classList.toggle('full');
+}
+
 
 // Render account
 function renderAccount(){
@@ -551,6 +644,36 @@ if(tabs.length){
 }
 $('#toLogin')?.addEventListener('click', ()=> tabs[0]?.click());
 switchToRegister?.addEventListener('click', (e)=>{ e.preventDefault(); tabs[1]?.click(); });
+
+// View buttons
+viewSortBar?.addEventListener('click', (e)=>{
+  const btn = e.target.closest('.view-btn');
+  if(!btn) return;
+  viewMode = btn.dataset.view || 'icons';
+  $$('.view-btn').forEach(b=> b.classList.toggle('active', b === btn));
+  applyViewMode();
+});
+
+// Sorting
+sortSelect?.addEventListener('change', ()=>{
+  sortMode = sortSelect.value;
+  renderListings();
+});
+
+pmClose?.addEventListener('click', closeProductModal);
+pmMax?.addEventListener('click', toggleMaxProductModal);
+pm?.addEventListener('click', (e)=>{ if(e.target === pm) closeProductModal(); });
+document.addEventListener('keydown', (e)=>{ if(e.key==='Escape') closeProductModal(); });
+
+// Thumbnail switching
+pmThumbs?.addEventListener('click', (e)=>{
+  const t = e.target.closest('.pm-thumb'); if(!t) return;
+  $$('.pm-thumb').forEach(x=>x.classList.remove('active'));
+  t.classList.add('active');
+  const src = t.getAttribute('data-src');
+  if(src){ pmMainImg.src = src; }
+});
+
 
 // Step1 submit
 loginStep1?.addEventListener('submit', (e)=>{
