@@ -32,7 +32,11 @@ img{max-width:100%;display:block}
 /* Layout */
 .page-wrapper{display:flex;flex-direction:column;min-height:100vh}
 main{max-width:var(--max);margin:28px auto;padding:12px}
-.container{max-width:var(--max);margin:0 auto;padding:22px}
+.container {
+  max-width: 100%;  /* allow full width */
+  margin: 0 auto;
+  padding: 20px;
+}
 
 /* Header */
 header{position:sticky;top:0;left:0;right:0;background:var(--bg-grad);color:#fff;z-index:1000;box-shadow:0 6px 20px rgba(0,0,0,.12)}
