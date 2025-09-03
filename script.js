@@ -176,7 +176,7 @@ function getFilteredSorted(){
   });
 }
 
-function getSorted(items){
+function getFilteredSorted(items){
   const list = [...items];
   const numericPrice = (p)=> Number(p.price)||0;
   const createdVal = (p)=>{
