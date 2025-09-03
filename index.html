@@ -161,15 +161,25 @@
               <div class="chip" data-cat="computers">💻 Computers</div>
               <div class="chip" data-cat="accessories">🎧 Accessories</div>
             </div>
-            <div class="sort">
-              <label for="sortSelect" class="muted">Sort by:</label>
-              <select id="sortSelect" aria-label="Sort products">
-                <option value="relevance">Relevance</option>
-                <option value="price-asc">Price: Low to High</option>
-                <option value="price-desc">Price: High to Low</option>
-                <option value="newest">Newest arrivals</option>
-              </select>
-            </div>
+            <!-- View & Sort toolbar -->
+<div class="toolbar" id="viewSortBar">
+  <div class="view-switch">
+    <button class="view-btn active" data-view="icons" title="Icons">◻︎</button>
+    <button class="view-btn" data-view="list" title="List">≣</button>
+    <button class="view-btn" data-view="columns" title="Columns">☰▮</button>
+    <button class="view-btn" data-view="gallery" title="Gallery">▦</button>
+  </div>
+
+  <div class="sort-wrap">
+    <label for="sortSelect" class="sr-only">Sort</label>
+    <select id="sortSelect" aria-label="Sort products">
+      <option value="new">Newly added</option>
+      <option value="price-asc">Price: Low → High</option>
+      <option value="price-desc">Price: High → Low</option>
+    </select>
+  </div>
+</div>
+
           <div id="resultMeta" class="result-meta"></div>
           <div class="grid" id="listings" aria-live="polite"></div>
         </section>
