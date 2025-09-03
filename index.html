@@ -161,7 +161,15 @@
               <div class="chip" data-cat="computers">💻 Computers</div>
               <div class="chip" data-cat="accessories">🎧 Accessories</div>
             </div>
-          </div>
+            <div class="sort">
+              <label for="sortSelect" class="muted">Sort by:</label>
+              <select id="sortSelect" aria-label="Sort products">
+                <option value="relevance">Relevance</option>
+                <option value="price-asc">Price: Low to High</option>
+                <option value="price-desc">Price: High to Low</option>
+                <option value="newest">Newest arrivals</option>
+              </select>
+            </div>
           <div id="resultMeta" class="result-meta"></div>
           <div class="grid" id="listings" aria-live="polite"></div>
         </section>
