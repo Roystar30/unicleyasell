@@ -1,0 +1,11 @@
+plugins:
+  - jekyll-sitemap     # Adds sitemap.xml
+  - jekyll-seo-tag     # Adds SEO metadata
+  - jekyll-feed        # Optional: RSS feed
+  - jekyll-minifier    # Minifies HTML, CSS, JS
+
+# (Optional but good for SEO)
+url: "https://roystar30.github.io"
+title: "Unicleya — Buy & Sell Tech"
+description: "E-commerce store for refurbished mobiles, computers, and more."
+theme: minima
