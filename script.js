@@ -63,7 +63,7 @@ const registerForm = $('#registerForm');
 // ===== State =====
 let allProducts = [];
 let activeCategory = 'all';
-let viewMode = 'icons';    // 'icons' | 'list' | 'columns' | 'gallery'
+let viewMode = 'list';    // 'icons' | 'list' | 'columns' | 'gallery'
 let sortMode = 'new';      // 'new' | 'price-asc' | 'price-desc'
 let searchText = '';
 let cart = JSON.parse(localStorage.getItem('unicleya_cart') || '[]'); // [{id,qty,price,title,image}]
@@ -139,7 +139,7 @@ function productToCard(p){
   const fullDesc = p.desc || p.description || '';
   const desc = fullDesc.length > 160 ? (fullDesc.slice(0,157) + '…') : fullDesc;
   const id = p._id || p.id || '';
-  const image = p.image || (p.images && p.images[0]) || 'https://placehold.co/300x300/png?text=No+Image';
+  const image = p.image || (p.images && p.images[0]) || 'https://picsum.photos/300/300';
   const specs = [p.ram, p.storage, p.processor, p.condition].filter(Boolean).slice(0,4);
 
   // data-images helps the modal quickly read images without extra API calls
@@ -248,11 +248,11 @@ function renderListings(){
 // 👉 Outside renderListings
 function applyViewMode(){
   if(!listingsRoot) return;
-  listingsRoot.classList.remove('view-icons','view-list','view-columns','view-gallery');
+  listingsRoot.classList.remove('view-list','view-columns','view-gallery');
   listingsRoot.classList.add(`view-${viewMode}`);
 
   const root = listingsRoot;
-  root.classList.remove('icons-mode','list-mode','columns-mode','gallery-mode');
+  root.classList.remove('list-mode','columns-mode','gallery-mode');
   root.classList.add(`${viewMode}-mode`);
 }
 
@@ -544,7 +544,7 @@ function openProductModal(p){
 
   // Images
   const imgs = (Array.isArray(p.images) && p.images.length ? p.images : [p.image]).filter(Boolean);
-  const first = imgs[0] || 'https://placehold.co/800x600/png?text=No+Image';
+  const first = imgs[0] || 'https://picsum.photos/300/300';
   pmMainImg.src = first;
   pmMainImg.alt = title;
   pmThumbs.innerHTML = imgs.map((src,i)=>`
@@ -642,7 +642,7 @@ switchToRegister?.addEventListener('click', (e)=>{ e.preventDefault(); tabs[1]?.
 viewSortBar?.addEventListener('click', (e)=>{
   const btn = e.target.closest('.view-btn');
   if(!btn) return;
-  viewMode = btn.dataset.view || 'icons';
+  viewMode = btn.dataset.view || 'list';
   $$('.view-btn').forEach(b=> b.classList.toggle('active', b === btn));
   applyViewMode();
 });
