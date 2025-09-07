@@ -9,3 +9,9 @@ url: "https://roystar30.github.io"
 title: "Unicleya — Buy & Sell Tech"
 description: "E-commerce store for refurbished mobiles, computers, and more."
 theme: minima
+exclude:
+  - README.md
+  - node_modules
+  - package.json
+  - package-lock.json
+  - .gitignore
