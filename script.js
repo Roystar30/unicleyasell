@@ -63,7 +63,7 @@ const registerForm = $('#registerForm');
 // ===== State =====
 let allProducts = [];
 let activeCategory = 'all';
-let viewMode = 'list';    // 'icons' | 'list' | 'columns' | 'gallery'
+let viewMode = 'list';    // 'list' | 'columns'
 let sortMode = 'new';      // 'new' | 'price-asc' | 'price-desc'
 let searchText = '';
 let cart = JSON.parse(localStorage.getItem('unicleya_cart') || '[]'); // [{id,qty,price,title,image}]
@@ -248,11 +248,11 @@ function renderListings(){
 // 👉 Outside renderListings
 function applyViewMode(){
   if(!listingsRoot) return;
-  listingsRoot.classList.remove('view-list','view-columns','view-gallery');
+  listingsRoot.classList.remove('view-list','view-columns');
   listingsRoot.classList.add(`view-${viewMode}`);
 
   const root = listingsRoot;
-  root.classList.remove('list-mode','columns-mode','gallery-mode');
+  root.classList.remove('list-mode','columns-mode');
   root.classList.add(`${viewMode}-mode`);
 }
 
