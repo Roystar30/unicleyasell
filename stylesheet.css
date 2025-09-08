@@ -228,7 +228,7 @@ header{position:sticky;top:0;left:0;right:0;background:var(--bg-grad);color:#fff
 .grid.view-columns{grid-template-columns:repeat(auto-fill,minmax(280px,1fr))}
 
 /* Card polish */
-.product-card{position:relative}
+.product-card{position:relative; cursor: pointer;}
 .product-card:focus-within,.product-card:has(:hover){outline:0}
 .product-card .product-media{background:#f3f6ff;border:1px solid #ebefff}
 .product-card:hover{transform:translateY(-6px);box-shadow:0 22px 42px rgba(0,0,0,.12)}

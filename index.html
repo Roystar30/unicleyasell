@@ -152,9 +152,9 @@
             </div>
             <!-- View & Sort toolbar -->
 <div class="toolbar" id="viewSortBar">
-  <div class="view-switch">
-    <button class="view-btn" data-view="list" title="List">≣</button>
-    <button class="view-btn" data-view="columns" title="Columns">☰▮</button>
+  <div class="view-wrap" role="group" aria-label="View mode">
+    <button class="view-btn active" id="listViewBtn" data-view="list" aria-pressed="true" title="List view">☰</button>
+    <button class="view-btn" id="columnsViewBtn" data-view="columns" aria-pressed="false" title="Columns view">▦</button>
   </div>
 
   <div class="sort-wrap">

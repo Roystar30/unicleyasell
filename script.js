@@ -172,7 +172,22 @@ function productToCard(p){
         <button class="btn ghost" data-action="buy" data-id="${escapeHtml(id)}">Buy Now</button>
       </div>
     </div>`;
+
 }
+
+// Add click event to open product modal on product card or media click
+document.addEventListener('click', (e) => {
+  const productCard = e.target.closest('.product-card');
+  if (!productCard) return;
+
+  const id = productCard.dataset.id;
+  if (!id) return;
+
+  const p = findProductById(id);
+  if (!p) return;
+
+  openProductModal(p);
+});
 
 
 function getFiltered(){
