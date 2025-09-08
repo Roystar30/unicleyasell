@@ -6,3 +6,4 @@
 - [x] Remove view classes from stylesheet.css
 - [x] Update .grid CSS for fully responsive default view
 - [x] Test responsiveness on different screen sizes (user will test)
+- [ ] chips style should change from flex to constant
