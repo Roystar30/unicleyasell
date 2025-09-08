@@ -50,7 +50,7 @@ header{position:sticky;top:0;left:0;right:0;background:var(--bg-grad);color:#fff
 .header-left{display:flex;align-items:center;gap:14px}
 .logo{display:flex;align-items:center;gap:12px;cursor:pointer}
 .brand-logo{height: clamp(32px, 5vw, 56px); width:auto; object-fit:contain}
-.logo h1{margin:0;font-size:22px;font-weight:800;background:linear-gradient(45deg,#fff,#e0e0e0);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.logo h1{margin:0;font-size:22px;font-weight:800;background:linear-gradient(45deg,#fff,#e0e0e0);background-clip:text;-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 .tagline{font-size:12px;color:rgba(255,255,255,.85)}
 
 .hamburger-btn{width:46px;height:40px;border-radius:8px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.06);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:6px;cursor:pointer}
