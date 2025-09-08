@@ -186,15 +186,20 @@ header{position:sticky;top:0;left:0;right:0;background:var(--bg-grad);color:#fff
 }
 
 .chips {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  justify-content: flex-start;
-  margin-bottom: 24px;
-  width: 100%;
-  position: relative;
-  z-index: 2;
-}
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 24px;
+    width: 100%;
+    position: relative;
+    z-index: 2;
+    align-content: space-between;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    /* Added for better responsiveness */
+    
+  }
 
 .chip {
   min-width: 100px;
