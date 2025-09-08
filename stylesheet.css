@@ -198,7 +198,7 @@ header{position:sticky;top:0;left:0;right:0;background:var(--bg-grad);color:#fff
     justify-content: center;
     align-items: center;
     /* Added for better responsiveness */
-    
+
   }
 
 .chip {
@@ -239,7 +239,19 @@ header{position:sticky;top:0;left:0;right:0;background:var(--bg-grad);color:#fff
 }
 
 /* Toolbar (sort only) */
-.toolbar{display:flex;align-items:center;justify-content:flex-end;gap:12px;margin:10px 0 8px}
+.toolbar{  display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 24px;
+    width: 100%;
+    position: relative;
+    z-index: 2;
+    align-content: space-between;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    /* Added for better responsiveness */
+    }
 .sort-wrap select{padding:8px 10px;border-radius:10px;border:1px solid #e6e6e6;background:#fff}
 
 /* Grid is now fully responsive by default */
