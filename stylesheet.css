@@ -234,18 +234,6 @@ header{position:sticky;top:0;left:0;right:0;background:var(--bg-grad);color:#fff
 .product-card:hover{transform:translateY(-6px);box-shadow:0 22px 42px rgba(0,0,0,.12)}
 .product-desc{line-height:1.35}
 
-/* LIST view card layout */
-.list-mode .product-card{display:grid;grid-template-columns:160px 1fr auto;gap:16px;align-items:center}
-.list-mode .product-media{width:160px;min-width:160px;height:120px}
-.list-mode .product-title{font-size:18px}
-.list-mode .product-desc{max-height:3.2em}
-
-
-/* COLUMNS (multi-column) */
-.columns-mode .product-media{height:140px}
-.columns-mode .product-actions{gap:8px}
-.columns-mode .price{font-size:18px}
-
 /* Buttons (polish) */
 .btn.primary{background:linear-gradient(135deg,var(--accent),var(--accent-2));color:#06343a;border:0}
 .btn.primary:hover {
@@ -471,6 +459,7 @@ input,select{padding:10px;border-radius:8px;border:1px solid #e2e6ee;background:
 .pm-actions{display:flex;gap:10px;margin-top:8px}
 
 /* Fullscreen mode */
+#productModal.full{z-index:1100}
 #productModal.full .pm-sheet{width:96%;height:92vh;display:flex;flex-direction:column}
 #productModal.full .pm-content{grid-template-columns:1fr 1fr;gap:18px;flex:1}
 #productModal.full .pm-image{height:100%}
