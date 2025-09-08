@@ -63,18 +63,10 @@ const registerForm = $('#registerForm');
 // ===== State =====
 let allProducts = [];
 let activeCategory = 'all';
-let viewMode = 'list';    // 'list' | 'columns'
 let sortMode = 'new';      // 'new' | 'price-asc' | 'price-desc'
 let searchText = '';
 
-// Ensure the default view button is active on load
-document.addEventListener('DOMContentLoaded', () => {
-  const defaultViewBtn = document.querySelector(`.view-btn[data-view="${viewMode}"]`);
-  if (defaultViewBtn) {
-    $$('.view-btn').forEach(b => b.classList.remove('active'));
-    defaultViewBtn.classList.add('active');
-  }
-});
+// Initialization handled in init() function
 let cart = JSON.parse(localStorage.getItem('unicleya_cart') || '[]'); // [{id,qty,price,title,image}]
 let recentSearches = JSON.parse(localStorage.getItem('unicleya_recent_searches') || '[]'); // [q1,q2,...]
 let recentViews = JSON.parse(localStorage.getItem('unicleya_recent_views') || '[]'); // [{id,title,image}]
@@ -238,8 +230,6 @@ function renderListings(){
   resultMeta.textContent = items.length ? `${items.length} item(s)` : 'No results';
   listingsRoot.innerHTML = items.map(productToCard).join('');
 
-  applyViewMode();
-
   // Wire actions
   $$('#listings [data-action="add"]').forEach(btn=>{
     btn.addEventListener('click', ()=> addToCart(btn.dataset.id));
@@ -269,16 +259,7 @@ function renderListings(){
   });
 }
 
-// 👉 Outside renderListings
-function applyViewMode(){
-  if(!listingsRoot) return;
-  listingsRoot.classList.remove('view-list','view-columns');
-  listingsRoot.classList.add(`view-${viewMode}`);
-
-  const root = listingsRoot;
-  root.classList.remove('list-mode','columns-mode');
-  root.classList.add(`${viewMode}-mode`);
-}
+// View mode logic removed - using responsive default view
 
 
 
@@ -662,14 +643,7 @@ if(tabs.length){
 $('#toLogin')?.addEventListener('click', ()=> tabs[0]?.click());
 switchToRegister?.addEventListener('click', (e)=>{ e.preventDefault(); tabs[1]?.click(); });
 
-// View buttons
-viewSortBar?.addEventListener('click', (e)=>{
-  const btn = e.target.closest('.view-btn');
-  if(!btn) return;
-  viewMode = btn.dataset.view || 'list';
-  $$('.view-btn').forEach(b=> b.classList.toggle('active', b === btn));
-  applyViewMode();
-});
+// View buttons removed - using responsive default view
 
 // Sorting
 sortSelect?.addEventListener('change', ()=>{

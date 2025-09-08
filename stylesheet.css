@@ -216,16 +216,11 @@ header{position:sticky;top:0;left:0;right:0;background:var(--bg-grad);color:#fff
   box-shadow: 0 6px 16px rgba(102, 126, 234, 0.25);
 }
 
-/* Toolbar (view + sort) */
-.toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:10px 0 8px}
-.view-switch{display:inline-flex;gap:6px;align-items:center}
-.view-btn{border:1px solid #e6e6e6;background:#fff;border-radius:10px;padding:8px 10px;cursor:pointer;font-weight:700}
-.view-btn.active,.view-btn:hover{border-color:#cfd6ff;box-shadow:0 6px 18px rgba(102,126,234,.12)}
+/* Toolbar (sort only) */
+.toolbar{display:flex;align-items:center;justify-content:flex-end;gap:12px;margin:10px 0 8px}
 .sort-wrap select{padding:8px 10px;border-radius:10px;border:1px solid #e6e6e6;background:#fff}
 
-/* Grid view modifiers */
-.grid.view-list{grid-template-columns:1fr}
-.grid.view-columns{grid-template-columns:repeat(auto-fill,minmax(280px,1fr))}
+/* Grid is now fully responsive by default */
 
 /* Card polish */
 .product-card{position:relative; cursor: pointer;}
@@ -251,13 +246,28 @@ header{position:sticky;top:0;left:0;right:0;background:var(--bg-grad);color:#fff
   color: var(--accent);
 }
 
-/* Grid & Cards */
+/* Grid & Cards - Responsive default view */
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 18px;
   align-items: stretch;
   justify-items: stretch;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .grid {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .grid {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 14px;
+  }
 }
 .product-card {
   display: flex;
