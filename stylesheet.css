@@ -20,32 +20,48 @@
   margin: -1px;
   overflow: hidden;
   clip: rect(0, 0, 0, 0);
+}
+
+.product-media {
+  width: 160px;
+  min-width: 160px;
+  height: 160px;
+  border-radius: 14px;
+  background: #f7f9ff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border: 1px solid #e3e9ff;
+  box-shadow: 0 2px 8px rgba(102,126,234,0.06);
+}
+.product-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: 10px;
+  background: #fff;
+  box-shadow: 0 1px 4px rgba(102,126,234,0.04);
+}
+.product-title {
+  margin: 0 0 4px 0;
+  font-size: 18px;
+  font-weight: 800;
+  color: #111;
   white-space: nowrap;
-  border: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  letter-spacing: 0.2px;
+  line-height: 1.2;
 }
-
-*{box-sizing:border-box}
-html,body{height:100%;margin:0;font-family:Inter, Roboto, system-ui, -apple-system, "Segoe UI", Arial;color:var(--text);background:#f7f9ff}
-a{color:inherit;text-decoration:none}
-img{max-width:100%;display:block}
-
-/* Layout */
-.page-wrapper{display:flex;flex-direction:column;min-height:100vh}
-main{
-  max-width: 100%;     /* allow full width */
-  margin: 28px auto;   /* vertical spacing, still centered horizontally */
-  padding: 20px;       /* breathing space */
-  width: 100%;
+.product-desc {
+  margin: 0;
+  color: #5f6b7a;
+  max-height: 44px;
+  overflow: hidden;
+  font-size: 15px;
+  line-height: 1.35;
 }
-.container {
-  max-width: var(--max);  /* constrain to max width to stay within header and footer bounds */
-  margin: 0 auto;
-  padding: 20px;
-  width: 100%;
-}
-
-/* Header */
-header{position:sticky;top:0;left:0;right:0;background:var(--bg-grad);color:#fff;z-index:1000;box-shadow:0 6px 20px rgba(0,0,0,.12)}
 .header-content{max-width:var(--max);margin:0 auto;padding:14px 24px;display:flex;align-items:center;gap:16px;justify-content:space-between}
 .header-left{display:flex;align-items:center;gap:14px}
 .logo{display:flex;align-items:center;gap:12px;cursor:pointer}
@@ -207,16 +223,6 @@ header{position:sticky;top:0;left:0;right:0;background:var(--bg-grad);color:#fff
   font-size: 13px;
   font-weight: 500;
   cursor: pointer;
-  min-width: 90px;
-  max-width: 120px;
-  padding: 7px 16px;
-  border-radius: 999px;
-  background: #f5f7ff;
-  border: 1px solid #e3e9ff;
-  color: #344054;
-  font-size: 13px;
-  font-weight: 500;
-  cursor: pointer;
   display: inline-flex;
   align-items: center;
   gap: 6px;
@@ -225,6 +231,7 @@ header{position:sticky;top:0;left:0;right:0;background:var(--bg-grad);color:#fff
   text-transform: lowercase;
   box-shadow: 0 2px 8px rgba(102,126,234,0.08);
   justify-content: center;
+}
 
 .chip:hover {
   background: #eef2ff;
@@ -238,7 +245,7 @@ header{position:sticky;top:0;left:0;right:0;background:var(--bg-grad);color:#fff
   font-weight: 600;
   border: none;
   box-shadow: 0 6px 16px rgba(102, 126, 234, 0.25);
-    letter-spacing: 0.5px;
+  letter-spacing: 0.5px;
 }
 
 /* Toolbar (sort only) */
