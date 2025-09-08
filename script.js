@@ -66,6 +66,15 @@ let activeCategory = 'all';
 let viewMode = 'list';    // 'list' | 'columns'
 let sortMode = 'new';      // 'new' | 'price-asc' | 'price-desc'
 let searchText = '';
+
+// Ensure the default view button is active on load
+document.addEventListener('DOMContentLoaded', () => {
+  const defaultViewBtn = document.querySelector(`.view-btn[data-view="${viewMode}"]`);
+  if (defaultViewBtn) {
+    $$('.view-btn').forEach(b => b.classList.remove('active'));
+    defaultViewBtn.classList.add('active');
+  }
+});
 let cart = JSON.parse(localStorage.getItem('unicleya_cart') || '[]'); // [{id,qty,price,title,image}]
 let recentSearches = JSON.parse(localStorage.getItem('unicleya_recent_searches') || '[]'); // [q1,q2,...]
 let recentViews = JSON.parse(localStorage.getItem('unicleya_recent_views') || '[]'); // [{id,title,image}]
