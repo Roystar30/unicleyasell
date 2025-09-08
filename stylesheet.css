@@ -189,25 +189,42 @@ header{position:sticky;top:0;left:0;right:0;background:var(--bg-grad);color:#fff
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
+    justify-content: flex-start;
+    margin-bottom: 22px;
+    width: 100%;
+    position: relative;
+    z-index: 2;
 }
 
 .chip {
-  padding: 10px 16px; /* increased padding for better button size */
-  border-radius: 9999px;  /* smoother pill shape */
+  min-width: 90px;
+  max-width: 120px;
+  padding: 7px 16px;
+  border-radius: 999px;
   background: #f5f7ff;
   border: 1px solid #e3e9ff;
   color: #344054;
-  font-size: 14px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  min-width: 90px;
+  max-width: 120px;
+  padding: 7px 16px;
+  border-radius: 999px;
+  background: #f5f7ff;
+  border: 1px solid #e3e9ff;
+  color: #344054;
+  font-size: 13px;
   font-weight: 500;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
   gap: 6px;
   transition: background-color .2s, box-shadow .2s, transform .15s;
-  user-select: none;      /* prevent accidental text selection */
-  min-width: 80px; /* ensure consistent button size */
+  user-select: none;
+  text-transform: lowercase;
+  box-shadow: 0 2px 8px rgba(102,126,234,0.08);
   justify-content: center;
-}
 
 .chip:hover {
   background: #eef2ff;
@@ -221,6 +238,7 @@ header{position:sticky;top:0;left:0;right:0;background:var(--bg-grad);color:#fff
   font-weight: 600;
   border: none;
   box-shadow: 0 6px 16px rgba(102, 126, 234, 0.25);
+    letter-spacing: 0.5px;
 }
 
 /* Toolbar (sort only) */
