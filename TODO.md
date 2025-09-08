@@ -5,4 +5,4 @@
 - [x] Remove view-related event listeners from script.js
 - [x] Remove view classes from stylesheet.css
 - [x] Update .grid CSS for fully responsive default view
-- [ ] Test responsiveness on different screen sizes
+- [x] Test responsiveness on different screen sizes (user will test)
