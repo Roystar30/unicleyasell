@@ -320,6 +320,37 @@ function renderCartTotals(){
   updateCartBadge();
 }
 
+function renderCart(){
+  if(!cartList) return;
+  cartList.innerHTML = '';
+  if(cart.length === 0){
+    if(cartEmpty) cartEmpty.style.display = 'block';
+    if(cartFooter) cartFooter.style.display = 'none';
+    return;
+  }
+  if(cartEmpty) cartEmpty.style.display = 'none';
+  if(cartFooter) cartFooter.style.display = 'block';
+  cart.forEach(item => {
+    const div = document.createElement('div');
+    div.className = 'cart-card';
+    div.innerHTML = `
+      <img src="${escapeHtml(item.image || '')}" alt="${escapeHtml(item.title)}" class="cart-img">
+      <div class="cart-info">
+        <h4>${escapeHtml(item.title)}</h4>
+        <p>₹${item.price} × ${item.qty} = ₹${item.price * item.qty}</p>
+        <div>
+          <button class="btn ghost" onclick="setQty('${item.id}', ${item.qty - 1})">-</button>
+          <span>${item.qty}</span>
+          <button class="btn ghost" onclick="setQty('${item.id}', ${item.qty + 1})">+</button>
+          <button class="btn danger" onclick="removeFromCart('${item.id}')">Remove</button>
+        </div>
+      </div>
+    `;
+    cartList.appendChild(div);
+  });
+  renderCartTotals();
+}
+
 
 // ===== Checkout =====
 
