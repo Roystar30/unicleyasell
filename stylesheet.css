@@ -180,6 +180,7 @@ header{position:sticky;top:0;left:0;right:0;background:var(--bg-grad);color:#fff
   justify-content: center;
   flex-wrap: wrap;       /* allows better responsiveness */
   gap: 12px;
+  width: 100%;
   margin-bottom: 18px;
   position: sticky;
   top: 0;
