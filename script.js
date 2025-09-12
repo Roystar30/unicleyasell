@@ -60,6 +60,25 @@ const whoLabel = $('#whoLabel');
 const switchToRegister = $('#switchToRegister');
 const registerForm = $('#registerForm');
 
+
+// Attempt to find a common selector for a header and a search bar within it.
+// This is a heuristic and might need adjustment based on the specific page structure.
+const possibleHeaders = Array.from(document.querySelectorAll('header, .header, #header'));
+let searchBar = null;
+for (const header of possibleHeaders) {
+  searchBar = header.querySelector('input[type="search"], .search-bar, #search-bar, [role="search"]');
+  if (searchBar) {
+    $0 = searchBar; // Update $0 to the found search bar element
+    break;
+  }
+}
+
+const data = {
+  searchBarFound: !!searchBar,
+  searchBarSelector: searchBar ? (searchBar.id ? `#${searchBar.id}` : (searchBar.className ? `.${searchBar.className.split(' ')[0]}` : searchBar.tagName)) : null,
+  headerSelector: searchBar ? (searchBar.parentElement.id ? `#${searchBar.parentElement.id}` : (searchBar.parentElement.className ? `.${searchBar.parentElement.className.split(' ')[0]}` : searchBar.parentElement.tagName)) : null,
+};
+
 // ===== State =====
 let allProducts = [];
 let activeCategory = 'all';

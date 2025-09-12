@@ -172,6 +172,9 @@ header{position:sticky;top:0;left:0;right:0;background:var(--bg-grad);color:#fff
 .section-subtitle{text-align:center;color:var(--muted);margin-bottom:18px}
 
 /* Filters / Chips */
+.filters > * {
+  flex-shrink: 1;
+}
 .filters {
   display: flex;
   justify-content: center;
@@ -243,7 +246,8 @@ header{position:sticky;top:0;left:0;right:0;background:var(--bg-grad);color:#fff
     flex-wrap: wrap;
     gap: 12px;
     margin-bottom: 24px;
-    width: 100%;
+    flex: 1 1 auto;   /* let them shrink & grow */
+    min-width: 200px; /* so they don’t collapse too small */
     position: relative;
     z-index: 2;
     align-content: space-between;
