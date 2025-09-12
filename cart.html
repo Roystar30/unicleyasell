@@ -121,28 +121,29 @@
   <!-- ===== HEADER (reuse from index.html) ===== -->
   <!-- 🔽 Paste your full header code from index.html -->
  
-  <!-- ===== MAIN CART CONTENT ===== -->
-  <main class="container">
-    <h2>🛒 My Cart</h2>
+ <!-- ===== MAIN CART CONTENT ===== -->
+    <main class="container">
+      <h2 class="section-title">🛒 My Cart</h2>
+      <div class="section-subtitle">Review your selected items and proceed to checkout.</div>
 
-    <!-- Empty State -->
-    <div id="cartEmpty" style="display:none; text-align:center; margin:20px 0;">
-      <p>Your cart is empty.</p>
-      <a href="index.html" class="btn">Continue Shopping</a>
-    </div>
-
-    <!-- Cart List -->
-    <div id="cartList" class="cart-list"></div>
-
-    <!-- Cart Footer -->
-    <div id="cartFooter" style="display:none; margin-top:20px; text-align:right;">
-      <div><strong>Total: <span id="cartTotal">₹0</span></strong></div>
-      <div style="margin-top:12px;">
-        <button id="clearCartBtn" class="btn ghost">Clear Cart</button>
-        <button id="toCheckoutBtn" class="btn primary">Checkout</button>
+      <!-- Empty State -->
+      <div id="cartEmpty" style="display:none; text-align:center; margin:20px 0;">
+        <p>Your cart is empty.</p>
+        <a href="index.html" class="btn">Continue Shopping</a>
       </div>
-    </div>
-  </main>
+
+      <!-- Cart List -->
+      <div id="cartList" class="cart-list"></div>
+
+      <!-- Cart Footer -->
+      <div id="cartFooter" style="display:none; margin-top:20px; text-align:right;">
+        <div><strong>Total: <span id="cartTotal">₹0</span></strong></div>
+        <div style="margin-top:12px;">
+          <button id="clearCartBtn" class="btn ghost">Clear Cart</button>
+          <button id="toCheckoutBtn" class="btn primary">Checkout</button>
+        </div>
+      </div>
+    </main>
 
   <!-- ===== FOOTER (reuse from index.html) ===== -->
   <!-- 🔽 Paste your full footer code from index.html -->
