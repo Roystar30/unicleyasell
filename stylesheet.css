@@ -180,7 +180,6 @@ header{position:sticky;top:0;left:0;right:0;background:var(--bg-grad);color:#fff
   justify-content: center;
   flex-wrap: wrap;       /* allows better responsiveness */
   gap: 12px;
-  width: 100%;
   margin-bottom: 18px;
   position: sticky;
   top: 0;
@@ -373,7 +372,8 @@ header{position:sticky;top:0;left:0;right:0;background:var(--bg-grad);color:#fff
 /*account page*/
 
 .account-page {
-  max-width: 800px;
+  width: 100%;
+  max-width: 430px;
   margin: 2rem auto;
   padding: 1rem;
 }
