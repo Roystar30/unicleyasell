@@ -168,7 +168,7 @@ header{position:sticky;top:0;left:0;right:0;background:var(--bg-grad);color:#fff
 @keyframes spin{to{transform:rotate(360deg)}}
 
 /* Titles */
-.section-title{font-size:28px;text-align:center;margin:8px 0;background:linear-gradient(135deg,#667eea,#764ba2);-webkit-background-clip:text;color:transparent;font-weight:800}
+.section-title{font-size:28px;text-align:center;margin:8px 0;background:linear-gradient(135deg,#667eea,#764ba2);-webkit-background-clip:text;background-clip:text;color:transparent;font-weight:800}
 .section-subtitle{text-align:center;color:var(--muted);margin-bottom:18px}
 
 /* Filters / Chips */
