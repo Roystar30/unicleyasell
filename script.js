@@ -159,7 +159,7 @@ function productToCard(p){
   const fullDesc = p.desc || p.description || '';
   const desc = fullDesc.length > 160 ? (fullDesc.slice(0,157) + '…') : fullDesc;
   const id = p._id || p.id || '';
-  const image = p.image || (p.images && p.images[0]) || 'https://picsum.photos/300/300';
+  const image = (p.images && p.images.length && p.images[0]) || p.image || 'https://picsum.photos/300/300';
   const specs = [p.ram, p.storage, p.processor, p.condition].filter(Boolean).slice(0,4);
 
   // data-images helps the modal quickly read images without extra API calls
