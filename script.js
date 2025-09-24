@@ -159,11 +159,30 @@ function productToCard(p){
   const fullDesc = p.desc || p.description || '';
   const desc = fullDesc.length > 160 ? (fullDesc.slice(0,157) + '…') : fullDesc;
   const id = p._id || p.id || '';
-  const image = (p.images && p.images.length && p.images[0]) || p.image || 'https://picsum.photos/300/300';
+
+  // ✅ Image handling (supports images[], imageUrl, or image)
+  let image = 'https://picsum.photos/300/300';
+  if (p.images && Array.isArray(p.images) && p.images.length) {
+    // if array of strings
+    if (typeof p.images[0] === 'string') {
+      image = p.images[0];
+    }
+    // if array of objects with { url: '...' }
+    else if (p.images[0].url) {
+      image = p.images[0].url;
+    }
+  } else if (p.imageUrl) {
+    image = p.imageUrl;
+  } else if (p.image) {
+    image = p.image;
+  }
+
   const specs = [p.ram, p.storage, p.processor, p.condition].filter(Boolean).slice(0,4);
 
   // data-images helps the modal quickly read images without extra API calls
-  const imagesAttr = (p.images && Array.isArray(p.images)) ? ` data-images='${JSON.stringify(p.images).replace(/'/g,"&#39;")}'` : '';
+  const imagesAttr = (p.images && Array.isArray(p.images)) 
+    ? ` data-images='${JSON.stringify(p.images).replace(/'/g,"&#39;")}'` 
+    : '';
 
   return `
     <div class="product-card" data-id="${escapeHtml(id)}"${imagesAttr}>
@@ -183,7 +202,6 @@ function productToCard(p){
         <button class="btn ghost" data-action="buy" data-id="${escapeHtml(id)}">Buy Now</button>
       </div>
     </div>`;
-
 }
 
 // Add click event to open product modal on product card or media click
