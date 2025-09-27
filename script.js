@@ -606,32 +606,61 @@ function closeAccountPopup() {
   accountPopup.style.display = "none";
 }
 
-function openProductModal(p){
-  if(!pm) return;
+function openProductModal(p) {
+  if (!pm) return;
+
+  // Title / Price / Desc
   const title = p.title || p.name || 'Untitled';
   pmTitle.textContent = title;
   pmPrice.textContent = typeof p.price === 'number' ? `₹${p.price}` : (p.price || '—');
   pmDesc.textContent = p.desc || p.description || '';
-  const specList = [p.ram, p.storage, p.processor, p.condition].filter(Boolean);
-  pmSpecs.innerHTML = specList.map(s=>`<span class="spec">${escapeHtml(s)}</span>`).join('');
 
-  // Images
-  const imgs = (Array.isArray(p.images) && p.images.length ? p.images : [p.image]).filter(Boolean);
-  const first = imgs[0] || 'https://picsum.photos/300/300';
-  pmMainImg.src = first;
+  // Specs
+  const specList = [p.ram, p.storage, p.processor, p.condition].filter(Boolean);
+  pmSpecs.innerHTML = specList.map(s => `<span class="spec">${escapeHtml(s)}</span>`).join('');
+
+  // ✅ Normalize images
+  let imgs = [];
+  if (Array.isArray(p.images) && p.images.length) {
+    if (typeof p.images[0] === 'string') {
+      imgs = p.images;
+    } else if (p.images[0].url) {
+      imgs = p.images.map(img => img.url);
+    }
+  } else if (p.imageUrl) {
+    imgs = [p.imageUrl];
+  } else if (p.image) {
+    imgs = [p.image];
+  }
+  if (!imgs.length) imgs = ['https://picsum.photos/300/300'];
+
+  // Main image
+  pmMainImg.src = imgs[0];
   pmMainImg.alt = title;
-  pmThumbs.innerHTML = imgs.map((src,i)=>`
-    <div class="pm-thumb ${i===0?'active':''}" data-src="${escapeHtml(src)}">
+
+  // Thumbs
+  pmThumbs.innerHTML = imgs.map((src, i) => `
+    <div class="pm-thumb ${i===0 ? 'active' : ''}" data-src="${escapeHtml(src)}">
       <img src="${escapeHtml(src)}" alt="">
     </div>`).join('');
 
-  // Actions
-  pmAdd.onclick = ()=>{ addToCart(p._id||p.id); toast('Added to cart'); };
-  pmBuy.onclick = ()=>{ addToCart(p._id||p.id); window.location.href='checkout.html'; };
+  // ✅ Thumb click → change main image
+  pmThumbs.querySelectorAll('.pm-thumb').forEach(thumb => {
+    thumb.addEventListener('click', () => {
+      const newSrc = thumb.dataset.src;
+      pmMainImg.src = newSrc;
+      pmThumbs.querySelectorAll('.pm-thumb').forEach(t => t.classList.remove('active'));
+      thumb.classList.add('active');
+    });
+  });
 
-  // Show
+  // Actions
+  pmAdd.onclick = () => { addToCart(p._id || p.id); toast('Added to cart'); };
+  pmBuy.onclick = () => { addToCart(p._id || p.id); window.location.href = 'checkout.html'; };
+
+  // Show modal
   pm.style.display = 'flex';
-  requestAnimationFrame(()=> pm.classList.add('show'));
+  requestAnimationFrame(() => pm.classList.add('show'));
 }
 
 function closeProductModal(){
