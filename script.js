@@ -47,6 +47,10 @@ const accountArea = $('#accountArea');
 
 // Auth elements
 const authModal = $('#authModal');
+const sendOtpBtn = $('#sendOtpBtn');
+const verifyOtpBtn = $('#verifyOtpBtn');
+const otpInput = $('#otpInput');
+const phoneInput = $('#phoneInput');
 const loginStep1 = $('#loginFormStep1');
 const loginStep2 = $('#loginFormStep2');
 const loginBtn = $('#loginBtn');
@@ -561,6 +565,65 @@ function closeAuth(){
   authModal.classList.remove('show');
   setTimeout(()=> authModal.style.display='none', 180);
 }
+
+// ===== OTP Auth Flow =====
+
+async function sendOtp() {
+  const phone = phoneInput?.value?.trim();
+  if (!phone || phone.length < 10) return toast("Enter a valid phone number");
+
+  try {
+    const res = await fetch(`${API_BASE}/auth/send-otp`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ phone })
+    });
+
+    const data = await res.json();
+    if (data.success) {
+      toast("OTP sent successfully ✅");
+      loginStep1.style.display = "none";
+      loginStep2.style.display = "block";
+    } else {
+      toast(data.message || "Failed to send OTP");
+    }
+  } catch (err) {
+    console.error(err);
+    toast("Error sending OTP");
+  }
+}
+
+async function verifyOtp() {
+  const otp = otpInput?.value?.trim();
+  const phone = phoneInput?.value?.trim();
+
+  if (!otp || otp.length < 4) return toast("Enter valid OTP");
+
+  try {
+    const res = await fetch(`${API_BASE}/auth/verify-otp`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ phone, otp })
+    });
+
+    const data = await res.json();
+    if (data.success) {
+      localStorage.setItem("unicleya_token", data.token);
+      localStorage.setItem("unicleya_user", JSON.stringify(data.user));
+      toast("Logged in successfully 🎉");
+      closeAuth();
+      updateHeaderAuthUI();
+    } else {
+      toast(data.message || "Invalid OTP");
+    }
+  } catch (err) {
+    console.error(err);
+    toast("Verification failed");
+  }
+}
+
+if (sendOtpBtn) sendOtpBtn.addEventListener("click", sendOtp);
+if (verifyOtpBtn) verifyOtpBtn.addEventListener("click", verifyOtp);
 
 function getUser(){
   return JSON.parse(localStorage.getItem('unicleya_user')||'null');
