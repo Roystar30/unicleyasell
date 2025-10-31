@@ -117,18 +117,45 @@
 
       <!-- Register form -->
       <form id="registerForm" style="display:none">
-        <h3 class="modal-title">Create account</h3>
-        <div class="form-row"><input name="name" type="text" placeholder="Full name" required></div>
-        <div class="form-row"><input name="email" type="email" placeholder="Email" required></div>
-        <div class="form-row"><input name="phone" type="tel" placeholder="Mobile (optional)"></div>
-        <div class="form-row"><input name="password" type="password" placeholder="Create password" required minlength="6"></div>
-        <div class="form-row"><input name="confirm" type="password" placeholder="Re-enter password" required minlength="6"></div>
-        <div class="form-actions">
-          <button class="btn" type="submit" id="registerSubmit">Create account</button>
-          <button type="button" class="ghost" id="toLogin">Back to login</button>
-        </div>
-        <div class="small err" id="registerError" style="display:none"></div>
-      </form>
+  <h3 class="modal-title">Create account</h3>
+
+  <div class="form-row">
+    <input name="name" type="text" placeholder="Full name" required>
+  </div>
+
+  <div class="form-row">
+    <input name="email" type="email" placeholder="Email" required>
+  </div>
+
+  <!-- ✅ Mobile number now required -->
+  <div class="form-row">
+    <input id="regPhone" name="phone" type="tel" placeholder="Mobile number" required maxlength="10" pattern="[0-9]{10}">
+  </div>
+
+  <!-- ✅ OTP section (hidden initially) -->
+  <div class="form-row" id="otpRow" style="display:none;">
+    <input id="regOtp" name="otp" type="text" placeholder="Enter OTP" maxlength="6" pattern="[0-9]{6}">
+    <button class="btn small" type="button" id="sendOtpBtn">Send OTP</button>
+  </div>
+
+  <!-- ✅ Verify message -->
+  <div class="small" id="otpStatus" style="display:none; color:var(--accent-color); margin-top:-6px;"></div>
+
+  <div class="form-row">
+    <input name="password" type="password" placeholder="Create password" required minlength="6">
+  </div>
+
+  <div class="form-row">
+    <input name="confirm" type="password" placeholder="Re-enter password" required minlength="6">
+  </div>
+
+  <div class="form-actions">
+    <button class="btn" type="submit" id="registerSubmit">Create account</button>
+    <button type="button" class="ghost" id="toLogin">Back to login</button>
+  </div>
+
+  <div class="small err" id="registerError" style="display:none"></div>
+</form>
     </div>
   </div>
 </div>
