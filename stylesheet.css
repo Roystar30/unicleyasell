@@ -31,11 +31,10 @@ img{max-width:100%;display:block}
 /* Layout */
 .page-wrapper{display:flex;flex-direction:column;min-height:100vh}
 main{
-  max-width: 100%;     
+  max-width: 100%;      
   margin: 28px auto;   
   padding: 20px;       
   width: 100%;
-  /* FIX: Ensure main area has height so loader is visible even if empty */
   min-height: 60vh; 
 }
 .container {
@@ -85,11 +84,11 @@ header{position:sticky;top:0;left:0;right:0;background:var(--bg-grad);color:#fff
   position: fixed;
   top: 0; left: 0;
   width: 100%; height: 100%;
-  background: rgba(0,0,0,0.6); /* Darker background */
+  background: rgba(0,0,0,0.6); 
   display: none; 
   justify-content: center; 
   align-items: center;
-  z-index: 2000; /* Higher than header (1000) and sidebar */
+  z-index: 2000; 
   backdrop-filter: blur(3px);
 }
 .popup-box {
@@ -97,10 +96,10 @@ header{position:sticky;top:0;left:0;right:0;background:var(--bg-grad);color:#fff
   padding: 24px;
   border-radius: 16px;
   width: 100%;
-  max-width: 380px; /* Good width for desktop */
+  max-width: 380px; 
   box-shadow: 0 10px 40px rgba(0,0,0,0.3);
   position: relative;
-  margin: 20px; /* Prevents touching edges on mobile */
+  margin: 20px; 
   animation: popupUp 0.3s ease-out;
 }
 @keyframes popupUp {
@@ -113,7 +112,7 @@ header{position:sticky;top:0;left:0;right:0;background:var(--bg-grad);color:#fff
   width: 100%; padding: 12px;
   margin: 6px 0;
   border: 1px solid #e2e8f0; border-radius: 8px;
-  font-size: 16px; /* Prevents zoom on iPhone */
+  font-size: 16px; 
 }
 .btn {
   display: inline-flex;
@@ -166,7 +165,6 @@ header{position:sticky;top:0;left:0;right:0;background:var(--bg-grad);color:#fff
 /* Progress & loader */
 .progress{position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,var(--accent),var(--accent-2));width:0;z-index:1100}
 
-/* LOADER FIX: Increased Z-Index so it's visible over everything */
 .loader-spot{
     position:fixed;
     right:20px;
@@ -175,12 +173,12 @@ header{position:sticky;top:0;left:0;right:0;background:var(--bg-grad);color:#fff
     color:#fff;
     padding:12px 16px;
     border-radius:999px;
-    display:none; /* JS toggles this */
+    display:none;
     align-items:center;
     gap:10px;
     border:1px solid rgba(255,255,255,0.1);
     box-shadow:0 12px 30px rgba(0,0,0,0.3);
-    z-index: 3000; /* Must be highest */
+    z-index: 3000;
 }
 .loader-spot.show { display: flex; }
 .spinner{width:24px;height:24px;border-radius:50%;border:3px solid rgba(255,255,255,0.3);border-top-color:#fff;animation:spin 1s linear infinite}
@@ -202,7 +200,8 @@ header{position:sticky;top:0;left:0;right:0;background:var(--bg-grad);color:#fff
   gap: 12px;
   margin-bottom: 18px;
   position: sticky;
-  top: 0;
+  /* === FIX: Adjusted top value to sit BELOW the header === */
+  top: 74px; 
   background: #f7f9ff; 
   padding: 10px 0;
   z-index: 10; 
@@ -225,7 +224,6 @@ header{position:sticky;top:0;left:0;right:0;background:var(--bg-grad);color:#fff
 
 .chip {
   min-width: 100px;
-  /* Removed fixed width so text fits */
   padding: 8px 16px;
   border-radius: 999px;
   background: #f5f7ff;
@@ -243,7 +241,7 @@ header{position:sticky;top:0;left:0;right:0;background:var(--bg-grad);color:#fff
   text-transform: capitalize;
   box-shadow: 0 2px 8px rgba(102,126,234,0.08);
   outline: none;
-  white-space: nowrap; /* Keeps text on one line */
+  white-space: nowrap; 
 }
 
 .chip:hover {
@@ -292,7 +290,7 @@ header{position:sticky;top:0;left:0;right:0;background:var(--bg-grad);color:#fff
   align-items: stretch;
   justify-items: stretch;
   width: 100%;
-  min-height: 200px; /* Prevents collapse */
+  min-height: 200px; 
 }
 @media (max-width: 1200px) {
   .grid { grid-template-columns: repeat(4, 1fr); }
@@ -304,26 +302,23 @@ header{position:sticky;top:0;left:0;right:0;background:var(--bg-grad);color:#fff
   .grid { grid-template-columns: repeat(2, 1fr); }
   
    /* === MOBILE FILTER SCROLL FIX === */
-   /* This creates a horizontal swipe for filters on mobile */
     .filters {
         overflow-x: auto; 
         justify-content: flex-start; 
         flex-wrap: nowrap; 
         padding: 10px 16px; 
-        /* Negative margins allow full-width scroll while keeping padding */
         margin-left: -20px;
         margin-right: -20px;
         width: calc(100% + 40px);
-        /* Hide scrollbar for neatness */
-        -ms-overflow-style: none;  /* IE and Edge */
-        scrollbar-width: none;  /* Firefox */
+        -ms-overflow-style: none; 
+        scrollbar-width: none; 
     }
     .filters::-webkit-scrollbar {
-      display: none; /* Chrome, Safari */
+      display: none;
     }
 
     .chip {
-        flex-shrink: 0; /* Prevent squishing */
+        flex-shrink: 0;
         margin-right: 6px;
     }
 }
@@ -601,19 +596,37 @@ input,select{padding:10px;border-radius:8px;border:1px solid #e2e6ee;background:
   /* Hide non-essential pills */
   .pill:not(.hamburger-btn) { display: none; }
 
+  /* === FIX: Filters Stick Below Header on Mobile === */
+  .filters {
+      top: 140px; /* Header is taller on mobile, so push filters down */
+  }
+
   /* Product card internal layout adjustments */
   .product-card{
     flex-direction:column;
     align-items:flex-start;
     padding: 16px; 
   }
+  
+  /* === FIX: Center Product Image on Mobile === */
   .product-media {
     width: 100%; 
     min-width: unset; 
-    height: 180px; /* Fixed height stops collapse */
+    height: 180px;
     max-height: 200px; 
     margin-bottom: 8px; 
+    /* Centering magic */
+    margin-left: auto;
+    margin-right: auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
+  /* Ensure image element is centered inside container */
+  .product-media img {
+      margin: 0 auto;
+  }
+
   .product-body { width: 100%; }
 
   .product-actions{
