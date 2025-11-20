@@ -45,7 +45,7 @@ main{
 }
 
 /* Header */
-header{position:sticky;top:0;left:0;right:0;background:var(--bg-grad);color:#fff;z-index:1000;box-shadow:0 6px 20px rgba(0,0,0,.12)}
+header{position:sticky;top:0;left:0;right:0;background:var(--bg-grad);color:#fff;z-index:1000;box-shadow:0 6px 20px rgba(0,0,0,.12); transition: height 0.3s;}
 .header-content{max-width:var(--max);margin:0 auto;padding:14px 24px;display:flex;align-items:center;gap:16px;justify-content:space-between}
 .header-left{display:flex;align-items:center;gap:14px}
 .logo{display:flex;align-items:center;gap:12px;cursor:pointer}
@@ -189,7 +189,7 @@ header{position:sticky;top:0;left:0;right:0;background:var(--bg-grad);color:#fff
 .section-title{font-size:28px;text-align:center;margin:8px 0;background:linear-gradient(135deg,#667eea,#764ba2);-webkit-background-clip:text;background-clip:text;color:transparent;font-weight:800}
 .section-subtitle{text-align:center;color:var(--muted);margin-bottom:18px}
 
-/* === FILTERS / CHIPS FIXES === */
+/* === FILTERS / CHIPS (Default Desktop) === */
 .filters > * {
   flex-shrink: 1;
 }
@@ -200,11 +200,10 @@ header{position:sticky;top:0;left:0;right:0;background:var(--bg-grad);color:#fff
   gap: 12px;
   margin-bottom: 18px;
   position: sticky;
-  /* === FIX: Adjusted top value to sit BELOW the header === */
   top: 74px; 
   background: #f7f9ff; 
   padding: 10px 0;
-  z-index: 10; 
+  z-index: 900; /* Below header (1000) but above content */
   transition: all 0.3s ease;
 }
 
@@ -274,15 +273,8 @@ header{position:sticky;top:0;left:0;right:0;background:var(--bg-grad);color:#fff
     }
 .sort-wrap select{padding:8px 10px;border-radius:10px;border:1px solid #e6e6e6;background:#fff}
 
-/* Card polish */
-.product-card{position:relative; cursor: pointer;}
-.product-card:focus-within,.product-card:has(:hover){outline:0}
-.product-card .product-media{background:#f3f6ff;border:1px solid #ebefff}
-.product-card:hover{transform:translateY(-6px);box-shadow:0 22px 42px rgba(0,0,0,.12)}
-.product-desc{line-height:1.35}
 
-
-/* Grid & Cards - Responsive default view */
+/* Grid & Cards - Default Desktop */
 .grid {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
@@ -298,51 +290,6 @@ header{position:sticky;top:0;left:0;right:0;background:var(--bg-grad);color:#fff
 @media (max-width: 900px) {
   .grid { grid-template-columns: repeat(3, 1fr); }
 }
-@media (max-width: 600px) {
-  .grid { grid-template-columns: repeat(2, 1fr); }
-  
-   /* === MOBILE FILTER SCROLL FIX === */
-    .filters {
-        overflow-x: auto; 
-        justify-content: flex-start; 
-        flex-wrap: nowrap; 
-        padding: 10px 16px; 
-        margin-left: -20px;
-        margin-right: -20px;
-        width: calc(100% + 40px);
-        -ms-overflow-style: none; 
-        scrollbar-width: none; 
-    }
-    .filters::-webkit-scrollbar {
-      display: none;
-    }
-
-    .chip {
-        flex-shrink: 0;
-        margin-right: 6px;
-    }
-}
-@media (max-width: 420px) {
-  .grid { grid-template-columns: 1fr; }
-}
-
-/* Responsive adjustments */
-@media (max-width: 768px) {
-  .grid {
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 16px;
-  }
-}
-
-@media (max-width: 480px) {
-  .grid {
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 14px;
-  }
-  /* Reduce main container padding for smallest screens */
-    main { margin: 16px auto; padding: 10px; }
-    .container { padding: 10px; }
-}
 
 .product-card {
   display: flex;
@@ -357,6 +304,7 @@ header{position:sticky;top:0;left:0;right:0;background:var(--bg-grad);color:#fff
   transition: transform .2s, box-shadow .2s;
   width: 100%;
   min-width: 0;
+  position: relative; 
 }
 .product-card:hover {
   transform: translateY(-6px);
@@ -568,8 +516,12 @@ input,select{padding:10px;border-radius:8px;border:1px solid #e2e6ee;background:
 .soc:hover{transform:translateY(-2px)}
 .footer-bottom{text-align:center;padding:10px;border-top:1px solid #1c2750}
 
-/* Responsive */
+/* =========================================== */
+/* === IMPORTANT: MOBILE & RESPONSIVE FIXES === */
+/* =========================================== */
+
 @media (max-width:720px){
+  /* Header & Search Adjustment */
   .header-content{
     padding:12px;
     gap: 0; 
@@ -593,36 +545,65 @@ input,select{padding:10px;border-radius:8px;border:1px solid #e2e6ee;background:
       width:100%;
       margin-top:4px;
   }
-  /* Hide non-essential pills */
   .pill:not(.hamburger-btn) { display: none; }
 
-  /* === FIX: Filters Stick Below Header on Mobile === */
+  /* === FIX 1: Horizontal Scrolling Filters Below Sticky Header === */
   .filters {
-      top: 140px; /* Header is taller on mobile, so push filters down */
+      top: 135px; /* Push down below the double-height mobile header */
+      
+      /* Enable Horizontal Scroll */
+      justify-content: flex-start; 
+      flex-wrap: nowrap; 
+      overflow-x: auto; 
+      
+      /* Layout Tweaks for Scroll */
+      padding: 10px 16px; 
+      margin-left: -20px; /* Bleed to edge */
+      margin-right: -20px;
+      width: calc(100% + 40px);
+      
+      /* Hide Scrollbars */
+      -ms-overflow-style: none; 
+      scrollbar-width: none; 
+  }
+  .filters::-webkit-scrollbar { display: none; }
+
+  /* Force chips to stay in one line */
+  .chip {
+      flex-shrink: 0; 
+      margin-right: 6px;
   }
 
-  /* Product card internal layout adjustments */
+  /* === FIX 2: Middle of Page Product (Single Column) === */
+  .grid {
+    grid-template-columns: 1fr; /* Force single column so product is in middle */
+    gap: 16px;
+  }
+
+  /* === FIX 3: Center Product Card Content === */
   .product-card{
     flex-direction:column;
-    align-items:flex-start;
-    padding: 16px; 
+    align-items:center; /* Center items horizontally */
+    text-align: center; /* Center text */
+    padding: 18px; 
   }
   
-  /* === FIX: Center Product Image on Mobile === */
   .product-media {
     width: 100%; 
     min-width: unset; 
-    height: 180px;
-    max-height: 200px; 
-    margin-bottom: 8px; 
-    /* Centering magic */
+    height: 220px; /* Slightly taller for better visibility */
+    max-height: 250px; 
+    margin-bottom: 12px; 
+    
+    /* Center the container */
     margin-left: auto;
     margin-right: auto;
+    
     display: flex;
     justify-content: center;
     align-items: center;
   }
-  /* Ensure image element is centered inside container */
+  
   .product-media img {
       margin: 0 auto;
   }
