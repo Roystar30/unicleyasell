@@ -552,6 +552,7 @@ function renderSuggestions(){
 function openAuth(){
   closeAccountPopup();
   if(!authModal) return;
+  document.body.style.overflow = 'hidden';
   authModal.style.display='flex';
   requestAnimationFrame(()=> authModal.classList.add('show'));
   // setTimeout(()=> authModal.classList.add('show'), 10);
@@ -562,6 +563,7 @@ function openAuth(){
 }
 function closeAuth(){
   if(!authModal) return;
+  document.body.style.overflow = '';
   authModal.classList.remove('show');
   setTimeout(()=> authModal.style.display='none', 180);
 }
@@ -671,7 +673,7 @@ function closeAccountPopup() {
 
 function openProductModal(p) {
   if (!pm) return;
-
+  document.body.style.overflow = 'hidden';
   // Title / Price / Desc
   const title = p.title || p.name || 'Untitled';
   pmTitle.textContent = title;
@@ -728,6 +730,7 @@ function openProductModal(p) {
 
 function closeProductModal(){
   if(!pm) return;
+  document.body.style.overflow = '';
   pm.classList.remove('show','full');
   setTimeout(()=> pm.style.display='none', 180);
 }

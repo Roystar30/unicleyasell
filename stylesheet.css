@@ -411,7 +411,7 @@ header{position:sticky;top:0;left:0;right:0;background:var(--bg-grad);color:#fff
     .card a:hover { background: #333; }
 
 /* Modal */
-.modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;z-index:60;background:rgba(12,18,30,0.28);backdrop-filter:blur(4px)}
+.modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;z-index:2005;background:rgba(12,18,30,0.4);backdrop-filter:blur(4px)}
 .modal.show{display:flex}
 .modal .sheet{width:460px;max-width:92%;background:#ffffff;border-radius:16px;padding:20px;border:1px solid #f1f1f3;box-shadow:0 24px 50px rgba(2,6,23,0.24);transform:translateY(10px);opacity:0;transition:all .28s;position:relative}
 .modal.show .sheet{transform:none;opacity:1}
@@ -446,7 +446,7 @@ input,select{padding:10px;border-radius:8px;border:1px solid #e2e6ee;background:
 .pm-specs .spec{background:#f4f6fb;border:1px solid #e7ebf6;border-radius:999px;padding:6px 10px;font-size:12px;color:#394150}
 .pm-actions{display:flex;gap:10px;margin-top:8px}
 
-#productModal.full{z-index:1100}
+#productModal.full{z-index:2005}
 #productModal.full .pm-sheet{width:96%;height:92vh;display:flex;flex-direction:column}
 #productModal.full .pm-content{grid-template-columns:1fr 1fr;gap:18px;flex:1}
 #productModal.full .pm-image{height:100%}
