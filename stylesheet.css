@@ -101,6 +101,7 @@ header{position:sticky;top:0;left:0;right:0;background:var(--bg-grad);color:#fff
   z-index: 2000; 
   backdrop-filter: blur(3px);
 }
+.popup-overlay.show { display: flex; }
 .popup-box {
   background: #fff;
   padding: 24px;
