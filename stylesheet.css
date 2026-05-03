@@ -482,7 +482,76 @@ input,select{padding:10px;border-radius:8px;border:1px solid #e2e6ee;background:
 .soc:hover{transform:translateY(-2px)}
 .footer-bottom{text-align:center;padding:10px;border-top:1px solid #1c2750}
 
-/* =========================================== */
-/* === MOBILE & RESPONSIVE FIXES === */
-/* =========================================== */
 
+/* --- TABLET FIXES (Max 768px) ---mobile style  */
+
+@media (max-width: 768px) {
+  /* Let header wrap so search drops to second line */
+  .header-content {
+    flex-wrap: wrap;
+    padding: 12px 16px;
+  }
+  
+  /* Force search bar to the bottom row, taking full width */
+  .search-container {
+    order: 3;
+    flex: 1 1 100%;
+    max-width: 100%;
+    margin-top: 10px;
+  }
+  
+  /* Distribute top row items evenly */
+  .header-left {
+    flex: 1 1 auto;
+  }
+  .header-right {
+    flex: 1 1 auto;
+    justify-content: flex-end;
+  }
+  
+  /* Hide minor text elements to save space */
+  .tagline { display: none; }
+  .logo h1 { font-size: 18px; }
+
+  /* Scale grid down to 2 columns on tablets */
+  .grid { 
+    grid-template-columns: repeat(2, 1fr); 
+    gap: 14px;
+  }
+}
+
+/* --- MOBILE FIXES (Max 500px) --- */
+@media (max-width: 500px) {
+  /* Scale grid to 1 column for small phones */
+  .grid { 
+    grid-template-columns: 1fr; 
+    gap: 16px;
+  }
+
+  /* Make product cards horizontal on mobile (List view) */
+  .product-card {
+    flex-direction: row;
+    padding: 10px;
+    align-items: center;
+  }
+
+  /* Override fixed rigid image sizes */
+  .product-media {
+    width: 100px;
+    min-width: 100px;
+    height: 100px;
+    flex-shrink: 0;
+  }
+
+  /* Adjust typography inside product cards */
+  .product-title { font-size: 16px; }
+  .price { font-size: 18px; }
+  .product-actions { align-items: flex-start; }
+
+  /* Stack footer items */
+  .footer-inner {
+    flex-direction: column;
+    text-align: center;
+    gap: 16px;
+  }
+}
