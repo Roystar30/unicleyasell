@@ -429,9 +429,25 @@ input,select{padding:10px;border-radius:8px;border:1px solid #e2e6ee;background:
 .modal input:focus,.modal textarea:focus,.modal select:focus{border-color:var(--accent);background:#fff;outline:none}
 
 /* Product modal */
-.pm-sheet{width:min(980px,96%);padding:18px;position:relative}
-.pm-close{position:absolute;right:10px;top:10px;width:34px;height:34px;border-radius:8px;border:1px solid #eaeaea;background:#f8f9fb;font-size:20px;cursor:pointer}
-.pm-max{position:absolute;left:10px;top:10px;width:34px;height:34px;border-radius:8px;border:1px solid #eaeaea;background:#f8f9fb;font-size:16px;cursor:pointer}
+ .pm-sheet { 
+        padding: 10px; 
+        padding-top: 60px; /* Creates a safe zone for the buttons */
+        height: 100%; 
+        display: flex; 
+        flex-direction: column; 
+    }
+   .pm-close {
+        /* Use safe-area for notches, or default to 16px to clear the browser bar */
+        top: max(16px, env(safe-area-inset-top)); 
+        right: 12px;
+        z-index: 10;
+    }
+    
+    .pm-max {
+        top: max(16px, env(safe-area-inset-top)); 
+        left: 12px; /* Keep maximize on the left */
+        z-index: 10;
+    }
 .pm-content{display:grid;grid-template-columns:1.1fr 1fr;gap:16px}
 .pm-image{background:#f5f7ff;border:1px solid #ebefff;border-radius:14px;height:380px;display:flex;align-items:center;justify-content:center;overflow:hidden}
 .pm-image img{max-width:100%;max-height:100%;object-fit:contain}
@@ -457,7 +473,13 @@ input,select{padding:10px;border-radius:8px;border:1px solid #e2e6ee;background:
 }
 
 @media (max-width: 500px) {
-    .modal .sheet { width: 98%; max-width: 98%; height: 96vh; border-radius: 0; margin: 0; }
+    .modal .sheet { 
+        width: 100%; 
+        max-width: 100%; 
+        height: 100dvh; /* dvh fixes the mobile browser UI cut-off issue */
+        border-radius: 0; 
+        margin: 0; 
+    }
     .pm-sheet { padding: 10px; height: 100%; display: flex; flex-direction: column; }
     .pm-content { grid-template-columns: 1fr; flex: 1; overflow-y: auto; }
     .pm-image { height: 250px; }
