@@ -4,12 +4,13 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>My Account - Unicleya</title>
-  <link rel="stylesheet" href="stylesheet.css"> <!-- your existing css -->
- </head>
+  <link rel="stylesheet" href="stylesheet.css">
+</head>
 <body>
   <div class="page-wrapper">
     <div class="progress" id="progress"></div>
-  <header>
+    
+    <header>
       <div class="header-content">
         <div class="header-left">
           <button class="hamburger-btn" id="hamburger" aria-label="Open menu">
@@ -42,149 +43,59 @@
         </div>
       </div>
     </header>
- <!-- Account Popup -->
-    <div id="accountPopup" class="popup-overlay">
-      <div class="popup-box">
-        <button class="close-btn" onclick="toggleAccountPopup(false)">×</button>
-        <h2>My Account</h2>
-        <div id="accountArea"></div>
+
+    <main class="main-content">
+      <div class="account-header">
+        <h1>My Account Dashboard</h1>
+        <p>Manage your profile, orders, and requests all in one place</p>
       </div>
-    </div>
-    <!-- Side Nav -->
-    <aside class="side-nav" id="sideNav" aria-hidden="true">
-      <div class="side-nav-header">
-        <div class="side-brand">
-          <img src="logo.png" alt="Unicleya" />
-          <strong>Unicleya</strong>
-        </div>
-        <button class="pill" id="closeNav">Close</button>
-      </div>
-      <nav class="side-nav-content">
-        <a class="nav-item active" href="index.html">🏠 Home</a>
-        <a class="nav-item" href="cart.html">🛒 Cart</a>
-        <a class="nav-item" href="checkout.html">💳 Checkout</a>
-        <a class="nav-item" href="account.html">👤 Account</a>
-      </nav>
-      <div class="side-nav-footer">
-        <a class="nav-item contact" href="mailto:support@unicleya.com">✉️ Contact us</a>
-        <small>© <span id="year"></span> Unicleya</small>
-      </div>
-    </aside>
-    <div class="overlay" id="overlay"></div>
 
-    <div class="loader-spot" id="loader" aria-hidden="true">
-      <div class="spinner"></div>
-      <div class="loader-text">Working...</div>
-    </div>
+      <section class="account-container">
+        <a href="/profile.html" class="card account-card">
+          <div class="card-icon">👤</div>
+          <h3>My Account</h3>
+          <p>View and edit your profile details, addresses, and preferences.</p>
+          <span class="card-action">Go ➔</span>
+        </a>
 
-    <!-- Auth Modal (2-step) -->
-    <div class="modal" id="authModal" style="display:none" aria-modal="true" role="dialog" aria-labelledby="authTitle">
-      <div class="sheet">
-        <button class="close-x" id="authClose" aria-label="Close">×</button>
-        <div class="tabs" role="tablist">
-          <div class="tab active" data-tab="login" role="tab" aria-selected="true">Sign in</div>
-          <div class="tab" data-tab="register" role="tab" aria-selected="false">Create account</div>
-        </div>
+        <a href="/orders.html" class="card account-card">
+          <div class="card-icon">📦</div>
+          <h3>My Orders</h3>
+          <p>Check your past and current orders, and manage them easily.</p>
+          <span class="card-action">Go ➔</span>
+        </a>
 
-        <div id="tabBody">
-          <!-- Step 1: Identifier -->
-          <form id="loginFormStep1" autocomplete="on">
-            <h3 id="authTitle" class="modal-title">Welcome back</h3>
-            <p class="modal-sub">Enter email or mobile</p>
-            <div class="form-row"><input name="identifier" type="text" placeholder="Email or mobile number" required></div>
-            <div class="form-actions between">
-              <button class="btn" type="submit" id="loginNext">Continue</button>
-              <a href="#" id="switchToRegister" class="small">New here? Create account</a>
-            </div>
-            <div class="small err" id="loginError" style="display:none"></div>
-          </form>
+        <a href="/returns.html" class="card account-card">
+          <div class="card-icon">💸</div>
+          <h3>Returns & Refunds</h3>
+          <p>Track your return requests and refunds in one place.</p>
+          <span class="card-action">Go ➔</span>
+        </a>
 
-          <!-- Step 2: Password -->
-          <form id="loginFormStep2" style="display:none">
-            <h3 class="modal-title">Enter password</h3>
-            <p class="modal-sub" id="whoLabel"></p>
-            <div class="form-row"><input name="password" type="password" placeholder="Password" required minlength="6"></div>
-            <div class="form-actions between">
-              <button class="btn" type="submit" id="loginSubmit">Sign in</button>
-              <a href="#" class="small" id="forgotPass">Forgot password?</a>
-            </div>
-            <div class="small err" id="loginError2" style="display:none"></div>
-          </form>
+        <a href="/track.html" class="card account-card">
+          <div class="card-icon">🚚</div>
+          <h3>Track Orders</h3>
+          <p>Track your shipments and deliveries in real-time.</p>
+          <span class="card-action">Go ➔</span>
+        </a>
 
-          <!-- register form -->
-          <form id="registerForm" style="display:none">
-            <h3 class="modal-title">Create account</h3>
-            <div class="form-row"><input name="name" type="text" placeholder="Full name" required></div>
-            <div class="form-row"><input name="email" type="email" placeholder="Email" required></div>
-            <div class="form-row"><input name="phone" type="tel" placeholder="Mobile (optional)"></div>
-            <div class="form-row"><input name="password" type="password" placeholder="Create password" required minlength="6"></div>
-            <div class="form-row"><input name="confirm" type="password" placeholder="Re-enter password" required minlength="6"></div>
-            <div class="form-actions">
-              <button class="btn" type="submit" id="registerSubmit">Create account</button>
-              <button type="button" class="ghost" id="toLogin">Back to login</button>
-            </div>
-            <div class="small err" id="registerError" style="display:none"></div>
-          </form>
-        </div>
-      </div>
-    </div>
+        <a href="/complaints.html" class="card account-card">
+          <div class="card-icon">📝</div>
+          <h3>Complaints & Requests</h3>
+          <p>Submit and manage complaints or special service requests.</p>
+          <span class="card-action">Go ➔</span>
+        </a>
 
-  <div class="account-header">
-    <h1>My Account Dashboard</h1>
-    <p>Manage your profile, orders, and requests all in one place</p>
-  </div>
+        <a href="/support.html" class="card account-card">
+          <div class="card-icon">💬</div>
+          <h3>Help & Support</h3>
+          <p>Need assistance? Contact support or check FAQs.</p>
+          <span class="card-action">Go ➔</span>
+        </a>
+      </section>
+    </main>
 
-  <section class="account-container">
-    <!-- My Account -->
-    <div class="card" onclick="location.href='/profile.html'">
-      <div class="card-icon">👤</div>
-      <h3>My Account</h3>
-      <p>View and edit your profile details, addresses, and preferences.</p>
-      <a href="/profile.html">Go</a>
-    </div>
-
-    <!-- My Orders -->
-    <div class="card" onclick="location.href='/orders.html'">
-      <div class="card-icon">📦</div>
-      <h3>My Orders</h3>
-      <p>Check your past and current orders, and manage them easily.</p>
-      <a href="/orders.html">Go</a>
-    </div>
-
-    <!-- Returns & Refunds -->
-    <div class="card" onclick="location.href='/returns.html'">
-      <div class="card-icon">💸</div>
-      <h3>Returns & Refunds</h3>
-      <p>Track your return requests and refunds in one place.</p>
-      <a href="/returns.html">Go</a>
-    </div>
-
-    <!-- Track Orders -->
-    <div class="card" onclick="location.href='/track.html'">
-      <div class="card-icon">🚚</div>
-      <h3>Track Orders</h3>
-      <p>Track your shipments and deliveries in real-time.</p>
-      <a href="/track.html">Go</a>
-    </div>
-
-    <!-- Complaints & Requests -->
-    <div class="card" onclick="location.href='/complaints.html'">
-      <div class="card-icon">📝</div>
-      <h3>Complaints & Requests</h3>
-      <p>Submit and manage complaints or special service requests.</p>
-      <a href="/complaints.html">Go</a>
-    </div>
-
-    <!-- Support / Help Center -->
-    <div class="card" onclick="location.href='/support.html'">
-      <div class="card-icon">💬</div>
-      <h3>Help & Support</h3>
-      <p>Need assistance? Contact support or check FAQs.</p>
-      <a href="/support.html">Go</a>
-    </div>
-  </section>
-
-   <footer class="site-footer">
+    <footer class="site-footer">
       <div class="footer-inner">
         <div class="footer-left">
           <img src="logo.png" alt="" class="footer-logo" />
@@ -202,6 +113,90 @@
       </div>
       <div class="footer-bottom">© <span id="year2"></span> Unicleya. All rights reserved.</div>
     </footer>
-     <script src="script.js"></script>
+    
+  </div> <div class="overlay" id="overlay"></div>
+
+  <aside class="side-nav" id="sideNav" aria-hidden="true">
+    <div class="side-nav-header">
+      <div class="side-brand">
+        <img src="logo.png" alt="Unicleya" />
+        <strong>Unicleya</strong>
+      </div>
+      <button class="pill" id="closeNav">Close</button>
+    </div>
+    <nav class="side-nav-content">
+      <a class="nav-item" href="index.html">🏠 Home</a>
+      <a class="nav-item" href="cart.html">🛒 Cart</a>
+      <a class="nav-item" href="checkout.html">💳 Checkout</a>
+      <a class="nav-item active" href="account.html">👤 Account</a>
+    </nav>
+    <div class="side-nav-footer">
+      <a class="nav-item contact" href="mailto:support@unicleya.com">✉️ Contact us</a>
+      <small>© <span id="year"></span> Unicleya</small>
+    </div>
+  </aside>
+
+  <div id="accountPopup" class="popup-overlay" style="display:none;">
+    <div class="popup-box">
+      <button class="close-btn" onclick="toggleAccountPopup(false)">×</button>
+      <h2>My Account</h2>
+      <div id="accountArea"></div>
+    </div>
+  </div>
+
+  <div class="loader-spot" id="loader" aria-hidden="true">
+    <div class="spinner"></div>
+    <div class="loader-text">Working...</div>
+  </div>
+
+  <div class="modal" id="authModal" style="display:none" aria-modal="true" role="dialog" aria-labelledby="authTitle">
+    <div class="sheet">
+      <button class="close-x" id="authClose" aria-label="Close">×</button>
+      <div class="tabs" role="tablist">
+        <div class="tab active" data-tab="login" role="tab" aria-selected="true">Sign in</div>
+        <div class="tab" data-tab="register" role="tab" aria-selected="false">Create account</div>
+      </div>
+
+      <div id="tabBody">
+        <form id="loginFormStep1" autocomplete="on">
+          <h3 id="authTitle" class="modal-title">Welcome back</h3>
+          <p class="modal-sub">Enter email or mobile</p>
+          <div class="form-row"><input name="identifier" type="text" placeholder="Email or mobile number" required></div>
+          <div class="form-actions between">
+            <button class="btn" type="submit" id="loginNext">Continue</button>
+            <a href="#" id="switchToRegister" class="small">New here? Create account</a>
+          </div>
+          <div class="small err" id="loginError" style="display:none"></div>
+        </form>
+
+        <form id="loginFormStep2" style="display:none">
+          <h3 class="modal-title">Enter password</h3>
+          <p class="modal-sub" id="whoLabel"></p>
+          <div class="form-row"><input name="password" type="password" placeholder="Password" required minlength="6"></div>
+          <div class="form-actions between">
+            <button class="btn" type="submit" id="loginSubmit">Sign in</button>
+            <a href="#" class="small" id="forgotPass">Forgot password?</a>
+          </div>
+          <div class="small err" id="loginError2" style="display:none"></div>
+        </form>
+
+        <form id="registerForm" style="display:none">
+          <h3 class="modal-title">Create account</h3>
+          <div class="form-row"><input name="name" type="text" placeholder="Full name" required></div>
+          <div class="form-row"><input name="email" type="email" placeholder="Email" required></div>
+          <div class="form-row"><input name="phone" type="tel" placeholder="Mobile (optional)"></div>
+          <div class="form-row"><input name="password" type="password" placeholder="Create password" required minlength="6"></div>
+          <div class="form-row"><input name="confirm" type="password" placeholder="Re-enter password" required minlength="6"></div>
+          <div class="form-actions">
+            <button class="btn" type="submit" id="registerSubmit">Create account</button>
+            <button type="button" class="ghost" id="toLogin">Back to login</button>
+          </div>
+          <div class="small err" id="registerError" style="display:none"></div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
 </body>
 </html>
