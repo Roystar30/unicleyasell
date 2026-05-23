@@ -521,25 +521,69 @@ input,select{padding:10px;border-radius:8px;border:1px solid #e2e6ee;background:
 .modal input:focus,.modal textarea:focus,.modal select:focus{border-color:var(--accent);background:#fff;outline:none}
 
 /* Product modal */
- .pm-sheet { 
-        padding: 10px; 
-        padding-top: 60px; /* Creates a safe zone for the buttons */
-        height: 100%; 
-        display: flex; 
-        flex-direction: column; 
-    }
-   .pm-close {
-        /* Use safe-area for notches, or default to 16px to clear the browser bar */
-        top: max(16px, env(safe-area-inset-top)); 
-        right: 12px;
-        z-index: 10;
-    }
-    
-    .pm-max {
-        top: max(16px, env(safe-area-inset-top)); 
-        left: 12px; /* Keep maximize on the left */
-        z-index: 10;
-    }
+
+.pm-sheet { 
+  padding: 10px; 
+  padding-top: 54px; /* Creates a safe zone for the top-left buttons */
+  height: 100%; 
+  display: flex; 
+  flex-direction: column; 
+  position: relative; /* Ensure absolute positioning works for buttons */
+}
+
+   .pm-close, .pm-max {
+  position: absolute;
+  top: max(16px, env(safe-area-inset-top)); 
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1) inset;
+  color: transparent; 
+  font-size: 0; /* Hides any default text/icons inside the HTML */
+}
+/* Close Button (Red) */
+.pm-close {
+  left: 16px;
+  background-color: #ff5f56;
+}
+
+/* Maximize Button (Green) */
+.pm-max {
+  left: 38px; /* Positioned perfectly next to the close button */
+  background-color: #27c93f;
+}
+/* macOS Hover Icons Generation */
+.pm-close::before, .pm-close::after {
+  content: '';
+  position: absolute;
+  width: 8px;
+  height: 1.5px;
+  background-color: #4d0000;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+.pm-close:hover::before { opacity: 1; transform: rotate(45deg); }
+.pm-close:hover::after { opacity: 1; transform: rotate(-45deg); }
+
+.pm-max::before {
+  content: '';
+  position: absolute;
+  width: 6.5px;
+  height: 6.5px;
+  border: 1.2px solid #004d09;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+  box-sizing: border-box;
+}
+.pm-max:hover::before { opacity: 1; }
+
 .pm-content{display:grid;grid-template-columns:1.1fr 1fr;gap:16px}
 .pm-image{background:#f5f7ff;border:1px solid #ebefff;border-radius:14px;height:380px;display:flex;align-items:center;justify-content:center;overflow:hidden}
 .pm-image img{max-width:100%;max-height:100%;object-fit:contain}
@@ -572,15 +616,17 @@ input,select{padding:10px;border-radius:8px;border:1px solid #e2e6ee;background:
         border-radius: 0; 
         margin: 0; 
     }
+  
     .pm-sheet { padding: 10px; height: 100%; display: flex; flex-direction: column; }
     .pm-content { grid-template-columns: 1fr; flex: 1; overflow-y: auto; }
     .pm-image { height: 250px; }
     .pm-actions { flex-direction: column; gap: 8px; }
     .pm-actions .btn { width: 100%; min-width: unset; }
-    .pm-close, .pm-max { top: 5px; right: 5px; z-index: 1; }
+    
+    /* Keep macOS controls positioned consistently on mobile */
+    .pm-close { top: 12px; left: 12px; }
+    .pm-max { top: 12px; left: 34px; }
 }
-
-
 .form-actions{display:flex;gap:8px;align-items:center;justify-content:space-between}
 .form-actions.between{justify-content:space-between}
 .small{font-size:13px;color:var(--muted)}
